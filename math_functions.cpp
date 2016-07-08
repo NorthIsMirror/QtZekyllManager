@@ -9,7 +9,7 @@ char characters[36]={ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b'
 // Takes number, returns string [a-z0-9]+ that
 // is representation of the number in base 36
 
-std::vector<char> convert_integer_to_base_36(int number) {
+std::tuple< std::vector<char>, int > convert_integer_to_base_36(int number) {
     std::vector<int> digits;
 
     int new_number = number;
@@ -30,24 +30,24 @@ std::vector<char> convert_integer_to_base_36(int number) {
 
     std::reverse(digits.begin(), digits.end());
 
-    std::vector<char> letters = numbers_to_letters(digits);
+    std::tuple<std::vector<char>, int> letters_error = numbers_to_letters(digits);
 
-    return letters;
+    return letters_error;
 }
 // }}}
 
 // FUNCTION: numbers_to_letters {{{
 // Converts array of numbers into string [a-z0-9]+
-std::vector<char> numbers_to_letters(const std::vector<int> & digits) {
+std::tuple< std::vector<char>, int> numbers_to_letters(const std::vector<int> & digits) {
     std::vector<char> REPLY;
     for( std::vector<int>::const_iterator it = digits.begin(); it != digits.end(); it ++ ) {
         int i = *it;
         if ( i < 0 || i > 35 ) {
             qDebug() << "Incorrect number during character conversion: " << i;
-            return REPLY;
+            return std::tuple<std::vector<char>, int>( REPLY, 1 );
         }
         REPLY.push_back( characters[i] );
     }
 
-    return REPLY;
+    return std::tuple<std::vector<char>, int>( REPLY, 0 );
 }
