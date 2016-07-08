@@ -43,6 +43,7 @@ signals:
 public slots:
     void handle_zkiresize_list(int exitCode, QStringList entries);
     void handle_zkiresize_consistent(int exitCode, QStringList entries);
+    void updateMessages( const QStringList & messages );
 
 private slots:
     void browse();

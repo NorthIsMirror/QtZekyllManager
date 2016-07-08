@@ -316,9 +316,34 @@
       </widget>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="messages_label">
+      <property name="text">
+       <string>Messages</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPlainTextEdit" name="messages">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>140</height>
+       </size>
+      </property>
+     </widget>
+    </item>
    </layout>
    <zorder></zorder>
    <zorder>tabWidget</zorder>
+   <zorder>messages</zorder>
+   <zorder>messages_label</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

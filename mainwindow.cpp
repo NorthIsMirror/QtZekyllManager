@@ -3,18 +3,22 @@
 #include "math_functions.h"
 #include "coding_functions.h"
 #include "script_functions.h"
+#include "singleton.h"
+#include "messages.h"
 #include <QDebug>
 #include <QRegExp>
 #include <QCheckBox>
 #include <QDir>
 #include <QFileDialog>
 
+#define MessagesI Singleton<Messages>::instance()
+
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    isConsistent_(true)
+    isConsistent_(true),
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     ui->currentIndex->setText(tr("1"));
@@ -48,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->curRepoButton, &QAbstractButton::clicked, this, &MainWindow::browse);
     connect(this, &MainWindow::repositoryChanged, this, &MainWindow::reloadRepository);
+    QObject::connect(&MessagesI, SIGNAL(messagesChanged(const QStringList&)), this, SLOT(updateMessages(const QStringList&)) );
 
     zkiresize_->setIndex( current_index_ );
     zkiresize_->list();
@@ -225,3 +230,15 @@ void MainWindow::reloadRepository() {
     zkiresize_->setIndex( current_index_ );
     zkiresize_->list();
 }
+
+ void MainWindow::updateMessages( const QStringList & messages ) {
+     ui->messages->clear();
+     int size = 0;
+     foreach( const QString &str, messages ) {
+         size ++;
+         QString str2 = str;
+         str2.replace( QRegExp("[\r\n]+"), QString("<br/>") );
+         ui->messages->appendHtml( str2 );
+     }
+     ui->messages->scroll(0, size);
+ }

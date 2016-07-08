@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     lzcsde.cpp \
     math_functions.cpp \
     coding_functions.cpp \
-    script_functions.cpp
+    script_functions.cpp \
+    messages.cpp
 
 HEADERS  += mainwindow.h \
     zkiresize.h \
@@ -27,6 +28,9 @@ HEADERS  += mainwindow.h \
     lzcsde.h \
     math_functions.h \
     coding_functions.h \
-    script_functions.h
+    script_functions.h \
+    messages.h \
+    call_once.h \
+    singleton.h
 
 FORMS    += mainwindow.ui
