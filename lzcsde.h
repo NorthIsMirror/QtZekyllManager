@@ -38,6 +38,8 @@ public:
         entry.setError("");
         entries_.append(entry);
     }
+
+    void clear() { entries_.clear(); }
 };
 
 #endif // LZCSDE_H

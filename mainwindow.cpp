@@ -251,6 +251,12 @@ void MainWindow::browse()
 }
 
 void MainWindow::reloadRepository() {
+    ui->tableWidget->setRowCount(0);
+    ui->tableWidget_2->setRowCount(0);
+    ui->tableWidget_3->setRowCount(0);
+    lzcsde_list_.clear();
+    lzcsde_consistent_.clear();
+
     zkiresize_->setRepoPath( current_path_ );
     zkiresize_->setIndex( current_index_ );
     zkiresize_->list();
