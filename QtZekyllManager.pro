@@ -13,8 +13,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    zkiresize.cpp \
+    lzcsde_entry.cpp \
+    lzcsde.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    zkiresize.h \
+    lzcsde_entry.h \
+    lzcsde.h
 
 FORMS    += mainwindow.ui
