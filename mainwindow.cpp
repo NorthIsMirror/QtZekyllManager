@@ -241,8 +241,10 @@ void MainWindow::reloadRepository() {
 
  void MainWindow::updateMessages( const QStringList & messages ) {
      ui->messages->clear();
-     foreach( const QString &str, messages ) {
-         QString str2 = str;
+     QStringList::const_iterator it = messages.constEnd();
+     while( it != messages.constBegin() ) {
+         -- it;
+         QString str2 = *it;
          str2.replace( QRegExp("[\r\n]+"), QString("<br/>") );
          ui->messages->appendHtml( str2 );
      }
