@@ -264,7 +264,7 @@ void MainWindow::reloadRepository() {
          -- it;
          QString str2 = *it;
          str2.replace( QRegExp("[\r\n]+"), QString("<br/>") );
-         str2 = QString("<font color=magenta><b>{%1}</b></font> ").arg( counter ) + str2;
+         str2 = QString("<font color=magenta>{<b>%1</b>}</font> ").arg( counter ) + str2;
          ui->messages->appendHtml( str2 );
          -- counter;
      }
