@@ -9,17 +9,13 @@ std::tuple< QString, int > getRepoFromPath( const QString & path ) {
     QFileInfo fileInfo = QFileInfo(path);
     QStringList nodes = path.split("/");
     QString last = nodes.takeLast();
-    qDebug() << nodes;
-    qDebug() << "Last: " << last;
 
     if( !fileInfo.isDir() ) {
-        qDebug() << "Path 1";
-        nodes.removeLast();
         last = nodes.takeLast();
+        fileInfo = QFileInfo( nodes.join("/") );
     }
-    qDebug() << "Path 2";
+
     if( !fileInfo.isDir() ) {
-        qDebug() << "Path 3";
         return make_tuple( path, 1 );
     }
 
@@ -27,7 +23,6 @@ std::tuple< QString, int > getRepoFromPath( const QString & path ) {
     rx.setCaseSensitivity(Qt::CaseSensitive);
     QStringList result;
     if (rx.indexIn( last ) != -1) {
-        qDebug() << "Path 4";
         if( rx.cap(1) != "gh" ) {
             result += rx.cap(1);
             result += "@";
@@ -41,7 +36,6 @@ std::tuple< QString, int > getRepoFromPath( const QString & path ) {
         }
         return make_tuple( result.join(""), 0 );
     } else {
-        qDebug() << "Path 5";
         return make_tuple( path, 2 );
     }
 }
