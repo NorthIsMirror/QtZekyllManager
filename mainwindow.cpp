@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->tabWidget->saveTheColor();
     ui->currentIndex->setText(tr("1"));
     current_index_ = 1;
 
@@ -56,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->curRepoButton, &QAbstractButton::clicked, this, &MainWindow::browse);
     connect(this, &MainWindow::repositoryChanged, this, &MainWindow::reloadRepository);
     QObject::connect(&MessagesI, SIGNAL(messagesChanged(const QStringList&)), this, SLOT(updateMessages(const QStringList&)) );
+    QObject::connect(this, SIGNAL(markThirdTab(bool)), this->ui->tabWidget, SLOT(markThirdTab(bool)) );
 
     zkiresize_->setIndex( current_index_ );
     zkiresize_->list();

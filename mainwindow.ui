@@ -247,7 +247,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="MyQTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -343,7 +343,6 @@
      </widget>
     </item>
    </layout>
-   <zorder></zorder>
    <zorder>tabWidget</zorder>
    <zorder>messages</zorder>
    <zorder>messages_label</zorder>
@@ -369,6 +368,14 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>MyQTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header location="global">myqtabwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

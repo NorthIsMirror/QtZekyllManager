@@ -39,6 +39,7 @@ private:
 
 signals:
     void repositoryChanged();
+    void markThirdTab(bool highlight);
 
 public slots:
     void handle_zkiresize_list(int exitCode, QStringList entries);
