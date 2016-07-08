@@ -9,6 +9,8 @@
 class LZCSDE
 {
     QVector<LZCSDE_Entry> entries_;
+    LZCSDE_Entry dummy_entry_;
+
 public:
     LZCSDE();
 
@@ -40,6 +42,10 @@ public:
     }
 
     void clear() { entries_.clear(); }
+
+    const LZCSDE_Entry & getId( int id );
+
+    const LZCSDE_Entry & getId( const QString & id );
 };
 
 #endif // LZCSDE_H

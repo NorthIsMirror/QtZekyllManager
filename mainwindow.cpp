@@ -290,3 +290,17 @@ void MainWindow::reloadRepository() {
  void MainWindow::stopThirdTabMarking() {
      timer_.stop();
  }
+
+void MainWindow::on_tableWidget_cellDoubleClicked(int row, int column)
+{
+    if( column == 1 ) {
+        QTableWidgetItem *item = ui->tableWidget->item( row, 0 );
+        QString text = item->text();
+        LZCSDE_Entry entry = lzcsde_list_.getId( text );
+        if( entry.id() != -1 ) {
+            qDebug() << "Double-clicked " + QString("%1,%2").arg(row).arg(column) + " with listing: " + entry.listing();
+        } else {
+            MessagesI.AppendMessageT("<font color=red>Could not find data associated with the clicked cell</font>");
+        }
+    }
+}

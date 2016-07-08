@@ -15,6 +15,7 @@ class LZCSDE_Entry
 
 public:
     LZCSDE_Entry();
+    int id() const { return id_; }
     const QString &listing() const { return listing_; }
     const QString &zekyll() const { return zekyll_; }
     bool checked() const { return checked_; }

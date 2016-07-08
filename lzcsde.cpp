@@ -2,7 +2,7 @@
 
 LZCSDE::LZCSDE()
 {
-
+    dummy_entry_.setId(-1);
 }
 
 bool LZCSDE::insertFromListing( int id, const QString & listing ) {
@@ -50,5 +50,24 @@ bool LZCSDE::insertFromListing( int id, const QString & listing ) {
         return true;
     } else {
         return false;
+    }
+}
+
+const LZCSDE_Entry & LZCSDE::getId( int id ) {
+    foreach( const LZCSDE_Entry & entry, entries_ ) {
+        if( id == entry.id() ) {
+            return entry;
+        }
+    }
+    return dummy_entry_;
+}
+
+const LZCSDE_Entry & LZCSDE::getId( const QString & id ) {
+    bool ok = false;
+    int intid = id.toInt(&ok);
+    if( ok ) {
+        return getId( intid );
+    } else {
+        return dummy_entry_;
     }
 }

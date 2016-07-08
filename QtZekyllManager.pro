@@ -35,4 +35,5 @@ HEADERS  += mainwindow.h \
     singleton.h \
     myqtabwidget.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    editor_dialog.ui
