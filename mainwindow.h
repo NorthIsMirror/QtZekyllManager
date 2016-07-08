@@ -35,6 +35,9 @@ private:
 public slots:
     void handle_zkiresize_list(int exitCode, QStringList entries);
     void handle_zkiresize_consistent(int exitCode, QStringList entries);
+
+private slots:
+    void browse();
 };
 
 #endif // MAINWINDOW_H

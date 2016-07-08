@@ -18,13 +18,15 @@ SOURCES += main.cpp\
     lzcsde_entry.cpp \
     lzcsde.cpp \
     math_functions.cpp \
-    coding_functions.cpp
+    coding_functions.cpp \
+    script_functions.cpp
 
 HEADERS  += mainwindow.h \
     zkiresize.h \
     lzcsde_entry.h \
     lzcsde.h \
     math_functions.h \
-    coding_functions.h
+    coding_functions.h \
+    script_functions.h
 
 FORMS    += mainwindow.ui

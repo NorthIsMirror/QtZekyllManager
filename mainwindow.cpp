@@ -2,9 +2,12 @@
 #include "ui_mainwindow.h"
 #include "math_functions.h"
 #include "coding_functions.h"
+#include "script_functions.h"
 #include <QDebug>
 #include <QRegExp>
 #include <QCheckBox>
+#include <QDir>
+#include <QFileDialog>>
 
 using namespace std;
 
@@ -41,6 +44,9 @@ MainWindow::MainWindow(QWidget *parent) :
                      SIGNAL(result_consistent(int, QStringList)),
                      this,
                      SLOT(handle_zkiresize_consistent(int, QStringList)));
+
+    connect(ui->curRepoButton, &QAbstractButton::clicked, this, &MainWindow::browse);
+
 
     zkiresize_->setIndex( current_index_ );
     zkiresize_->list();
@@ -149,4 +155,21 @@ void MainWindow::insertLZSDETableRow(QTableWidget * tableWidget, const QString &
     tableWidget->setItem(row, 1, sectionItem);
     tableWidget->setItem(row, 2, descriptionItem);
     tableWidget->setItem(row, 3, errorItem);
+}
+
+void MainWindow::browse()
+{
+    QString directory = QFileDialog::getExistingDirectory(this,
+                               tr("Select repository"), QDir::homePath() + "/.zekyll/repos");
+
+    if (!directory.isEmpty()) {
+        tuple< QString, int > result = getRepoFromPath( directory );
+        QString repo = get<0>(result);
+
+        if (ui->curRepoCombo->findText(repo) == -1) {
+            ui->curRepoCombo->addItem(repo);
+        }
+
+        ui->curRepoCombo->setCurrentIndex(ui->curRepoCombo->findText(repo));
+    }
 }
