@@ -10,7 +10,7 @@ std::tuple< QString, QString, int > getRepoFromPath( const QString & path ) {
     QStringList nodes = path.split("/");
     QString last = nodes.takeLast();
 
-    if( !fileInfo.isDir() ) {
+    if( fileInfo.isFile() && fileInfo.exists() ) {
         last = nodes.takeLast();
         fileInfo = QFileInfo( nodes.join("/") );
     }
