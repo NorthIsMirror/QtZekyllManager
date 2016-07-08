@@ -178,6 +178,7 @@ void MainWindow::insertLZSDETableRow(QTableWidget * tableWidget, const QString &
 
 void MainWindow::browse()
 {
+    QString msg_incorrect = tr("Incorrect path selected");
     QString directory = QFileDialog::getExistingDirectory(this,
                                tr("Select repository"), QDir::homePath() + "/.zekyll/repos");
 
@@ -195,9 +196,18 @@ void MainWindow::browse()
             current_path_ = path;
             selected = path;
         } else if ( error == 1 ) {
-            selected = tr("Incorrect path selected");
+            selected = msg_incorrect;
         }
 
+        // Remove any previous "Incorrect path selected"
+        if( error == 0 || error == 2 ) {
+            int idx = ui->curRepoCombo->findText(msg_incorrect);
+            if( idx != -1) {
+                ui->curRepoCombo->removeItem( idx );
+            }
+        }
+
+        // Add item if new
         if (ui->curRepoCombo->findText(selected) == -1) {
             ui->curRepoCombo->addItem(selected);
         }
