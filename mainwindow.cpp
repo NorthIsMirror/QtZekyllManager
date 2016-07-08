@@ -88,6 +88,10 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
             insertLZCSDTableRow(ui->tableWidget, rx.cap(1), true, rx.cap(2), rx.cap(3));
         }
     }
+
+    if( entries.count() == 0 ) {
+        MessagesI.AppendMessageT(tr("Index ") + QString("%1") . arg(current_index_) + tr(" is empty (go ahead and resize it), or selected path isn't a Zekyll repository"));
+    }
 }
 
 void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) {
