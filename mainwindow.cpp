@@ -101,6 +101,8 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
     }
     isConsistent2_ = false;
 
+    MessagesI.AppendMessageT( tr("<font color=red>Index ") + QString("%1") . arg(current_index_) + tr(" is inconsistent</font>") );
+
     QRegExp rx1("([a-z0-9][a-z0-9][a-z0-9])\\.([A-Z])--(.*) >>(.*)<<");
     QRegExp rx2("([a-z0-9][a-z0-9][a-z0-9]) >>(.*)<<");
     rx1.setCaseSensitivity(Qt::CaseSensitive);
