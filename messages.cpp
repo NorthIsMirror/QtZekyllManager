@@ -7,6 +7,12 @@ Messages::Messages(QObject* parent)
 
 }
 
+void Messages::AppendMessageT(const QString &message) {
+    messages_ += message + "\n";
+
+    emit messagesChanged( messages_ );
+}
+
 void Messages::AppendMessageT(const QString &message, QStringList &arr) {
     QString final_message = message + "\n";
     foreach (const QString &str, arr) {

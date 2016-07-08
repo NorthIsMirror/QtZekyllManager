@@ -16,6 +16,7 @@ class Messages : public QObject
 
 public:
     Messages(QObject* parent = 0);
+    void AppendMessageT(const QString & message);
     void AppendMessageT(const QString & message, QStringList & arr);
     void AppendMessageT(const QString & message, std::vector<std::string> & arr);
 
