@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->curRepoButton, &QAbstractButton::clicked, this, &MainWindow::browse);
     connect(this, &MainWindow::repositoryChanged, this, &MainWindow::reloadRepository);
     QObject::connect(&MessagesI, SIGNAL(messagesChanged(const QStringList&)), this, SLOT(updateMessages(const QStringList&)) );
-    QObject::connect(this, SIGNAL(markThirdTab(bool)), this->ui->tabWidget, SLOT(markThirdTab(bool)) );
+    QObject::connect(this->ui->tabWidget, SIGNAL(thirdTabMarkingEnough()), this, SLOT(stopThirdTabMarking()));
 
     zkiresize_->setIndex( current_index_ );
     zkiresize_->list();
@@ -110,8 +110,6 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
     }
     isConsistent2_ = false;
 
-    MessagesI.AppendMessageT( tr("<font color=red>Index ") + QString("%1") . arg(current_index_) + tr(" is inconsistent</font>") );
-
     QRegExp rx1("([a-z0-9][a-z0-9][a-z0-9])\\.([A-Z])--(.*) >>(.*)<<");
     QRegExp rx2("([a-z0-9][a-z0-9][a-z0-9]) >>(.*)<<");
     rx1.setCaseSensitivity(Qt::CaseSensitive);
@@ -133,6 +131,15 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
         } else {
             // TODO report inproper input
         }
+    }
+
+    MessagesI.AppendMessageT( tr("<font color=red>Index ") + QString("%1") . arg(current_index_) + tr(" is inconsistent</font>") );
+
+    if(!timer_.isActive()) {
+        timer_.setInterval(500);
+        timer_.setSingleShot(false);
+        connect(&timer_, SIGNAL(timeout()), ui->tabWidget, SLOT(toggleThirdTabMark()));
+        timer_.start();
     }
 }
 
@@ -278,4 +285,8 @@ void MainWindow::reloadRepository() {
      }
      ui->messages->moveCursor (QTextCursor::Start);
      ui->messages->ensureCursorVisible();
+ }
+
+ void MainWindow::stopThirdTabMarking() {
+     timer_.stop();
  }

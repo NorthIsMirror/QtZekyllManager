@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QTabWidget>
 #include <QColor>
+#include <QTimer>
 
 class MyQTabWidget : public QTabWidget
 {
@@ -16,9 +17,16 @@ public:
 
 public slots:
     void markThirdTab(bool highlight);
+    void toggleThirdTabMark();
+
+signals:
+    void thirdTabMarkingEnough();
 
 private:
     QColor default_color_;
+    bool current_third_tab_mark_;
+    int mark_count_;
+    QTimer timer_;
 };
 
 #endif // MYQTABWIDGET_H
