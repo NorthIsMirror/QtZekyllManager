@@ -33,8 +33,8 @@ private:
     LZCSDE lzcsde_list_;
     LZCSDE lzcsde_consistent_;
 
-    void insertLZCSDTableRow(QTableWidget * tableWidget, const QString & zekyll, bool checked, const QString & section, const QString & description);
-    void insertLZSDETableRow(QTableWidget * tableWidget, const QString & zekyll, const QString & section,
+    void insertLZCSDTableRow(QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description);
+    void insertLZSDETableRow(QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
                                 const QString & description, const QString & error);
 
 signals:
