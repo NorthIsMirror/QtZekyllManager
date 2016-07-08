@@ -233,12 +233,11 @@ void MainWindow::reloadRepository() {
 
  void MainWindow::updateMessages( const QStringList & messages ) {
      ui->messages->clear();
-     int size = 0;
      foreach( const QString &str, messages ) {
-         size ++;
          QString str2 = str;
          str2.replace( QRegExp("[\r\n]+"), QString("<br/>") );
          ui->messages->appendHtml( str2 );
      }
-     ui->messages->scroll(0, size);
+     ui->messages->moveCursor (QTextCursor::Start);
+     ui->messages->ensureCursorVisible();
  }
