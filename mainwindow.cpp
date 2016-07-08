@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "math_functions.h"
 #include <QDebug>
 #include <QRegExp>
 #include <QCheckBox>
@@ -22,7 +23,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget_3->setHorizontalHeaderLabels(labels);
     ui->tableWidget_3->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     ui->tableWidget_3->horizontalHeader()->setStretchLastSection( true );
-
 
     zkiresize_ = new ZkIResize();
 

@@ -16,11 +16,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     zkiresize.cpp \
     lzcsde_entry.cpp \
-    lzcsde.cpp
+    lzcsde.cpp \
+    math_functions.cpp
 
 HEADERS  += mainwindow.h \
     zkiresize.h \
     lzcsde_entry.h \
-    lzcsde.h
+    lzcsde.h \
+    math_functions.h
 
 FORMS    += mainwindow.ui
