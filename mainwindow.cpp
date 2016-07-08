@@ -241,12 +241,15 @@ void MainWindow::reloadRepository() {
 
  void MainWindow::updateMessages( const QStringList & messages ) {
      ui->messages->clear();
+     int counter = messages.count();
      QStringList::const_iterator it = messages.constEnd();
      while( it != messages.constBegin() ) {
          -- it;
          QString str2 = *it;
          str2.replace( QRegExp("[\r\n]+"), QString("<br/>") );
+         str2 = QString("<font color=magenta><b>{%1}</b></font> ").arg( counter ) + str2;
          ui->messages->appendHtml( str2 );
+         -- counter;
      }
      ui->messages->moveCursor (QTextCursor::Start);
      ui->messages->ensureCursorVisible();
