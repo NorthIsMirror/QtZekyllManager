@@ -69,30 +69,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
     if( exitCode != 0 && exitCode != 12 ) {
-        QString error_decode;
-        if ( exitCode == 1) {
-            error_decode = "Improper options";
-        } else if ( exitCode == 2) {
-            error_decode = "Negative index size";
-        } else if ( exitCode == 3) {
-            error_decode = "Maximum index size exceeded";
-        } else if ( exitCode == 4) {
-            error_decode = "Repository doesn't exist";
-        } else if ( exitCode == 5) {
-            error_decode = "Inconsistent index (1)";
-        } else if ( exitCode == 6) {
-            error_decode = "No size requested";
-        } else if ( exitCode == 7) {
-            error_decode = "No change in index size";
-        } else if ( exitCode == 8) {
-            error_decode = "No agreement to continue";
-        } else if ( exitCode == 9) {
-            error_decode = "Improper section given";
-        } else if ( exitCode == 10) {
-            error_decode = "Improper description given";
-        } else if ( exitCode == 11) {
-            error_decode = "Inconsistent index (2)";
-        }
+        QString error_decode = decode_zkiresize_exit_code(exitCode);
+
         MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend:</font> ") + error_decode );
         return;
     }
