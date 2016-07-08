@@ -70,8 +70,9 @@ MainWindow::~MainWindow()
 void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
     if( exitCode != 0 && exitCode != 12 ) {
         QString error_decode = decode_zkiresize_exit_code(exitCode);
-
-        MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend:</font> ") + error_decode );
+        if( error_decode != "" ) {
+            MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend (1):</font> ") + error_decode );
+        }
         return;
     }
 
@@ -92,7 +93,10 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
 void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) {
     if( exitCode != 11 ) {
         isConsistent2_ = (exitCode == 0);
-        // TODO messages about other error codes
+        QString error_decode = decode_zkiresize_exit_code(exitCode);
+        if( error_decode != "" ) {
+            MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend (2):</font> ") + error_decode );
+        }
         return;
     }
     isConsistent2_ = false;

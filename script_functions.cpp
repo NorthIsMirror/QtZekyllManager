@@ -41,7 +41,7 @@ std::tuple< QString, QString, int > getRepoFromPath( const QString & path ) {
 }
 
 QString decode_zkiresize_exit_code(int exitCode) {
-    QString error_decode;
+    QString error_decode = "";
     if ( exitCode == 1) {
         error_decode = "Improper options";
     } else if ( exitCode == 2) {
