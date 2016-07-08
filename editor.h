@@ -18,8 +18,15 @@ public:
 
     void setFile( QString fullPath );
 
+public slots:
+    void closeWithoutSaving(bool _close);
+
 private slots:
     void on_save_clicked();
+
+    void on_close_clicked();
+
+    void on_cancel_clicked();
 
 private:
     Ui::Editor *ui;
