@@ -5,7 +5,7 @@
 #include <QDebug>
 
 using namespace std;
-std::tuple< QString, int > getRepoFromPath( const QString & path ) {
+std::tuple< QString, QString, int > getRepoFromPath( const QString & path ) {
     QFileInfo fileInfo = QFileInfo(path);
     QStringList nodes = path.split("/");
     QString last = nodes.takeLast();
@@ -16,7 +16,7 @@ std::tuple< QString, int > getRepoFromPath( const QString & path ) {
     }
 
     if( !fileInfo.isDir() ) {
-        return make_tuple( path, 1 );
+        return make_tuple( path, nodes.join("/") + "/" + last, 1 );
     }
 
     QRegExp rx("^([a-z0-9][a-z0-9])---([a-zA-Z0-9][a-zA-Z0-9-]*)---([a-zA-Z0-9_-]+)---([a-zA-Z0-9_-/.~]+)$");
@@ -34,8 +34,8 @@ std::tuple< QString, int > getRepoFromPath( const QString & path ) {
             result += "/";
             result += rx.cap(4);
         }
-        return make_tuple( result.join(""), 0 );
+        return make_tuple( result.join(""), nodes.join("/") + "/" + last, 0 );
     } else {
-        return make_tuple( path, 2 );
+        return make_tuple( path, nodes.join("/") + "/" + last, 2 );
     }
 }

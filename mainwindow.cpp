@@ -7,13 +7,14 @@
 #include <QRegExp>
 #include <QCheckBox>
 #include <QDir>
-#include <QFileDialog>>
+#include <QFileDialog>
 
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    isConsistent_(true)
 {
     ui->setupUi(this);
     ui->currentIndex->setText(tr("1"));
@@ -46,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
                      SLOT(handle_zkiresize_consistent(int, QStringList)));
 
     connect(ui->curRepoButton, &QAbstractButton::clicked, this, &MainWindow::browse);
-
+    connect(this, &MainWindow::repositoryChanged, this, &MainWindow::reloadRepository);
 
     zkiresize_->setIndex( current_index_ );
     zkiresize_->list();
@@ -62,9 +63,15 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
+    if( exitCode != 0 && exitCode != 12 ) {
+        // TODO: deliver message about error
+        return;
+    }
+
+    isConsistent_ = (exitCode == 0);
+
     QRegExp rx("([a-z0-9][a-z0-9][a-z0-9])\\.([A-Z])--(.*)");
     rx.setCaseSensitivity(Qt::CaseSensitive);
-    rx.setMinimal(false);
     int counter = 0;
     foreach (const QString &str, entries) {
         if (rx.indexIn(str) != -1) {
@@ -72,17 +79,27 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
             lzcsde_list_.insertFromListing(counter, str);
             insertLZCSDTableRow(ui->tableWidget, rx.cap(1), true, rx.cap(2), rx.cap(3));
         }
-
     }
 }
 
 void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) {
+    if( exitCode != 11 ) {
+        isConsistent2_ = (exitCode == 0);
+        // TODO messages about other error codes
+        return;
+    }
+    isConsistent2_ = false;
+
     QRegExp rx1("([a-z0-9][a-z0-9][a-z0-9])\\.([A-Z])--(.*) >>(.*)<<");
     QRegExp rx2("([a-z0-9][a-z0-9][a-z0-9]) >>(.*)<<");
     rx1.setCaseSensitivity(Qt::CaseSensitive);
     rx2.setCaseSensitivity(Qt::CaseSensitive);
     int counter = 0;
     foreach (const QString &str, entries) {
+        if( str == "consistent" || str == "inconsistent" ) {
+            continue;
+        }
+
         if (rx1.indexIn(str) != -1) {
             counter ++;
             lzcsde_consistent_.insertFromListing(counter, str);
@@ -91,6 +108,8 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
             counter ++;
             lzcsde_consistent_.insertFromListing(counter, str);
             insertLZSDETableRow(ui->tableWidget_3, rx2.cap(1), "", "", rx2.cap(2));
+        } else {
+            // TODO report inproper input
         }
     }
 }
@@ -163,13 +182,36 @@ void MainWindow::browse()
                                tr("Select repository"), QDir::homePath() + "/.zekyll/repos");
 
     if (!directory.isEmpty()) {
-        tuple< QString, int > result = getRepoFromPath( directory );
-        QString repo = get<0>(result);
+        QString repo, path, selected;
+        int error;
+        tie(repo, path, error) = getRepoFromPath( directory );
 
-        if (ui->curRepoCombo->findText(repo) == -1) {
-            ui->curRepoCombo->addItem(repo);
+        if( error == 0 ) {
+            current_repo_ = repo;
+            current_path_ = path;
+            selected = repo;
+        } else if ( error == 2 ) {
+            current_repo_ = "";
+            current_path_ = path;
+            selected = path;
+        } else if ( error == 1 ) {
+            selected = tr("Incorrect path selected");
         }
 
-        ui->curRepoCombo->setCurrentIndex(ui->curRepoCombo->findText(repo));
+        if (ui->curRepoCombo->findText(selected) == -1) {
+            ui->curRepoCombo->addItem(selected);
+        }
+
+        ui->curRepoCombo->setCurrentIndex(ui->curRepoCombo->findText(selected));
+
+        if( error == 0 || error == 2 ) {
+            emit repositoryChanged();
+        }
     }
+}
+
+void MainWindow::reloadRepository() {
+    zkiresize_->setRepoPath( current_path_ );
+    zkiresize_->setIndex( current_index_ );
+    zkiresize_->list();
 }

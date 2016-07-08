@@ -249,7 +249,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -319,10 +319,6 @@
    </layout>
    <zorder></zorder>
    <zorder>tabWidget</zorder>
-   <zorder>curRepoLabel</zorder>
-   <zorder>lineEdit</zorder>
-   <zorder>curRepoButton</zorder>
-   <zorder>horizontalSpacer_3</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

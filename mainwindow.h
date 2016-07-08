@@ -21,7 +21,12 @@ public:
     ~MainWindow();
 
 private:
+    QString current_repo_;
+    QString current_path_;
     int current_index_;
+    bool isConsistent_;
+    bool isConsistent2_;
+
     std::vector<std::string> ZKL_INDEX_ZEKYLLS_;
     Ui::MainWindow *ui;
     ZkIResize *zkiresize_;
@@ -32,12 +37,16 @@ private:
     void insertLZSDETableRow(QTableWidget * tableWidget, const QString & zekyll, const QString & section,
                                 const QString & description, const QString & error);
 
+signals:
+    void repositoryChanged();
+
 public slots:
     void handle_zkiresize_list(int exitCode, QStringList entries);
     void handle_zkiresize_consistent(int exitCode, QStringList entries);
 
 private slots:
     void browse();
+    void reloadRepository();
 };
 
 #endif // MAINWINDOW_H

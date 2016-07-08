@@ -4,6 +4,6 @@
 #include <tuple>
 #include <QString>
 
-std::tuple< QString, int > getRepoFromPath( const QString & path );
+std::tuple< QString, QString, int > getRepoFromPath( const QString & path );
 
 #endif // SCRIPT_FUNCTIONS_H

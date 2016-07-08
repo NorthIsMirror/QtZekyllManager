@@ -10,6 +10,8 @@ class ZkIResize : public QObject
 public:
     explicit ZkIResize(QObject *parent = 0);
     void setIndex( int index ) { index_ = index; }
+    void setRepoPath( const QString & path ) { repoPath_ = path; }
+
 signals:
     void result_list(int exitCode, QStringList entries);
     void result_consistent(int exitCode, QStringList entries);
@@ -23,6 +25,7 @@ public slots:
 
 private:
     int index_;
+    QString repoPath_;
     QProcess process_list_;
     QProcess process_consistent_;
     QStringList arguments_list_;
