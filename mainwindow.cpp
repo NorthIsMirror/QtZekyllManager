@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "editor.h"
 #include "math_functions.h"
 #include "coding_functions.h"
 #include "script_functions.h"
@@ -298,7 +299,9 @@ void MainWindow::on_tableWidget_cellDoubleClicked(int row, int column)
         QString text = item->text();
         LZCSDE_Entry entry = lzcsde_list_.getId( text );
         if( entry.id() != -1 ) {
-            qDebug() << "Double-clicked " + QString("%1,%2").arg(row).arg(column) + " with listing: " + entry.listing();
+            Editor *editor = new Editor(this);
+            editor->setFile( current_path_ + "/" + entry.listing() );
+            editor->show();
         } else {
             MessagesI.AppendMessageT("<font color=red>Could not find data associated with the clicked cell</font>");
         }

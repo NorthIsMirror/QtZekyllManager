@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     coding_functions.cpp \
     script_functions.cpp \
     messages.cpp \
-    myqtabwidget.cpp
+    myqtabwidget.cpp \
+    editor.cpp
 
 HEADERS  += mainwindow.h \
     zkiresize.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     messages.h \
     call_once.h \
     singleton.h \
-    myqtabwidget.h
+    myqtabwidget.h \
+    editor.h
 
 FORMS    += mainwindow.ui \
-    editor_dialog.ui
+    editor.ui
