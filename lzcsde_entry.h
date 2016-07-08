@@ -15,12 +15,12 @@ class LZCSDE_Entry
 
 public:
     LZCSDE_Entry();
-    QString const &listing() const { return listing_; }
-    QString const &zekyll() const { return zekyll_; }
+    const QString &listing() const { return listing_; }
+    const QString &zekyll() const { return zekyll_; }
     bool checked() const { return checked_; }
-    QString const &section() const { return section_; }
-    QString const &description() const { return description_; }
-    QString const &error() const { return error_; }
+    const QString &section() const { return section_; }
+    const QString &description() const { return description_; }
+    const QString &error() const { return error_; }
 
     void setId( int id ) { id_ = id; }
     void setListing( const QString & listing ) { listing_ = listing; }
