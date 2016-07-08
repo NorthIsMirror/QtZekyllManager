@@ -1,16 +1,20 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "math_functions.h"
+#include "coding_functions.h"
 #include <QDebug>
 #include <QRegExp>
 #include <QCheckBox>
+
+using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->zcode->setText(tr("Test"));
+    ui->currentIndex->setText(tr("1"));
+    current_index_ = 1;
 
     QStringList labels;
     labels << tr("Zekyll") << tr("Use") << tr("Section") << tr("Description");
@@ -38,8 +42,11 @@ MainWindow::MainWindow(QWidget *parent) :
                      this,
                      SLOT(handle_zkiresize_consistent(int, QStringList)));
 
+    zkiresize_->setIndex( current_index_ );
     zkiresize_->list();
 
+    tuple< vector<string>, int > set_index_result = setIndex( current_index_ );
+    ZKL_INDEX_ZEKYLLS_ = get<0>(set_index_result);
 }
 
 MainWindow::~MainWindow()

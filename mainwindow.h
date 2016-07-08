@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QTableWidget>
+#include <vector>
+#include <string>
 #include "zkiresize.h"
 #include "lzcsde.h"
 
@@ -19,6 +21,8 @@ public:
     ~MainWindow();
 
 private:
+    int current_index_;
+    std::vector<std::string> ZKL_INDEX_ZEKYLLS_;
     Ui::MainWindow *ui;
     ZkIResize *zkiresize_;
     LZCSDE lzcsde_list_;
