@@ -3,10 +3,6 @@ project( QtZekyllManager )
 set( QT_VERSION_REQ "5.2" )
 set( CMAKE_CXX_STANDARD 11 )
 
-# Edit this path to point to your prefix of Qt installation
-# directory. Prefix means: path up to and not including "bin"
-set( CMAKE_PREFIX_PATH $ENV{HOME}/Qt/5.7/clang_64 )
-
 # Find includes in corresponding build directories
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
