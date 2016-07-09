@@ -19,21 +19,21 @@ void Editor::setFile(QString fullPath) {
     filePath_ = fullPath;
     QFile file( filePath_ );
     file.open(QFile::ReadOnly | QFile::Text);
-    ui->textArea->setPlainText(file.readAll());
+    ui->textEdit->setText(file.readAll());
 }
 
 void Editor::on_save_clicked()
 {
     QFile file( filePath_ );
     file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
-    file.write( ui->textArea->toPlainText().toUtf8().constData() );
-    ui->textArea->document()->setModified(false);
+    file.write( ui->textEdit->text().toUtf8().constData() );
+    ui->textEdit->setModified(false);
 }
 
 
 void Editor::on_close_clicked()
 {
-    if( ui->textArea->document()->isModified() ) {
+    if( ui->textEdit->isModified() ) {
         CloseWithoutSavingDialog *dialog = new CloseWithoutSavingDialog(this);
         QObject::connect( dialog, SIGNAL(accepted(bool)), this, SLOT(closeWithoutSaving(bool)) );
 
