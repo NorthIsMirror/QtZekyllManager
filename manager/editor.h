@@ -5,16 +5,16 @@
 #include <QString>
 
 namespace Ui {
-class Editor;
+class ZMEditor;
 }
 
-class Editor : public QDialog
+class ZMEditor : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Editor(QWidget *parent = 0);
-    ~Editor();
+    explicit ZMEditor(QWidget *parent = 0);
+    ~ZMEditor();
 
     void setFile( QString fullPath );
 
@@ -29,7 +29,7 @@ private slots:
     void on_cancel_clicked();
 
 private:
-    Ui::Editor *ui;
+    Ui::ZMEditor *ui;
     QString filePath_;
 };
 

@@ -299,7 +299,7 @@ void MainWindow::on_tableWidget_cellDoubleClicked(int row, int column)
         QString text = item->text();
         LZCSDE_Entry entry = lzcsde_list_.getId( text );
         if( entry.id() != -1 ) {
-            Editor *editor = new Editor(this);
+            ZMEditor *editor = new ZMEditor(this);
             editor->setFile( current_path_ + "/" + entry.listing() );
             editor->show();
         } else {

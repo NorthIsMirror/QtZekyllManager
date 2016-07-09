@@ -3,26 +3,26 @@
 #include "closewithoutsavingdialog.h"
 #include <QFile>
 
-Editor::Editor(QWidget *parent) :
+ZMEditor::ZMEditor(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Editor)
+    ui(new Ui::ZMEditor)
 {
     ui->setupUi(this);
 }
 
-Editor::~Editor()
+ZMEditor::~ZMEditor()
 {
     delete ui;
 }
 
-void Editor::setFile(QString fullPath) {
+void ZMEditor::setFile(QString fullPath) {
     filePath_ = fullPath;
     QFile file( filePath_ );
     file.open(QFile::ReadOnly | QFile::Text);
     ui->textEdit->setText(file.readAll());
 }
 
-void Editor::on_save_clicked()
+void ZMEditor::on_save_clicked()
 {
     QFile file( filePath_ );
     file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
@@ -31,7 +31,7 @@ void Editor::on_save_clicked()
 }
 
 
-void Editor::on_close_clicked()
+void ZMEditor::on_close_clicked()
 {
     if( ui->textEdit->isModified() ) {
         CloseWithoutSavingDialog *dialog = new CloseWithoutSavingDialog(this);
@@ -43,13 +43,13 @@ void Editor::on_close_clicked()
     }
 }
 
-void Editor::closeWithoutSaving(bool _close) {
+void ZMEditor::closeWithoutSaving(bool _close) {
     if(_close) {
         close();
     }
 }
 
-void Editor::on_cancel_clicked()
+void ZMEditor::on_cancel_clicked()
 {
     close();
 }
