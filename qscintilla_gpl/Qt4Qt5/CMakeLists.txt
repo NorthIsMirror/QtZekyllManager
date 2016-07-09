@@ -340,6 +340,7 @@ find_package( Qt5LinguistTools ${QT_VERSION_REQ} REQUIRED )
 if( APPLE )
     find_package( Qt5MacExtras ${QT_VERSION_REQ} REQUIRED )
 endif()
+get_target_property( QT_QMAKE_EXECUTABLE Qt5::qmake LOCATION )
 
 message("= QT is installed at: ${_qt5Widgets_install_prefix} =")
 
@@ -353,8 +354,8 @@ else()
     message( "= Static build =" )
 endif()
 
-QT5_ADD_TRANSLATION( QM_FILES ${TRANSLATIONS} )
-ADD_CUSTOM_TARGET( trans ALL DEPENDS ${QM_FILES} )
+qt5_add_translation( QM_FILES ${TRANSLATIONS} )
+add_custom_target( trans ALL DEPENDS ${QM_FILES} )
 
 # Qt5Widgets also includes directories for dependencies QtCore and QtGui
 include_directories( ${Qt5Widgets_INCLUDE_DIRS} ${Qt5PrintSupport_INCLUDE_DIRS} 
@@ -374,10 +375,7 @@ else()
     add_library( ${PROJECT_NAME} STATIC ${SRCS} ${HDRS} )
 endif()
 
-if( APPLE )
-    target_link_libraries( ${PROJECT_NAME} Qt5::Widgets Qt5::PrintSupport Qt5::MacExtras )
-else()
-    target_link_libraries( ${PROJECT_NAME} Qt5::Widgets Qt5::PrintSupport )
-endif()
+target_link_libraries( ${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::PrintSupport )
 
-target_include_directories( ${PROJECT_NAME} INTERFACE "." )
+set_property( TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}" )
+set_property( TARGET ${PROJECT_NAME} PROPERTY INTERFACE_LINK_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/libQScintilla2.a" )
