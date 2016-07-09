@@ -369,15 +369,15 @@ add_definitions( ${DEFINES} ${Qt5Widgets_DEFINITIONS} ${Qt5PrintSupport_DEFINITI
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 if (";${DEFINES};" MATCHES ";-DQSCINTILLA_MAKE_DLL;")
-    add_library( QScintilla2 SHARED ${SRCS} ${HDRS} )
+    add_library( ${PROJECT_NAME} SHARED ${SRCS} ${HDRS} )
 else()
-    add_library( QScintilla2 STATIC ${SRCS} ${HDRS} )
+    add_library( ${PROJECT_NAME} STATIC ${SRCS} ${HDRS} )
 endif()
 
 if( APPLE )
-    target_link_libraries( QScintilla2 Qt5::Widgets Qt5::PrintSupport Qt5::MacExtras )
+    target_link_libraries( ${PROJECT_NAME} Qt5::Widgets Qt5::PrintSupport Qt5::MacExtras )
 else()
-    target_link_libraries( QScintilla2 Qt5::Widgets Qt5::PrintSupport )
+    target_link_libraries( ${PROJECT_NAME} Qt5::Widgets Qt5::PrintSupport )
 endif()
 
-target_include_directories( QScintilla2 INTERFACE "." )
+target_include_directories( ${PROJECT_NAME} INTERFACE "." )
