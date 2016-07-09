@@ -52,3 +52,6 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"
 add_executable( QtZekyllManager ${SRCS} ${UIS_HDRS} )
 
 target_link_libraries( QtZekyllManager Qt5::Widgets )
+
+target_include_directories( QtZekyllManager PRIVATE
+    $<TARGET_PROPERTY:QScintilla2,INTERFACE_INCLUDE_DIRECTORIES> )

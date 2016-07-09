@@ -380,3 +380,4 @@ else()
     target_link_libraries( QScintilla2 Qt5::Widgets Qt5::PrintSupport )
 endif()
 
+target_include_directories( QScintilla2 INTERFACE "." )
