@@ -347,16 +347,10 @@ message("= QT is installed at: ${_qt5Widgets_install_prefix} =")
 #set( DEFINES ${DEFINES} -DSCI_NAMESPACE )
 set( DEFINES ${DEFINES} -DSCINTILLA_QT -DSCI_LEXER )
 
-QUERY_QMAKE(QT_HOST_DATA QT_HOST_DATA)
-set( features_path "${QT_HOST_DATA}/mkspecs/features" )
-
 if (";${DEFINES};" MATCHES ";-DQSCINTILLA_MAKE_DLL;")
-    set( features_files "${CMAKE_CURRENT_LIST_DIR}/features/qscintilla2.prf" )
     message( "= Dynamic build =" )
 else()
-    set( features_files "${CMAKE_CURRENT_LIST_DIR}/features_staticlib/qscintilla2.prf" )
-    message( "= Static build = ${Qt5PrintSupport_DEFINITIONS} 
-                 ${Qt5LinguistTools_DEFINITIONS} ${Qt5MacExtras_DEFINITIONS}" )
+    message( "= Static build =" )
 endif()
 
 QT5_ADD_TRANSLATION( QM_FILES ${TRANSLATIONS} )
