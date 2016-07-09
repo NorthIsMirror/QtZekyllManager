@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "editor.h"
+#include "zmeditor.h"
 #include "math_functions.h"
 #include "coding_functions.h"
 #include "script_functions.h"

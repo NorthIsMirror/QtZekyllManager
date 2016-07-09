@@ -1,5 +1,5 @@
-#include "editor.h"
-#include "ui_editor.h"
+#include "zmeditor.h"
+#include "ui_zmeditor.h"
 #include "closewithoutsavingdialog.h"
 #include <QFile>
 

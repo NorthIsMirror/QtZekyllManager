@@ -22,7 +22,7 @@ find_package( Qt5Widgets ${QT_VERSION_REQ} REQUIRED )
 SET( SRCS
     closewithoutsavingdialog.cpp
     coding_functions.cpp
-    editor.cpp
+    zmeditor.cpp
     lzcsde.cpp
     lzcsde_entry.cpp
     main.cpp
@@ -36,7 +36,7 @@ SET( SRCS
 
 QT5_WRAP_UI( UIS_HDRS
     mainwindow.ui
-    editor.ui
+    zmeditor.ui
     closewithoutsavingdialog.ui
 )
 
