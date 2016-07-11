@@ -37,9 +37,6 @@ HEADERS  += mainwindow.h \
     myqtabwidget.h \
     script_functions.h \
     singleton.h \
-    ui_closewithoutsavingdialog.h \
-    ui_mainwindow.h \
-    ui_zmeditor.h \
     zkiresize.h \
     zkrewrite.h \
     zmeditor.h
