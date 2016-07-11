@@ -15,8 +15,6 @@ ZkIResize::ZkIResize(QObject *parent) : QObject(parent)
 }
 
 void ZkIResize::handleZkIResizeList(int exitCode, QProcess::ExitStatus exitStatus) {
-    qDebug() << exitCode;
-    qDebug() << exitStatus;
     QString buffer = static_cast<QIODevice*>(QObject::sender())->readAll();
     QStringList entries = buffer.split("\n", QString::SkipEmptyParts);
 
@@ -28,8 +26,6 @@ void ZkIResize::handleZkIResizeList(int exitCode, QProcess::ExitStatus exitStatu
 }
 
 void ZkIResize::handleZkIResizeConsistent(int exitCode, QProcess::ExitStatus exitStatus) {
-    qDebug() << "Consistent" << exitCode;
-    qDebug() << "Consistent" << exitStatus;
     QString buffer = static_cast<QIODevice*>(QObject::sender())->readAll();
     QStringList entries = buffer.split("\n", QString::SkipEmptyParts);
 
