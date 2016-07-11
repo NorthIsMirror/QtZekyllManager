@@ -131,3 +131,33 @@ QStringList LZCSDE::getZekylls() {
     }
     return result;
 }
+
+bool LZCSDE::updateSectionOfId( const QString & id, const QString & section ) {
+    bool ok = false;
+    int intid = id.toInt( &ok );
+    if(!ok) {
+        return false;
+    }
+
+    int idx = findIdxOfId( intid );
+    if( idx == -1 ) {
+        return false;
+    }
+
+    entries_[idx].setSection( section );
+}
+
+bool LZCSDE::updateDescriptionOfId( const QString & id, const QString & description ) {
+    bool ok = false;
+    int intid = id.toInt( &ok );
+    if(!ok) {
+        return false;
+    }
+
+    int idx = findIdxOfId( intid );
+    if( idx == -1 ) {
+        return false;
+    }
+
+    entries_[idx].setDescription( description );
+}

@@ -19,6 +19,7 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     isConsistent_(true),
+    is_loading_(false),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -49,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
                      this,
                      SLOT(handle_zkiresize_list(int, QStringList)));
 
-    // Connect ZkIResize to obtain list of zekylls
+    // Connect ZkIResize to obtain list of inconsistent zekylls
     QObject::connect(this->zkiresize_,
                      SIGNAL(result_consistent(int, QStringList)),
                      this,
@@ -57,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     zkrewrite_ = new ZkRewrite();
 
-    // Connect ZkIResize to obtain list of zekylls
+    // Connect ZkRewrite
     QObject::connect(this->zkrewrite_,
                      SIGNAL(result(int, QStringList)),
                      this,
@@ -65,11 +66,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     git_ = new Git();
 
-    // Connect ZkIResize to obtain list of zekylls
     QObject::connect(this->git_,
                      SIGNAL(result_git_rm(int, QStringList)),
                      this,
                      SLOT(handle_git_rm(int, QStringList)));
+
+    QObject::connect(this->git_,
+                     SIGNAL(result_git_mv(int, QStringList)),
+                     this,
+                     SLOT(handle_git_mv(int, QStringList)));
 
     connect(ui->curRepoButton, &QAbstractButton::clicked, this, &MainWindow::browse);
     connect(this, &MainWindow::repositoryChanged, this, &MainWindow::reloadRepository);
@@ -77,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this->ui->tabWidget, SIGNAL(thirdTabMarkingEnough()), this, SLOT(stopThirdTabMarking()));
 
     zkiresize_->setIndex( current_index_ );
-    zkiresize_->list();
+    reloadRepository();
 
     tuple< vector<string>, int > set_index_result = setIndex( current_index_ );
     ZKL_INDEX_ZEKYLLS_ = get<0>(set_index_result);
@@ -95,6 +100,7 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
         if( error_decode != "" ) {
             MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend (1):</font> ") + error_decode );
         }
+        is_loading_ = false;
         return;
     }
 
@@ -117,6 +123,10 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
     if( entries.count() == 0 ) {
         MessagesI.AppendMessageT(tr("Index ") + QString("%1") . arg(current_index_) + tr(" is empty (go ahead and resize it), or selected path isn't a Zekyll repository"));
     }
+
+    if( exitCode != 12 ) {
+        is_loading_ = false;
+    }
 }
 
 void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) {
@@ -126,6 +136,7 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
         if( error_decode != "" ) {
             MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend (2):</font> ") + error_decode );
         }
+        is_loading_ = false;
         return;
     }
     isConsistent2_ = false;
@@ -161,6 +172,8 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
         connect(&timer_, SIGNAL(timeout()), ui->tabWidget, SLOT(toggleThirdTabMark()));
         timer_.start();
     }
+
+    is_loading_ = false;
 }
 
 void MainWindow::insertLZCSDTableRow(QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description) {
@@ -280,6 +293,7 @@ void MainWindow::browse()
 }
 
 void MainWindow::reloadRepository() {
+    is_loading_ = true;
     ui->tableWidget->setRowCount(0);
     ui->tableWidget_2->setRowCount(0);
     ui->tableWidget_3->setRowCount(0);
@@ -287,7 +301,8 @@ void MainWindow::reloadRepository() {
     lzcsde_list_.clear();
     lzcsde_initial_.clear();
     lzcsde_consistent_.clear();
-    lzcsde_renamed_.clear();
+    lzcsde_renamed_from_to_.first.clear();
+    lzcsde_renamed_from_to_.second.clear();
     lzcsde_deleted_.clear();
 
     git_->setRepoPath( current_path_ );
@@ -380,15 +395,43 @@ void MainWindow::on_minus_clicked()
 void MainWindow::on_save_clicked()
 {
     const QVector<LZCSDE_Entry> & initial_entries = lzcsde_initial_.entries();
-    LZCSDE removed;
     int size = initial_entries.count();
+
+    // Gather renames
+    int changed;
     for( int i=0; i<size; i++ ) {
         int idx = lzcsde_list_.findIdxOfId( initial_entries[i].id() );
-        if( idx == -1 ) {
-            removed.appendEntry( initial_entries[i] );
+        if( idx != -1 ) {
+            const LZCSDE_Entry & initial = initial_entries[i];
+            const LZCSDE_Entry & current = lzcsde_list_.entries()[idx];
+            changed = 0;
+
+            // Section changed?
+            if( initial.section() != current.section() ) {
+                changed = 1;
+            }
+
+            // Description changed?
+            if( initial.description() != current.description() ) {
+                changed += 2;
+            }
+
+            if( changed > 0 ) {
+                lzcsde_renamed_from_to_.first.appendEntry( initial );
+                lzcsde_renamed_from_to_.second.appendEntry( current );
+            }
         }
     }
 
+    // Gather deletions
+    for( int i=0; i<size; i++ ) {
+        int idx = lzcsde_list_.findIdxOfId( initial_entries[i].id() );
+        if( idx == -1 ) {
+            lzcsde_deleted_.appendEntry( initial_entries[i] );
+        }
+    }
+
+    // Establish new sequence of zekylls
     QStringList current_zekylls = lzcsde_list_.getZekylls();
     QStringList newer_zekylls;
     size = current_zekylls.size();
@@ -396,7 +439,10 @@ void MainWindow::on_save_clicked()
         newer_zekylls << QString( ZKL_INDEX_ZEKYLLS_[i].c_str() );
     }
 
-    git_->remove_lzcsde( removed );
+    git_->rename_lzcsde_to_lzcsde( lzcsde_renamed_from_to_ );
+    git_->waitForFinishedRename();
+
+    git_->remove_lzcsde( lzcsde_deleted_ );
     git_->waitForFinishedRemove();
 
     zkrewrite_->setInZekylls( current_zekylls.join("") );
@@ -461,5 +507,35 @@ void MainWindow::handle_git_rm( int exitCode, QStringList entries ) {
     if( exitCode == 0 ) {
         return;
     }
-    MessagesI.AppendMessageT( QString("[Exit code: %1] ").arg(exitCode) + "<font color=red>Git ran with error</font>", entries );
+    MessagesI.AppendMessageT( QString("[Exit code: %1] ").arg(exitCode) + "<font color=red>Git ran with errors</font>", entries );
+}
+
+void MainWindow::handle_git_mv( int exitCode, QStringList entries ) {
+    if( exitCode == 0 ) {
+        return;
+    }
+    MessagesI.AppendMessageT( QString("[Exit code: %1] ").arg(exitCode) + "<font color=red>Git ran with errors</font>", entries );
+}
+
+void MainWindow::on_tableWidget_itemChanged(QTableWidgetItem *item)
+{
+    if( is_loading_ ) {
+        return;
+    }
+
+    int row = item->row();
+    int column = item->column();
+    if( row == -1 || column == -1 ) {
+        return;
+    }
+
+    QTableWidgetItem *id_item = ui->tableWidget->item(row, 0);
+    QString id = id_item->text();
+    if( column == 3 ) {
+        QString new_section = item->text();
+        lzcsde_list_.updateSectionOfId( id, new_section );
+    } else if( column == 4 ) {
+        QString new_description = item->text();
+        lzcsde_list_.updateDescriptionOfId( id, new_description );
+    }
 }

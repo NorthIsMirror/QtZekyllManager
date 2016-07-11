@@ -62,6 +62,10 @@ public:
     const QVector<LZCSDE_Entry> & entries() { return entries_; }
 
     int findIdxOfId( int id );
+
+    bool updateSectionOfId( const QString & id, const QString & section );
+
+    bool updateDescriptionOfId( const QString & id, const QString & description );
 };
 
 #endif // LZCSDE_H

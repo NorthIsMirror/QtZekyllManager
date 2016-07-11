@@ -31,6 +31,7 @@ private:
     bool isConsistent2_;
 
     QTimer timer_;
+    bool is_loading_;
 
     std::vector<std::string> ZKL_INDEX_ZEKYLLS_;
     Ui::MainWindow *ui;
@@ -42,7 +43,7 @@ private:
     LZCSDE lzcsde_consistent_;
 
     LZCSDE lzcsde_initial_;
-    LZCSDE lzcsde_renamed_;
+    std::pair<LZCSDE, LZCSDE> lzcsde_renamed_from_to_;
     LZCSDE lzcsde_deleted_;
 
     void insertLZCSDTableRow(QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description);
@@ -57,6 +58,7 @@ public slots:
     void handle_zkiresize_consistent(int exitCode, QStringList entries);
     void handle_zkrewrite(int exitCode, QStringList entries);
     void handle_git_rm(int exitCode, QStringList entries);
+    void handle_git_mv(int exitCode, QStringList entries);
     void updateMessages( const QStringList & messages );
     void stopThirdTabMarking();
 
@@ -68,6 +70,7 @@ private slots:
     void on_down_clicked();
     void on_minus_clicked();
     void on_save_clicked();
+    void on_tableWidget_itemChanged(QTableWidgetItem *item);
 };
 
 #endif // MAINWINDOW_H
