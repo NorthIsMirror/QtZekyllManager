@@ -321,3 +321,13 @@ void MainWindow::on_down_clicked()
         ui->tableWidget->move(false);
     }
 }
+
+void MainWindow::on_minus_clicked()
+{
+    if(ui->tabWidget->currentIndex() == 0) {
+        if( ui->tableWidget->selectedItems().count() > 0)
+        {
+            ui->tableWidget->removeRow( ui->tableWidget->currentRow() );
+        }
+    }
+}

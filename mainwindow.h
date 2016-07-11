@@ -55,6 +55,7 @@ private slots:
     void on_tableWidget_cellDoubleClicked(int row, int column);
     void on_up_clicked();
     void on_down_clicked();
+    void on_minus_clicked();
 };
 
 #endif // MAINWINDOW_H
