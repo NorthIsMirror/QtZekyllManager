@@ -47,9 +47,14 @@ public:
 
     bool removeId( const QString & id );
 
+    bool move( int sourceId, int destId );
+
     const LZCSDE_Entry & getId( int id );
 
     const LZCSDE_Entry & getId( const QString & id );
+
+private:
+    int findIdxOfId( int id );
 };
 
 #endif // LZCSDE_H

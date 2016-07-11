@@ -1,20 +1,23 @@
 #include "myqtablewidget.h"
 
+using namespace std;
+
 MyQTableWidget::MyQTableWidget(QWidget *parent) : QTableWidget(parent)
 {
 
 }
 
-void MyQTableWidget::move(bool up)
+tuple<int,int> MyQTableWidget::move(bool up)
 {
     if( selectedItems().count() == 0 ) {
-        return;
+        return make_tuple(-1, -1);
     }
+
     const int sourceRow = row(selectedItems().at(0));
     const int destRow = (up ? sourceRow-1 : sourceRow+1);
 
     if( destRow < 0 || destRow >= rowCount() ) {
-        return;
+        return make_tuple(-1, -1);
     }
 
     // take whole rows
@@ -26,6 +29,19 @@ void MyQTableWidget::move(bool up)
     setRow(destRow, sourceItems);
 
     selectRow(destRow);
+
+    bool ok = false;
+    int sourceId = sourceItems.first()->text().toInt(&ok);
+    if(!ok) {
+        return make_tuple(-2, -2);
+    }
+
+    int destId = destItems.first()->text().toInt(&ok);
+    if(!ok) {
+        return make_tuple(-2,-2);
+    }
+
+    return make_tuple(sourceId, destId);
 }
 
 // takes and returns the whole row

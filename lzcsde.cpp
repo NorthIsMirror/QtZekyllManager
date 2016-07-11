@@ -101,3 +101,24 @@ bool LZCSDE::removeId( const QString & id ) {
         return removeId( intid );
     }
 }
+
+bool LZCSDE::move( int sourceId, int destId ) {
+    int sourceIdx = findIdxOfId( sourceId );
+    int destIdx = findIdxOfId( destId );
+    LZCSDE_Entry source = entries_[ sourceIdx ];
+    LZCSDE_Entry dest = entries_[ destIdx ];
+    entries_[ destIdx ] = source;
+    entries_[ sourceIdx ] = dest;
+}
+
+int LZCSDE::findIdxOfId( int id ) {
+    int size = entries_.count();
+    int idx = -1;
+    for( int i=0; i<size; i++ ) {
+        if( id == entries_[i].id() ) {
+            idx = i;
+            break;
+        }
+    }
+    return idx;
+}

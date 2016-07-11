@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QTableWidget>
+#include <tuple>
 
 class MyQTableWidget : public QTableWidget
 {
@@ -11,7 +12,7 @@ class MyQTableWidget : public QTableWidget
 public:
     MyQTableWidget(QWidget *parent = 0);
 
-    void move(bool up);
+    std::tuple<int,int> move(bool up);
     QList<QTableWidgetItem*> takeRow(int row);
     void setRow(int row, const QList<QTableWidgetItem*>& rowItems);
 

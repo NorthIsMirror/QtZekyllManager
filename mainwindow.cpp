@@ -311,14 +311,26 @@ void MainWindow::on_tableWidget_cellDoubleClicked(int row, int column)
 void MainWindow::on_up_clicked()
 {
     if(ui->tabWidget->currentIndex() == 0) {
-        ui->tableWidget->move(true);
+        int sourceId, destId;
+        tie(sourceId, destId) = ui->tableWidget->move(true);
+        if( sourceId == -2 || destId == -2 ) {
+            MessagesI.AppendMessageT("<font color=red>Internal error during element move (1)</font>");
+        } else if ( sourceId > 0 && destId > 0 ) {
+            lzcsde_list_.move( sourceId, destId );
+        }
     }
 }
 
 void MainWindow::on_down_clicked()
 {
     if(ui->tabWidget->currentIndex() == 0) {
-        ui->tableWidget->move(false);
+        int sourceId, destId;
+        tie(sourceId, destId) = ui->tableWidget->move(false);
+        if( sourceId == -2 || destId == -2 ) {
+            MessagesI.AppendMessageT("<font color=red>Internal error during element move (2)</font>");
+        } else if ( sourceId > 0 && destId > 0 ) {
+            lzcsde_list_.move( sourceId, destId );
+        }
     }
 }
 
