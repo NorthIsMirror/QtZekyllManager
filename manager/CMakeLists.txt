@@ -36,6 +36,7 @@ SET( SRCS
     myqtabwidget.cpp
     script_functions.cpp
     zkiresize.cpp
+    zkrewrite.cpp
 )
 
 QT5_WRAP_UI( UIS_HDRS
