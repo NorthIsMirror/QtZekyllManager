@@ -307,3 +307,17 @@ void MainWindow::on_tableWidget_cellDoubleClicked(int row, int column)
         }
     }
 }
+
+void MainWindow::on_up_clicked()
+{
+    if(ui->tabWidget->currentIndex() == 0) {
+        ui->tableWidget->move(true);
+    }
+}
+
+void MainWindow::on_down_clicked()
+{
+    if(ui->tabWidget->currentIndex() == 0) {
+        ui->tableWidget->move(false);
+    }
+}

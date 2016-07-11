@@ -178,7 +178,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
@@ -244,6 +244,40 @@
         </property>
        </spacer>
       </item>
+      <item>
+       <widget class="QToolButton" name="minus">
+        <property name="text">
+         <string>–</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="plus">
+        <property name="text">
+         <string>+</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="up">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::UpArrow</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="down">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::DownArrow</enum>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
@@ -257,12 +291,18 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="QTableWidget" name="tableWidget">
+         <widget class="MyQTableWidget" name="tableWidget">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
           </property>
           <property name="columnCount">
            <number>5</number>
@@ -285,7 +325,13 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <widget class="QTableWidget" name="tableWidget_2">
+         <widget class="MyQTableWidget" name="tableWidget_2">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
           <property name="columnCount">
            <number>5</number>
           </property>
@@ -305,6 +351,12 @@
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
          <widget class="QTableWidget" name="tableWidget_3">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
           <property name="columnCount">
            <number>5</number>
           </property>
@@ -346,6 +398,10 @@
    <zorder>tabWidget</zorder>
    <zorder>messages</zorder>
    <zorder>messages_label</zorder>
+   <zorder>up</zorder>
+   <zorder>down</zorder>
+   <zorder>plus</zorder>
+   <zorder>minus</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -374,6 +430,11 @@
    <extends>QTabWidget</extends>
    <header location="global">myqtabwidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MyQTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header location="global">myqtablewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

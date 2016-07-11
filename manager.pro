@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     script_functions.cpp \
     zkiresize.cpp \
     zkrewrite.cpp \
-    zmeditor.cpp
+    zmeditor.cpp \
+    myqtablewidget.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     singleton.h \
     zkiresize.h \
     zkrewrite.h \
-    zmeditor.h
+    zmeditor.h \
+    myqtablewidget.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \

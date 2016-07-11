@@ -53,6 +53,8 @@ private slots:
     void browse();
     void reloadRepository();
     void on_tableWidget_cellDoubleClicked(int row, int column);
+    void on_up_clicked();
+    void on_down_clicked();
 };
 
 #endif // MAINWINDOW_H
