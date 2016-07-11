@@ -49,6 +49,8 @@ public:
 
     bool move( int sourceId, int destId );
 
+    QStringList getZekylls();
+
     const LZCSDE_Entry & getId( int id );
 
     const LZCSDE_Entry & getId( const QString & id );

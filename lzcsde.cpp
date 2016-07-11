@@ -122,3 +122,12 @@ int LZCSDE::findIdxOfId( int id ) {
     }
     return idx;
 }
+
+QStringList LZCSDE::getZekylls() {
+    QStringList result;
+    int size = entries_.count();
+    for( int i=0; i<size; i++ ) {
+        result << entries_[i].zekyll();
+    }
+    return result;
+}

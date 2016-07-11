@@ -10,8 +10,6 @@ ZkRewrite::ZkRewrite(QObject *parent) : QObject(parent)
 }
 
 void ZkRewrite::handleZkRewrite(int exitCode, QProcess::ExitStatus exitStatus) {
-    qDebug() << exitCode;
-    qDebug() << exitStatus;
     QString buffer = static_cast<QIODevice*>(QObject::sender())->readAll();
     QStringList entries = buffer.split("\n", QString::SkipEmptyParts);
 
@@ -20,7 +18,7 @@ void ZkRewrite::handleZkRewrite(int exitCode, QProcess::ExitStatus exitStatus) {
 
 void ZkRewrite::rewrite() {
     arguments_.clear();
-    arguments_ << "-qn" << "-p" << repoPath_ << "-z" << in_zekylls_ << "-Z" << out_zekylls_;
+    arguments_ << "-qnw" << "-p" << repoPath_ << "-z" << in_zekylls_ << "-Z" << out_zekylls_;
     process_.kill();
     process_.waitForFinished(50);
     process_.start("zkrewrite", arguments_);

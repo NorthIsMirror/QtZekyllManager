@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include "zkiresize.h"
+#include "zkrewrite.h"
 #include "lzcsde.h"
 
 namespace Ui {
@@ -33,6 +34,7 @@ private:
     std::vector<std::string> ZKL_INDEX_ZEKYLLS_;
     Ui::MainWindow *ui;
     ZkIResize *zkiresize_;
+    ZkRewrite *zkrewrite_;
     LZCSDE lzcsde_list_;
     LZCSDE lzcsde_consistent_;
 
@@ -46,6 +48,7 @@ signals:
 public slots:
     void handle_zkiresize_list(int exitCode, QStringList entries);
     void handle_zkiresize_consistent(int exitCode, QStringList entries);
+    void handle_zkrewrite(int exitCode, QStringList entries);
     void updateMessages( const QStringList & messages );
     void stopThirdTabMarking();
 
@@ -56,6 +59,7 @@ private slots:
     void on_up_clicked();
     void on_down_clicked();
     void on_minus_clicked();
+    void on_save_clicked();
 };
 
 #endif // MAINWINDOW_H
