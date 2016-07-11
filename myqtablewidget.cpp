@@ -47,3 +47,20 @@ void MyQTableWidget::setRow(int row, const QList<QTableWidgetItem*>& rowItems)
         setItem(row, col, rowItems.at(col));
     }
 }
+
+int MyQTableWidget::maximumId() {
+    int rcount = rowCount();
+    int max = 0;
+    for( int i=0; i<rcount; i++ ) {
+        QString text = item(i,0)->text();
+        bool ok=false;
+        int id = text.toInt(&ok);
+        if(!ok) {
+            continue;
+        }
+        if( max < id ) {
+            max = id;
+        }
+    }
+    return max;
+}

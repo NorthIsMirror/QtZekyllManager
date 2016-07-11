@@ -15,6 +15,7 @@ public:
     QList<QTableWidgetItem*> takeRow(int row);
     void setRow(int row, const QList<QTableWidgetItem*>& rowItems);
 
+    int maximumId();
 };
 
 #endif // MYQTABLEWIDGET_H
