@@ -23,6 +23,10 @@ public slots:
     void list();
     void consistent();
 
+    void waitForFinishedList() { process_list_.waitForFinished(); }
+
+    void waitForFinishedConsistent() { process_consistent_.waitForFinished(); }
+
 private:
     int index_;
     QString repoPath_;

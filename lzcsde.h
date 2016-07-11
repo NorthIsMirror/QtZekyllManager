@@ -41,6 +41,10 @@ public:
         entries_.append(entry);
     }
 
+    void appendEntry( const LZCSDE_Entry & entry ) {
+        entries_.append( entry );
+    }
+
     void clear() { entries_.clear(); }
 
     bool removeId( int id );
@@ -55,7 +59,8 @@ public:
 
     const LZCSDE_Entry & getId( const QString & id );
 
-private:
+    const QVector<LZCSDE_Entry> & entries() { return entries_; }
+
     int findIdxOfId( int id );
 };
 

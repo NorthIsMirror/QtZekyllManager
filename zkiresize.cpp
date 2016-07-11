@@ -39,6 +39,7 @@ void ZkIResize::handleZkIResizeConsistent(int exitCode, QProcess::ExitStatus exi
 void ZkIResize::list() {
     arguments_list_.clear();
     arguments_list_ << "-qn" << "--req" << "-p" << repoPath_ << "-i" << "1" << "--list";
+    //qDebug() << "List: " << arguments_list_;
     process_list_.kill();
     process_list_.waitForFinished(50);
     process_list_.start("zkiresize", arguments_list_);
@@ -48,6 +49,7 @@ void ZkIResize::list() {
 void ZkIResize::consistent() {
     arguments_consistent_.clear();
     arguments_consistent_ << "-qn" << "--req" << "-p" << repoPath_ << "-i" << "1" << "--consistent";
+    //qDebug() << "Consistent: " << arguments_consistent_;
     process_consistent_.kill();
     process_consistent_.waitForFinished(50);
     process_consistent_.start("zkiresize", arguments_consistent_);

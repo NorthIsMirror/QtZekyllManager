@@ -8,6 +8,7 @@
 #include <string>
 #include "zkiresize.h"
 #include "zkrewrite.h"
+#include "git.h"
 #include "lzcsde.h"
 
 namespace Ui {
@@ -35,8 +36,14 @@ private:
     Ui::MainWindow *ui;
     ZkIResize *zkiresize_;
     ZkRewrite *zkrewrite_;
+    Git *git_;
+
     LZCSDE lzcsde_list_;
     LZCSDE lzcsde_consistent_;
+
+    LZCSDE lzcsde_initial_;
+    LZCSDE lzcsde_renamed_;
+    LZCSDE lzcsde_deleted_;
 
     void insertLZCSDTableRow(QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description);
     void insertLZSDETableRow(QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
@@ -49,6 +56,7 @@ public slots:
     void handle_zkiresize_list(int exitCode, QStringList entries);
     void handle_zkiresize_consistent(int exitCode, QStringList entries);
     void handle_zkrewrite(int exitCode, QStringList entries);
+    void handle_git_rm(int exitCode, QStringList entries);
     void updateMessages( const QStringList & messages );
     void stopThirdTabMarking();
 

@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     zkiresize.cpp \
     zkrewrite.cpp \
     zmeditor.cpp \
-    myqtablewidget.cpp
+    myqtablewidget.cpp \
+    git.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -41,7 +42,8 @@ HEADERS  += mainwindow.h \
     zkiresize.h \
     zkrewrite.h \
     zmeditor.h \
-    myqtablewidget.h
+    myqtablewidget.h \
+    git.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \

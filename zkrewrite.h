@@ -20,6 +20,7 @@ public slots:
 
     void handleZkRewrite( int exitCode, QProcess::ExitStatus exitStatus );
     void rewrite();
+    void waitForFinishedRewrite() { process_.waitForFinished(); }
 
 private:
     QString in_zekylls_;

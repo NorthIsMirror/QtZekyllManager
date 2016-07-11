@@ -63,6 +63,14 @@ MainWindow::MainWindow(QWidget *parent) :
                      this,
                      SLOT(handle_zkrewrite(int, QStringList)));
 
+    git_ = new Git();
+
+    // Connect ZkIResize to obtain list of zekylls
+    QObject::connect(this->git_,
+                     SIGNAL(result_git_rm(int, QStringList)),
+                     this,
+                     SLOT(handle_git_rm(int, QStringList)));
+
     connect(ui->curRepoButton, &QAbstractButton::clicked, this, &MainWindow::browse);
     connect(this, &MainWindow::repositoryChanged, this, &MainWindow::reloadRepository);
     QObject::connect(&MessagesI, SIGNAL(messagesChanged(const QStringList&)), this, SLOT(updateMessages(const QStringList&)) );
@@ -102,6 +110,9 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
             insertLZCSDTableRow(ui->tableWidget, counter, rx.cap(1), true, rx.cap(2), rx.cap(3));
         }
     }
+
+    lzcsde_initial_.clear();
+    lzcsde_initial_ = lzcsde_list_;
 
     if( entries.count() == 0 ) {
         MessagesI.AppendMessageT(tr("Index ") + QString("%1") . arg(current_index_) + tr(" is empty (go ahead and resize it), or selected path isn't a Zekyll repository"));
@@ -272,14 +283,20 @@ void MainWindow::reloadRepository() {
     ui->tableWidget->setRowCount(0);
     ui->tableWidget_2->setRowCount(0);
     ui->tableWidget_3->setRowCount(0);
+
     lzcsde_list_.clear();
+    lzcsde_initial_.clear();
     lzcsde_consistent_.clear();
+    lzcsde_renamed_.clear();
+    lzcsde_deleted_.clear();
+
+    git_->setRepoPath( current_path_ );
+
+    zkrewrite_->setRepoPath( current_path_ );
 
     zkiresize_->setRepoPath( current_path_ );
     zkiresize_->setIndex( current_index_ );
     zkiresize_->list();
-
-    zkrewrite_->setRepoPath( current_path_ );
 }
 
  void MainWindow::updateMessages( const QStringList & messages ) {
@@ -362,16 +379,32 @@ void MainWindow::on_minus_clicked()
 
 void MainWindow::on_save_clicked()
 {
+    const QVector<LZCSDE_Entry> & initial_entries = lzcsde_initial_.entries();
+    LZCSDE removed;
+    int size = initial_entries.count();
+    for( int i=0; i<size; i++ ) {
+        int idx = lzcsde_list_.findIdxOfId( initial_entries[i].id() );
+        if( idx == -1 ) {
+            removed.appendEntry( initial_entries[i] );
+        }
+    }
+
     QStringList current_zekylls = lzcsde_list_.getZekylls();
     QStringList newer_zekylls;
-    int size = current_zekylls.size();
+    size = current_zekylls.size();
     for( int i=0; i<size; i++ ) {
         newer_zekylls << QString( ZKL_INDEX_ZEKYLLS_[i].c_str() );
     }
 
+    git_->remove_lzcsde( removed );
+    git_->waitForFinishedRemove();
+
     zkrewrite_->setInZekylls( current_zekylls.join("") );
     zkrewrite_->setOutZekylls( newer_zekylls.join("") );
     zkrewrite_->rewrite();
+    zkrewrite_->waitForFinishedRewrite();
+
+    reloadRepository();
 }
 
 void MainWindow::handle_zkrewrite( int exitCode, QStringList entries ) {
@@ -422,4 +455,11 @@ void MainWindow::handle_zkrewrite( int exitCode, QStringList entries ) {
     }
 
     MessagesI.AppendMessageT( QString("[Exit code: %1] ").arg(exitCode) + error_decode );
+}
+
+void MainWindow::handle_git_rm( int exitCode, QStringList entries ) {
+    if( exitCode == 0 ) {
+        return;
+    }
+    MessagesI.AppendMessageT( QString("[Exit code: %1] ").arg(exitCode) + "<font color=red>Git ran with error</font>", entries );
 }
