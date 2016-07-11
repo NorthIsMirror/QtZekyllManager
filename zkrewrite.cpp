@@ -7,6 +7,8 @@ ZkRewrite::ZkRewrite(QObject *parent) : QObject(parent)
                      SIGNAL(finished(int, QProcess::ExitStatus)),
                      this,
                      SLOT(handleZkRewrite(int, QProcess::ExitStatus)));
+
+    process_.setProcessChannelMode( QProcess::MergedChannels );
 }
 
 void ZkRewrite::handleZkRewrite(int exitCode, QProcess::ExitStatus exitStatus) {

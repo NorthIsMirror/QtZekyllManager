@@ -8,10 +8,14 @@ ZkIResize::ZkIResize(QObject *parent) : QObject(parent)
                      this,
                      SLOT(handleZkIResizeList(int, QProcess::ExitStatus)));
 
+    process_list_.setProcessChannelMode( QProcess::MergedChannels );
+
     QObject::connect(&process_consistent_,
                      SIGNAL(finished(int, QProcess::ExitStatus)),
                      this,
                      SLOT(handleZkIResizeConsistent(int, QProcess::ExitStatus)));
+
+    process_consistent_.setProcessChannelMode( QProcess::MergedChannels );
 }
 
 void ZkIResize::handleZkIResizeList(int exitCode, QProcess::ExitStatus exitStatus) {
