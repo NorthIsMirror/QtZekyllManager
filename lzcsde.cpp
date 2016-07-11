@@ -71,3 +71,33 @@ const LZCSDE_Entry & LZCSDE::getId( const QString & id ) {
         return dummy_entry_;
     }
 }
+
+bool LZCSDE::removeId( int id ) {
+    LZCSDE_Entry *found = NULL;
+    int size = entries_.count();
+    int idx = -1;
+    for( int i=0; i<size; i++ ) {
+        if( id == entries_[i].id() ) {
+            found = &entries_[i];
+            idx = i;
+            break;
+        }
+    }
+
+    if( found ) {
+        entries_.removeAt( idx );
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool LZCSDE::removeId( const QString & id ) {
+    bool ok = false;
+    int intid = id.toInt( &ok );
+    if(!ok) {
+        return false;
+    } else {
+        return removeId( intid );
+    }
+}

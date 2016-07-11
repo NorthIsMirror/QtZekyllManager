@@ -327,7 +327,13 @@ void MainWindow::on_minus_clicked()
     if(ui->tabWidget->currentIndex() == 0) {
         if( ui->tableWidget->selectedItems().count() > 0)
         {
-            ui->tableWidget->removeRow( ui->tableWidget->currentRow() );
+            int row = ui->tableWidget->currentRow();
+            QTableWidgetItem *item = ui->tableWidget->item(row, 0);
+            QString id = item->text();
+            if( !lzcsde_list_.removeId(id) ) {
+                MessagesI.AppendMessageT("<font color=red>Internal error during element removal</font>");
+            }
+            ui->tableWidget->removeRow( row );
         }
     }
 }

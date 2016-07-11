@@ -43,6 +43,10 @@ public:
 
     void clear() { entries_.clear(); }
 
+    bool removeId( int id );
+
+    bool removeId( const QString & id );
+
     const LZCSDE_Entry & getId( int id );
 
     const LZCSDE_Entry & getId( const QString & id );
