@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>792</width>
-    <height>609</height>
+    <height>677</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -382,7 +382,7 @@
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>140</height>
+        <height>90</height>
        </size>
       </property>
      </widget>
@@ -391,9 +391,6 @@
    <zorder>tabWidget</zorder>
    <zorder>messages</zorder>
    <zorder>messages_label</zorder>
-   <zorder>up</zorder>
-   <zorder>down</zorder>
-   <zorder>minus</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
