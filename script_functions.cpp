@@ -19,7 +19,7 @@ std::tuple< QString, QString, int > getRepoFromPath( const QString & path ) {
         return make_tuple( path, nodes.join("/") + "/" + last, 1 );
     }
 
-    QRegExp rx("^([a-z0-9][a-z0-9])---([a-zA-Z0-9][a-zA-Z0-9-]*)---([a-zA-Z0-9_-]+)---([a-zA-Z0-9_-/.~]+)$");
+    QRegExp rx("^([a-z0-9][a-z0-9])---([a-zA-Z0-9][a-zA-Z0-9-]*)---([a-zA-Z0-9_-]+)---([a-zA-Z0-9_/.~-]+)$");
     rx.setCaseSensitivity(Qt::CaseSensitive);
     QStringList result;
     if (rx.indexIn( last ) != -1) {
