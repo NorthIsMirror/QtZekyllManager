@@ -56,6 +56,12 @@ MainWindow::MainWindow(QWidget *parent) :
                      this,
                      SLOT(handle_zkiresize_consistent(int, QStringList)));
 
+    // Connect ZkIResize to be able to resize index
+    QObject::connect(this->zkiresize_,
+                     SIGNAL(result_resize(int, QStringList)),
+                     this,
+                     SLOT(handle_zkiresize_resize(int, QStringList)));
+
     zkrewrite_ = new ZkRewrite();
 
     // Connect ZkRewrite
@@ -95,6 +101,9 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
+    current_size_of_index_ = 0;
+    this->ui->indexSize->setText( QString("%1").arg( current_size_of_index_ ) );
+
     if( exitCode != 0 && exitCode != 12 ) {
         QString error_decode = decode_zkiresize_exit_code(exitCode);
         if( error_decode != "" ) {
@@ -120,10 +129,15 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
     lzcsde_initial_.clear();
     lzcsde_initial_ = lzcsde_list_;
 
+    current_size_of_index_ = lzcsde_list_.count();
+    this->ui->indexSize->setText( QString("%1").arg( current_size_of_index_ ) );
+
     if( entries.count() == 0 ) {
         MessagesI.AppendMessageT(tr("Index ") + QString("%1") . arg(current_index_) + tr(" is empty (go ahead and resize it), or selected path isn't a Zekyll repository"));
     }
 
+    // If exitCode is 12, there was inconsistent read
+    // started, and whole listing actually stops there
     if( exitCode != 12 ) {
         is_loading_ = false;
     }
@@ -439,6 +453,16 @@ void MainWindow::on_save_clicked()
         newer_zekylls << QString( ZKL_INDEX_ZEKYLLS_[i].c_str() );
     }
 
+    // Establish new index size
+    bool ok = false;
+    new_size_of_index_ = ui->indexSize->text().toInt( &ok );
+    if( ok ) {
+        zkiresize_->resize( current_size_of_index_, new_size_of_index_ );
+        zkiresize_->waitForFinishedResize();
+    } else {
+        MessagesI.AppendMessageT("<font color=red>Incorrect index size</font>");
+    }
+
     git_->rename_lzcsde_to_lzcsde( lzcsde_renamed_from_to_ );
     git_->waitForFinishedRename();
 
@@ -537,5 +561,16 @@ void MainWindow::on_tableWidget_itemChanged(QTableWidgetItem *item)
     } else if( column == 4 ) {
         QString new_description = item->text();
         lzcsde_list_.updateDescriptionOfId( id, new_description );
+    }
+}
+
+void MainWindow::handle_zkiresize_resize( int exitCode, QStringList entries ) {
+    if( exitCode == 0 ) {
+        return;
+    }
+
+    QString error_decode = decode_zkiresize_exit_code(exitCode);
+    if( error_decode != "" ) {
+        MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend (1):</font> ") + error_decode );
     }
 }

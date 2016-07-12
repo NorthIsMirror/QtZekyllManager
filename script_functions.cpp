@@ -66,6 +66,14 @@ QString decode_zkiresize_exit_code(int exitCode) {
         error_decode = "Inconsistent index (2)";
     } else if ( exitCode == 12) {
         error_decode = "Inconsistent index (3)";
+    } else if ( exitCode == 13) {
+        error_decode = "No correct path or repo provided";
+    } else if ( exitCode == 14) {
+        error_decode = "Given index size (-s/--size) is not a number";
+    } else if ( exitCode == 15) {
+        error_decode = "Given index (-i/--index) is not a number";
+    } else if ( exitCode == 16) {
+        error_decode = "Index (-i/--index) cannot be 0";
     }
     return error_decode;
 }

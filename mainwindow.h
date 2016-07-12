@@ -27,6 +27,7 @@ private:
     QString current_repo_;
     QString current_path_;
     int current_index_;
+    int current_size_of_index_;
     bool isConsistent_;
     bool isConsistent2_;
 
@@ -45,6 +46,7 @@ private:
     LZCSDE lzcsde_initial_;
     std::pair<LZCSDE, LZCSDE> lzcsde_renamed_from_to_;
     LZCSDE lzcsde_deleted_;
+    int new_size_of_index_;
 
     void insertLZCSDTableRow(QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description);
     void insertLZSDETableRow(QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
@@ -56,6 +58,7 @@ signals:
 public slots:
     void handle_zkiresize_list(int exitCode, QStringList entries);
     void handle_zkiresize_consistent(int exitCode, QStringList entries);
+    void handle_zkiresize_resize(int exitCode, QStringList entries);
     void handle_zkrewrite(int exitCode, QStringList entries);
     void handle_git_rm(int exitCode, QStringList entries);
     void handle_git_mv(int exitCode, QStringList entries);

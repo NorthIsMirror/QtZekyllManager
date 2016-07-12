@@ -16,6 +16,13 @@ ZkIResize::ZkIResize(QObject *parent) : QObject(parent)
                      SLOT(handleZkIResizeConsistent(int, QProcess::ExitStatus)));
 
     process_consistent_.setProcessChannelMode( QProcess::MergedChannels );
+
+    QObject::connect(&process_resize_,
+                     SIGNAL(finished(int, QProcess::ExitStatus)),
+                     this,
+                     SLOT(handleZkIResizeResize(int, QProcess::ExitStatus)));
+
+    process_resize_.setProcessChannelMode( QProcess::MergedChannels );
 }
 
 void ZkIResize::handleZkIResizeList(int exitCode, QProcess::ExitStatus exitStatus) {
@@ -36,6 +43,13 @@ void ZkIResize::handleZkIResizeConsistent(int exitCode, QProcess::ExitStatus exi
     emit result_consistent(exitCode, entries);
 }
 
+void ZkIResize::handleZkIResizeResize(int exitCode, QProcess::ExitStatus exitStatus) {
+    QString buffer = static_cast<QIODevice*>(QObject::sender())->readAll();
+    QStringList entries = buffer.split("\n", QString::SkipEmptyParts);
+
+    emit result_resize(exitCode, entries);
+}
+
 void ZkIResize::list() {
     arguments_list_.clear();
     arguments_list_ << "-qn" << "--req" << "-p" << repoPath_ << "-i" << "1" << "--list";
@@ -54,4 +68,19 @@ void ZkIResize::consistent() {
     process_consistent_.waitForFinished(50);
     process_consistent_.start("zkiresize", arguments_consistent_);
     process_consistent_.waitForStarted();
+}
+
+void ZkIResize::resize(int current_size, int new_size) {
+    if( current_size == new_size ) {
+        return;
+    }
+
+    arguments_resize_.clear();
+    arguments_resize_ << "-qnw" << "--req" << "-p" << repoPath_ << "-i" << QString("%1").arg(index_) << "-s" << QString("%1").arg(new_size);
+    arguments_resize_ << "--section" << "Z" << "--desc" << "New Zekyll";
+    //qDebug() << "Resize: " << arguments_resize_;
+    process_resize_.kill();
+    process_resize_.waitForFinished(50);
+    process_resize_.start("zkiresize", arguments_resize_);
+    process_resize_.waitForStarted();
 }
