@@ -1,36 +1,20 @@
-###########################################################################################
-##      Created using Monkey Studio IDE v1.9.0.1 (1.9.0.1)
-##
-##  Author    : Filipe Azevedo aka Nox P@sNox <pasnox@gmail.com> and The QodeEdit development team
-##  Project   : QodeEdit
-##  FileName  : QodeEdit.pro
-##  Date      : 2012-05-27T13:18:50
-##  License   : LGPL3
-##  Comment   : A source code component editor based on QPlainTextEdit/QTextDocument/QSyntaxHighlighter and Kate xml language definition files.
-##  Home Page : https://github.com/pasnox/qodeedit
-##
-##  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-##  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-##
-###########################################################################################
+TEMPLATE = lib
+CONFIG += staticlib
 
 include( "./autogen.pri" )
 
 lessThan(QT_MAJOR_VERSION, 5): error("QtZekyllManager (and current component that you build: QodeEdit) requires Qt 5")
 
-TEMPLATE = lib
-CONFIG *= staticlib
-
 ABSOLUTE_DATA_DIR = $$PWD/share
 VERSION = 0.1.0
 autoGenerateFile( "QodeEditConfig.h.in", "src/QodeEditConfig.h" )
 
-QT *= xml
-QT *= widgets
+QT += xml
+QT += widgets
 
-INCLUDEPATH *= $${PWD}/src
+INCLUDEPATH += $${PWD}/src
 
-HEADERS *=  \
+HEADERS +=  \
     src/QodeEdit.h \
     src/Tools.h \
     src/editor/CodeEditor.h \
@@ -70,7 +54,7 @@ HEADERS *=  \
     src/Threading.h \
     src/Manager.h
 
-SOURCES *=  \
+SOURCES +=  \
     src/QodeEdit.cpp \
     src/Tools.cpp \
     src/editor/CodeEditor.cpp \

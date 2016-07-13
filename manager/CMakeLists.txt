@@ -10,8 +10,6 @@ if( NOT CMAKE_PREFIX_PATH )
     #set( CMAKE_PREFIX_PATH /usr/local/Cellar/qt5/5.6.1 )
 endif()
 
-add_subdirectory(qodeedit)
-
 # Find includes in corresponding build directories
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
@@ -20,9 +18,6 @@ set( CMAKE_AUTOMOC ON )
 
 # Widgets finds its own dependencies (QtGui and QtCore).
 find_package( Qt5Widgets ${QT_VERSION_REQ} REQUIRED )
-if( APPLE )
-    find_package( Qt5MacExtras ${QT_VERSION_REQ} REQUIRED )
-endif()
 get_target_property( QT_QMAKE_EXECUTABLE Qt5::qmake LOCATION )
 
 SET( SRCS
