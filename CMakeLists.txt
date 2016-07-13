@@ -10,6 +10,8 @@ if( NOT CMAKE_PREFIX_PATH )
     #set( CMAKE_PREFIX_PATH /usr/local/Cellar/qt5/5.6.1 )
 endif()
 
+add_subdirectory(qodeedit)
+
 # Find includes in corresponding build directories
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
@@ -24,19 +26,21 @@ endif()
 get_target_property( QT_QMAKE_EXECUTABLE Qt5::qmake LOCATION )
 
 SET( SRCS
-    closewithoutsavingdialog.cpp
-    coding_functions.cpp
-    zmeditor.cpp
-    lzcsde.cpp
-    lzcsde_entry.cpp
     main.cpp
     mainwindow.cpp
+    closewithoutsavingdialog.cpp
+    coding_functions.cpp
+    git.cpp
+    lzcsde.cpp
+    lzcsde_entry.cpp
     math_functions.cpp
     messages.cpp
+    myqtablewidget.cpp
     myqtabwidget.cpp
     script_functions.cpp
     zkiresize.cpp
     zkrewrite.cpp
+    zmeditor.cpp
 )
 
 QT5_WRAP_UI( UIS_HDRS
