@@ -69,7 +69,7 @@ std::tuple< std::vector<int>, int> letters_to_numbers( const std::vector<char> &
     rx.setCaseSensitivity( Qt::CaseSensitive );
     if ( rx.indexIn( str ) == -1 ) {
         MessagesI.AppendMessageT( "Incorrect character during conversion, allowed are a-z and 0-9" );
-        return make_tuple( reply, -1 );
+        return make_tuple( reply, 1 );
     }
 
     int number;
@@ -86,3 +86,61 @@ std::tuple< std::vector<int>, int> letters_to_numbers( const std::string & lette
     std::vector<char> letters2( letters.c_str(), letters.c_str() + letters.size() );
     return letters_to_numbers( letters2 );
 }
+
+// FUNCTION: div2 {{{
+// input - zcode's letters
+// Result – ( "zcode's letters after division" "remainder 0 or 1" )
+std::tuple< std::vector<char>, int, int > div2( const std::vector<char> & letters ) {
+    // First translate the letters to numbers and put them into array
+    std::tuple< std::vector<int>, int > res = letters_to_numbers( letters );
+    int error = std::get<1>( res );
+    if( error != 0 ) {
+        return make_tuple( std::vector<char>(), 0, error );
+    }
+
+    std::vector<int> numbers = std::get<0>( res );
+
+    // Now operate on the array performing long-division
+    int cur = 0, last = numbers.size() - 1;
+
+    std::vector<int> result;
+
+    int prepared_for_division = numbers[cur];
+    int subtracted;
+    while (( 1 )) {
+        int quotient = prepared_for_division / 2;
+
+        result.push_back( quotient );
+
+        int recovered = quotient*2;
+        subtracted = prepared_for_division - recovered;
+
+        cur ++;
+        if ( cur > last ) {
+            break;
+        }
+
+        prepared_for_division = 36 * subtracted + numbers[cur];
+    }
+
+    // Now convert the result to letters
+
+    std::tuple< std::vector<char>, int > res2 = numbers_to_letters( result );
+    error = std::get<1>(res2);
+    if( error != 0 ) {
+        return make_tuple( std::vector<char>(), 0, error );
+    }
+
+    return make_tuple( std::get<0>( res2 ), subtracted, 0 );
+}
+// }}}
+
+// FUNCTION: div2 {{{
+std::tuple< std::string, int, int > div2( const std::string & letters ) {
+    std::vector<char> out_letters;
+    int subtracted, error;
+    tie( out_letters, subtracted, error ) = div2( std::vector<char>( letters.c_str(), letters.c_str() + letters.size() ) );
+
+    return make_tuple( std::string( out_letters.begin(), out_letters.end() ), subtracted, error );
+}
+// }}}
