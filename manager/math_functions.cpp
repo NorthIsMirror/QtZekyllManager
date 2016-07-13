@@ -87,6 +87,49 @@ std::tuple< std::vector<int>, int> letters_to_numbers( const std::string & lette
     return letters_to_numbers( letters2 );
 }
 
+// FUNCTION: decode_zcode {{{
+// Takes zekyl code, i.e. 1/someletters
+// and decodes it to sequence of bits
+std::tuple< std::vector<int>, int > decode_zcode( const std::string & code ) {
+    QString _code = QString::fromLatin1( code.c_str() );
+    QStringList num_let = _code.split("/");
+    if( num_let.count() != 2 ) {
+        return make_tuple( std::vector<int>(), 1 );
+    }
+
+    bool ok = false;
+    int number = num_let.first().toInt( &ok );
+    if( !ok ) {
+        return make_tuple( std::vector<int>(), 2 );
+    }
+
+    std::string letters = num_let.last().toUtf8().constData();
+
+    // The zcode can have at most 30 digits
+    // This is the 150 bits (150 zekylls)
+    // written in base 36. We have to obtain
+    // the 150 bits. We will implement division
+    // in base 36 and gradually obtain the 150 bits.
+
+    std::vector<int> bits;
+    std::string workingvar = letters;
+    QRegExp rx("^0*$");
+    while( rx.indexIn( QString::fromLatin1( workingvar.c_str() ) ) == -1 ) {
+        int subtracted, error;
+        std::tie( workingvar, subtracted, error ) = div2( workingvar );
+        if( error != 0 ) {
+            return make_tuple( std::vector<int>(), 3 );
+        }
+        bits.push_back( subtracted );
+        // print "After div $workingvar/${reply[2]}"
+    }
+    std::reverse( bits.begin(), bits.end() );
+    // print "Bits of the letters $letters are: ${(j::)bits[@]}"
+
+    return make_tuple( bits, 0 );
+}
+// }}}
+
 // FUNCTION: div2 {{{
 // input - zcode's letters
 // Result – ( "zcode's letters after division" "remainder 0 or 1" )

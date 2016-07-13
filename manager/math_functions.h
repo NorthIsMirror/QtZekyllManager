@@ -9,6 +9,7 @@ std::tuple< std::vector<int>, int> letters_to_numbers( const std::vector<char> &
 std::tuple< std::vector<int>, int> letters_to_numbers( const std::string & letters );
 std::tuple< std::vector<char>, int, int > div2( const std::vector<char> & letters );
 std::tuple< std::string, int, int > div2( const std::string & letters );
+std::tuple< std::vector<int>, int > decode_zcode( const std::string & code );
 
 
 
