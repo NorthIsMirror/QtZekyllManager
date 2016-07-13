@@ -174,7 +174,7 @@ std::tuple< std::vector<char>, std::vector<int>, int > encode_zcode_str01( const
     int error;
     std::tie( numbers, error ) = str_01_to_24_bit_pack_numbers( sbits );
     if( error != 0 ) {
-        return make_tuple( std::vector<char>(), numbers, error + 2000 );
+        return make_tuple( std::vector<char>(), std::vector<int>(), error + 2000 );
     }
 
     std::vector<char> code;
