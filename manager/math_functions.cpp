@@ -130,6 +130,43 @@ std::tuple< std::vector<int>, int > decode_zcode( const std::string & code ) {
 }
 // }}}
 
+// FUNCTION: get_integer_from_base_36 {{{
+// Converts given base-36 string into integer
+// Warning: it tagets integer (signed), so
+// the size of number is limited here (while
+// decode_zcode generates series of bits of
+// arbitrary length)
+std::tuple<int, int> get_integer_from_base_36( const std::string & letters ) {
+    std::vector<int> bits;
+    std::string workingvar = letters;
+
+    // Get base-2 generated array consisting of 1 and 0
+    QRegExp rx("^0*$");
+    while( rx.indexIn( QString::fromLatin1( workingvar.c_str() ) ) == -1 ) {
+        int subtracted, error;
+        std::tie( workingvar, subtracted, error ) = div2( workingvar );
+        if( error != 0 ) {
+            return std::make_tuple( 0, error );
+        }
+        bits.push_back( subtracted );
+    }
+
+    std::reverse( bits.begin(), bits.end() );
+
+    // Now sum up the obtained 0 and 1
+    int i, mul = 1, size = bits.size();
+    int REPLY=0;
+    for ( i = size - 1; i >= 0; i -- ) {
+        REPLY = REPLY + bits[i]*mul;
+        mul = mul * 2;
+    }
+
+    // TODO: detect overflow and other problems
+    return std::make_tuple( REPLY, 0 );
+}
+// }}}
+
+
 // FUNCTION: div2 {{{
 // input - zcode's letters
 // Result – ( "zcode's letters after division" "remainder 0 or 1" )
