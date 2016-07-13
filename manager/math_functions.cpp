@@ -289,3 +289,38 @@ std::tuple< std::vector<int>, int > arr_01_to_24_bit_pack_numbers( const std::ve
     return std::make_tuple( numbers, 0 );
 }
 // }}}
+
+// FUNCTION: div_24-bit_pack_numbers_36 {{{
+// input - series of 0 and 1 (bits marking which zekyll is active)
+// output - result of division and remainder 0 ... 35, also error
+std::tuple< std::vector<int>, int, int > div_24_bit_pack_numbers_36( const std::vector<int> & numbers ) {
+    // Now operate on the array performing long-division
+    int cur = 0, last = numbers.size() - 1;
+
+    std::vector<int> result;
+
+    int subtracted;
+    int prepared_for_division = numbers[cur];
+    while ( 1 ) {
+        int quotient = prepared_for_division / 36;
+
+        result.push_back( quotient );
+
+        int recovered = quotient * 36;
+        subtracted = prepared_for_division - recovered;
+
+        cur ++;
+        if ( cur > last ) {
+            break;
+        }
+
+        prepared_for_division = 16777216 * subtracted + numbers[cur];
+
+        if( numbers[cur] > prepared_for_division ) {
+            return make_tuple( std::vector<int>(), 0, 107);
+        }
+    }
+
+    return std::make_tuple( result, subtracted, 0 );
+}
+// }}}
