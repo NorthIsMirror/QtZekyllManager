@@ -36,6 +36,7 @@ SET( SRCS
     zkiresize.cpp
     zkrewrite.cpp
     zmeditor.cpp
+    lgit.cpp
 )
 
 QT5_WRAP_UI( UIS_HDRS
@@ -55,4 +56,10 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"
 
 add_executable( QtZekyllManager ${SRCS} ${UIS_HDRS} )
 
-target_link_libraries( QtZekyllManager Qt5::Widgets )
+target_link_libraries( QtZekyllManager Qt5::Widgets
+                       $<TARGET_PROPERTY:git2,INTERFACE_LINK_LIBRARIES>
+)
+
+target_include_directories( QtZekyllManager PRIVATE
+                            $<TARGET_PROPERTY:git2,INTERFACE_INCLUDE_DIRECTORIES>
+)
