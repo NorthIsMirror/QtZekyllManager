@@ -69,7 +69,7 @@ std::tuple< std::vector<int>, int> letters_to_numbers( const std::vector<char> &
     rx.setCaseSensitivity( Qt::CaseSensitive );
     if ( rx.indexIn( str ) == -1 ) {
         MessagesI.AppendMessageT( "Incorrect character during conversion, allowed are a-z and 0-9" );
-        return make_tuple( reply, 1 );
+        return std::make_tuple( reply, 1 );
     }
 
     int number;
@@ -79,7 +79,7 @@ std::tuple< std::vector<int>, int> letters_to_numbers( const std::vector<char> &
         reply.push_back( number );
     }
 
-    return make_tuple( reply, 0 );
+    return std::make_tuple( reply, 0 );
 }
 
 std::tuple< std::vector<int>, int> letters_to_numbers( const std::string & letters ) {
@@ -94,13 +94,13 @@ std::tuple< std::vector<int>, int > decode_zcode( const std::string & code ) {
     QString _code = QString::fromLatin1( code.c_str() );
     QStringList num_let = _code.split("/");
     if( num_let.count() != 2 ) {
-        return make_tuple( std::vector<int>(), 1 );
+        return std::make_tuple( std::vector<int>(), 1 );
     }
 
     bool ok = false;
     int number = num_let.first().toInt( &ok );
     if( !ok ) {
-        return make_tuple( std::vector<int>(), 2 );
+        return std::make_tuple( std::vector<int>(), 2 );
     }
 
     std::string letters = num_let.last().toUtf8().constData();
@@ -118,7 +118,7 @@ std::tuple< std::vector<int>, int > decode_zcode( const std::string & code ) {
         int subtracted, error;
         std::tie( workingvar, subtracted, error ) = div2( workingvar );
         if( error != 0 ) {
-            return make_tuple( std::vector<int>(), 3 );
+            return std::make_tuple( std::vector<int>(), 3 );
         }
         bits.push_back( subtracted );
         // print "After div $workingvar/${reply[2]}"
@@ -126,7 +126,7 @@ std::tuple< std::vector<int>, int > decode_zcode( const std::string & code ) {
     std::reverse( bits.begin(), bits.end() );
     // print "Bits of the letters $letters are: ${(j::)bits[@]}"
 
-    return make_tuple( bits, 0 );
+    return std::make_tuple( bits, 0 );
 }
 // }}}
 
@@ -138,7 +138,7 @@ std::tuple< std::vector<char>, int, int > div2( const std::vector<char> & letter
     std::tuple< std::vector<int>, int > res = letters_to_numbers( letters );
     int error = std::get<1>( res );
     if( error != 0 ) {
-        return make_tuple( std::vector<char>(), 0, error );
+        return std::make_tuple( std::vector<char>(), 0, error );
     }
 
     std::vector<int> numbers = std::get<0>( res );
@@ -171,10 +171,10 @@ std::tuple< std::vector<char>, int, int > div2( const std::vector<char> & letter
     std::tuple< std::vector<char>, int > res2 = numbers_to_letters( result );
     error = std::get<1>(res2);
     if( error != 0 ) {
-        return make_tuple( std::vector<char>(), 0, error );
+        return std::make_tuple( std::vector<char>(), 0, error );
     }
 
-    return make_tuple( std::get<0>( res2 ), subtracted, 0 );
+    return std::make_tuple( std::get<0>( res2 ), subtracted, 0 );
 }
 // }}}
 
@@ -184,6 +184,6 @@ std::tuple< std::string, int, int > div2( const std::string & letters ) {
     int subtracted, error;
     tie( out_letters, subtracted, error ) = div2( std::vector<char>( letters.c_str(), letters.c_str() + letters.size() ) );
 
-    return make_tuple( std::string( out_letters.begin(), out_letters.end() ), subtracted, error );
+    return std::make_tuple( std::string( out_letters.begin(), out_letters.end() ), subtracted, error );
 }
 // }}}
