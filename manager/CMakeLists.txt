@@ -10,6 +10,8 @@ if( NOT CMAKE_PREFIX_PATH )
     #set( CMAKE_PREFIX_PATH /usr/local/Cellar/qt5/5.6.1 )
 endif()
 
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules" )
+
 # Find includes in corresponding build directories
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
@@ -19,6 +21,10 @@ set( CMAKE_AUTOMOC ON )
 # Widgets finds its own dependencies (QtGui and QtCore).
 find_package( Qt5Widgets ${QT_VERSION_REQ} REQUIRED )
 get_target_property( QT_QMAKE_EXECUTABLE Qt5::qmake LOCATION )
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    find_package( CoreFoundation REQUIRED )
+endif()
 
 SET( SRCS
     main.cpp
@@ -56,10 +62,10 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"
 
 add_executable( QtZekyllManager ${SRCS} ${UIS_HDRS} )
 
-target_link_libraries( QtZekyllManager Qt5::Widgets
+target_link_libraries( QtZekyllManager Qt5::Widgets ${CoreFoundation_LIBRARIES}
                        $<TARGET_PROPERTY:git2,INTERFACE_LINK_LIBRARIES>
 )
 
-target_include_directories( QtZekyllManager PRIVATE
+target_include_directories( QtZekyllManager PRIVATE ${CoreFoundation_INCLUDE_DIRS}
                             $<TARGET_PROPERTY:git2,INTERFACE_INCLUDE_DIRECTORIES>
 )
