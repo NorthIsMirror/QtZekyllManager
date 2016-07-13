@@ -16,5 +16,6 @@ std::tuple< std::vector<int>, int > str_01_to_24_bit_pack_numbers( const std::st
 std::tuple< std::vector<int>, int, int > div_24_bit_pack_numbers_36( const std::vector<int> & numbers );
 std::tuple< std::vector<char>, std::vector<int>, int > encode_zcode_24_bit_pack_numbers( const std::vector<int> & numbers );
 std::tuple< std::vector<char>, std::vector<int>, int > encode_zcode_str01( const std::string & sbits );
+std::tuple< std::vector<char>, std::vector<int>, int > encode_zcode_arr01( const std::vector<int> & bits );
 
 #endif // MATH_FUNCTIONS_H
