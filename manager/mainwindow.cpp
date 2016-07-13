@@ -482,48 +482,7 @@ void MainWindow::handle_zkrewrite( int exitCode, QStringList entries ) {
         return;
     }
 
-    QString error_decode;
-    switch( exitCode )
-    {
-
-    case 40:
-        error_decode = "<font color=red>Internal error: improper arguments given to zkrewrite</font>";
-        break;
-    case 49:
-        error_decode = "<font color=red>Internal error: no correct path for zkrewrite</font>";
-        break;
-    case 41:
-        error_decode = "<font color=red>zkrewrite reports the path to repo is incorrect</font>";
-        break;
-    case 42:
-        error_decode = "<font color=red>zkrewrite reports duplicates in zekylls</font>";
-        break;
-    case 43:
-        error_decode = "<font color=red>Internal error: zkrewrite reports entered string too long</font>";
-        break;
-    case 44:
-        error_decode = "<font color=red>Internal error: zkrewrite reports entered string too short</font>";
-        break;
-    case 45:
-        error_decode = "<font color=red>zkrewrite reports duplicates in zekylls</font>";
-        break;
-    case 46:
-        error_decode = "<font color=red>zkrewrite reports there are no zekylls in the repo</font>";
-        break;
-    case 47:
-        error_decode = "<font color=red>zkrewrite reports collisions in zekylls</font>";
-        break;
-    case 48:
-        error_decode = "<font color=red>Internal error: zkrewrite reports error during processing</font>";
-        break;
-    case 128:
-        error_decode = "<font color=red>Are all files added to git?</font>";
-        break;
-    default:
-        error_decode = "Result of the operation";
-        break;
-    }
-
+    QString error_decode = decode_zkrewrite_exit_code( exitCode );
     MessagesI.AppendMessageT( QString("[Exit code: %1] ").arg(exitCode) + error_decode );
 }
 

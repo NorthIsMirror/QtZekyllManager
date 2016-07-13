@@ -5,6 +5,7 @@
 #include <QString>
 
 std::tuple< QString, QString, int > getRepoFromPath( const QString & path );
-QString decode_zkiresize_exit_code(int exitCode);
+QString decode_zkiresize_exit_code( int exitCode );
+QString decode_zkrewrite_exit_code( int exitCode );
 
 #endif // SCRIPT_FUNCTIONS_H
