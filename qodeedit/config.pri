@@ -85,5 +85,3 @@ defineTest( initializeProject ) {
     setTargetDirectory( $${q_target_path} )
     setTemporaryDirectories( $${q_path} )
 }
-
-include( macx.pri )
