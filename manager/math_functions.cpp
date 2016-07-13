@@ -166,6 +166,44 @@ std::tuple<int, int> get_integer_from_base_36( const std::string & letters ) {
 }
 // }}}
 
+// FUNCTION: encode_zcode_24-bit_pack_numbers {{{
+// Takes 24-bit pack numbers whose bits mark which zekylls are active
+// and encodes them to base 36 number expressed via a-z0-9
+std::tuple< std::vector<char>, std::vector<int>, int > encode_zcode_24_bit_pack_numbers( const std::vector<int> & numbers ) {
+    std::vector<int> nums_base36, workingvar;
+    workingvar = numbers;
+
+    bool all_zero = true;
+    for( unsigned int i = 0; i < workingvar.size(); i ++ ) {
+        if( workingvar[i] != 0 ) {
+            all_zero = false;
+            break;
+        }
+    }
+
+    while ( !all_zero ) {
+        int error, subtracted;
+        std::tie( workingvar, subtracted, error ) = div_24_bit_pack_numbers_36( workingvar );
+        nums_base36.push_back( subtracted );
+
+        all_zero = true;
+        for( unsigned int i = 0; i < workingvar.size(); i ++ ) {
+            if( workingvar[i] != 0 ) {
+                all_zero = false;
+                break;
+            }
+        }
+    }
+
+    std::reverse( nums_base36.begin(), nums_base36.end() );
+
+    std::vector<char> letters;
+    int error;
+    tie( letters, error ) = numbers_to_letters( nums_base36 );
+
+    return make_tuple( letters, nums_base36, error );
+}
+// }}}
 
 // FUNCTION: div2 {{{
 // input - zcode's letters

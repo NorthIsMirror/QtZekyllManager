@@ -14,5 +14,6 @@ std::tuple<int, int> get_integer_from_base_36( const std::string & letters );
 std::tuple< std::vector<int>, int > arr_01_to_24_bit_pack_numbers( const std::vector<int> & bits );
 std::tuple< std::vector<int>, int > str_01_to_24_bit_pack_numbers( const std::string & sbits );
 std::tuple< std::vector<int>, int, int > div_24_bit_pack_numbers_36( const std::vector<int> & numbers );
+std::tuple< std::vector<char>, std::vector<int>, int > encode_zcode_24_bit_pack_numbers( const std::vector<int> & numbers );
 
 #endif // MATH_FUNCTIONS_H
