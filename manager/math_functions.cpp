@@ -224,3 +224,42 @@ std::tuple< std::string, int, int > div2( const std::string & letters ) {
     return std::make_tuple( std::string( out_letters.begin(), out_letters.end() ), subtracted, error );
 }
 // }}}
+
+// FUNCTION: arr_01_to_24-bit_pack_numbers {{{
+// Takes ARRAY (@) of 0 and 1 and converts it to array of numbers
+// that are 24-bit packs taken from right to left, from the string
+std::tuple< std::vector<int>, int > arr_01_to_24_bit_pack_numbers( const std::vector<int> & bits ) {
+    std::vector<int> pack, numbers;
+    int count=0, i, size = bits.size();
+
+    // Take packs of 24 bits, convert each to number and store in array
+    for ( i = size - 1; i >= 0; i-- ) {
+        if( bits[i] != 0 && bits[i] != 1 ) {
+            return std::make_tuple( std::vector<int>(), 1 );
+        }
+
+        pack.push_back( bits[i] );
+        count+=1;
+        if ( count < 24 && i != 0 ) {
+                continue;
+        }
+
+        count = 0;
+        std::reverse( pack.begin(), pack.end() );
+
+        // Convert the max. 24 bit pack to number
+        int result = 0;
+        for( int p = 0; p < pack.size(); p ++ ) {
+            result = result*2 + pack[p];
+        }
+
+        numbers.push_back( result );
+
+        pack.clear();
+    }
+
+    std::reverse( numbers.begin(), numbers.end() );
+
+    return std::make_tuple( numbers, 0 );
+}
+// }}}

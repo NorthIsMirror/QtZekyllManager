@@ -11,6 +11,7 @@ std::tuple< std::vector<char>, int, int > div2( const std::vector<char> & letter
 std::tuple< std::string, int, int > div2( const std::string & letters );
 std::tuple< std::vector<int>, int > decode_zcode( const std::string & code );
 std::tuple<int, int> get_integer_from_base_36( const std::string & letters );
+std::tuple< std::vector<int>, int > arr_01_to_24_bit_pack_numbers( const std::vector<int> & bits );
 
 
 
