@@ -53,23 +53,11 @@ QT5_WRAP_UI( UIS_HDRS
 include_directories( ${Qt5Widgets_INCLUDE_DIRS} )
 
 # Needed -DQT_WIDGETS_LIB for Qt 5
-add_definitions( ${Qt5Widgets_DEFINITIONS} ${Qt5MacExtras_DEFINITIONS} )
+add_definitions( ${Qt5Widgets_DEFINITIONS} )
 
 # Executables fail to build with Qt 5 without -fPIE
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 add_executable( QtZekyllManager ${SRCS} ${UIS_HDRS} )
 
-if( APPLE )
-    target_link_libraries( QtZekyllManager Qt5::Widgets Qt5::MacExtras
-                           $<TARGET_PROPERTY:QScintilla2,INTERFACE_LINK_LIBRARIES>
-)
-else()
-    target_link_libraries( QtZekyllManager Qt5::Widgets
-                           $<TARGET_PROPERTY:QScintilla2,INTERFACE_LINK_LIBRARIES>
-)
-endif()
-
-target_include_directories( QtZekyllManager PRIVATE
-                            $<TARGET_PROPERTY:QScintilla2,INTERFACE_INCLUDE_DIRECTORIES>
-)
+target_link_libraries( QtZekyllManager Qt5::Widgets )
