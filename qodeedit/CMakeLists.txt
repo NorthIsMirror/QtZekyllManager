@@ -4,7 +4,7 @@ set ( ${PROJECT_NAME}_NAME ${PROJECT_NAME} )
 set ( ${PROJECT_NAME}_VERSION 0.1.0 )
 set ( ${PROJECT_NAME}_ABSOLUTE_DATA_DIR ${PROJECT_SOURCE_DIR}/share )
 configure_file (
-    "${PROJECT_SOURCE_DIR}/QodeEditConfig.h.in"
+    "${PROJECT_SOURCE_DIR}/QodeEditConfig_CMake.h.in"
     "${PROJECT_BINARY_DIR}/QodeEditConfig.h"
 )
 option( STATICLIB "Build static library (default ON)" ON )
