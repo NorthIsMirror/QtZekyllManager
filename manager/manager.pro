@@ -48,3 +48,16 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     zmeditor.ui \
     closewithoutsavingdialog.ui
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libgit2/release/ -lgit2
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libgit2/debug/ -lgit2
+else:unix: LIBS += -L$$PWD/../libgit2/ -lgit2
+
+INCLUDEPATH += $$PWD/../libgit2/include
+DEPENDPATH += $$PWD/../libgit2/include
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../libgit2/release/libgit2.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../libgit2/debug/libgit2.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../libgit2/release/git2.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../libgit2/debug/git2.lib
+else:unix: PRE_TARGETDEPS += $$PWD/../libgit2/libgit2.a
