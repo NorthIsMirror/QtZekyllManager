@@ -55,9 +55,3 @@ Q_DOLLAR = "\\$"
 Q_OPENING_BRACE = "\\{"
 Q_CLOSING_BRACE = "\\}"
 
-# include functions
-isEmpty( translations_pass ) {
-    include( $$PWD/functions.pri )
-} else {
-    include( $$PWD/fake-functions.pri )
-}
