@@ -146,7 +146,7 @@ std::tuple<int, int> get_integer_from_base_36( const std::string & letters ) {
         int subtracted, error;
         std::tie( workingvar, subtracted, error ) = div2( workingvar );
         if( error != 0 ) {
-            return std::make_tuple( 0, error );
+            return std::make_tuple( 0, error + 1000 );
         }
         bits.push_back( subtracted );
     }
@@ -174,13 +174,13 @@ std::tuple< std::vector<char>, std::vector<int>, int > encode_zcode_str01( const
     int error;
     std::tie( numbers, error ) = str_01_to_24_bit_pack_numbers( sbits );
     if( error != 0 ) {
-        return make_tuple( std::vector<char>(), numbers, error + 1000 );
+        return make_tuple( std::vector<char>(), numbers, error + 2000 );
     }
 
     std::vector<char> code;
     std::tie( code, numbers, error ) = encode_zcode_24_bit_pack_numbers( numbers );
     if( error != 0 ) {
-        return make_tuple( code, numbers, error + 2000 );
+        return make_tuple( code, numbers, error + 3000 );
     }
 
     return make_tuple( code, numbers, 0 );
@@ -222,6 +222,10 @@ std::tuple< std::vector<char>, std::vector<int>, int > encode_zcode_24_bit_pack_
     int error;
     tie( letters, error ) = numbers_to_letters( nums_base36 );
 
+    if( error != 0 ) {
+        error += 4000;
+    }
+
     return make_tuple( letters, nums_base36, error );
 }
 // }}}
@@ -234,7 +238,7 @@ std::tuple< std::vector<char>, int, int > div2( const std::vector<char> & letter
     std::tuple< std::vector<int>, int > res = letters_to_numbers( letters );
     int error = std::get<1>( res );
     if( error != 0 ) {
-        return std::make_tuple( std::vector<char>(), 0, error );
+        return std::make_tuple( std::vector<char>(), 0, error + 5000 );
     }
 
     std::vector<int> numbers = std::get<0>( res );
@@ -267,7 +271,7 @@ std::tuple< std::vector<char>, int, int > div2( const std::vector<char> & letter
     std::tuple< std::vector<char>, int > res2 = numbers_to_letters( result );
     error = std::get<1>(res2);
     if( error != 0 ) {
-        return std::make_tuple( std::vector<char>(), 0, error );
+        return std::make_tuple( std::vector<char>(), 0, error + 6000 );
     }
 
     return std::make_tuple( std::get<0>( res2 ), subtracted, 0 );
@@ -279,7 +283,9 @@ std::tuple< std::string, int, int > div2( const std::string & letters ) {
     std::vector<char> out_letters;
     int subtracted, error;
     tie( out_letters, subtracted, error ) = div2( std::vector<char>( letters.c_str(), letters.c_str() + letters.size() ) );
-
+    if( error != 0 ) {
+        error += 7000;
+    }
     return std::make_tuple( std::string( out_letters.begin(), out_letters.end() ), subtracted, error );
 }
 // }}}
