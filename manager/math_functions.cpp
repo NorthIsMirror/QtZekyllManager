@@ -225,6 +225,32 @@ std::tuple< std::string, int, int > div2( const std::string & letters ) {
 }
 // }}}
 
+// FUNCTION: str_01_to_24-bit_pack_numbers {{{
+// Takes STRING of 0 and 1 and converts it to array of numbers
+// that are 24-bit packs taken from right to left, from the string
+std::tuple< std::vector<int>, int > str_01_to_24_bit_pack_numbers( const std::string & sbits ) {
+    QString sbits2 = QString::fromLatin1( sbits.c_str() );
+    QStringList lbits = sbits2.split( "", QString::SkipEmptyParts );
+
+    std::vector<int> bits;
+    foreach ( const QString &str, lbits ) {
+        bool ok = false;
+        int bit = str.toInt( &ok );
+        if( !ok ) {
+            return make_tuple( std::vector<int>(), 1 );
+        }
+
+        if( bit != 0 && bit != 1 ) {
+            return make_tuple( std::vector<int>(), 2 );
+        }
+
+        bits.push_back( bit );
+    }
+
+    return arr_01_to_24_bit_pack_numbers( bits );
+}
+// }}}
+
 // FUNCTION: arr_01_to_24-bit_pack_numbers {{{
 // Takes ARRAY (@) of 0 and 1 and converts it to array of numbers
 // that are 24-bit packs taken from right to left, from the string
