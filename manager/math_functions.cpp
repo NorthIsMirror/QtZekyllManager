@@ -275,7 +275,7 @@ std::tuple< std::vector<int>, int > arr_01_to_24_bit_pack_numbers( const std::ve
 
         // Convert the max. 24 bit pack to number
         int result = 0;
-        for( int p = 0; p < pack.size(); p ++ ) {
+        for( unsigned int p = 0; p < pack.size(); p ++ ) {
             result = result*2 + pack[p];
         }
 
