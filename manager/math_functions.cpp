@@ -69,7 +69,7 @@ std::tuple< std::vector<int>, int> letters_to_numbers( const std::vector<char> &
     rx.setCaseSensitivity( Qt::CaseSensitive );
     if ( rx.indexIn( str ) == -1 ) {
         MessagesI.AppendMessageT( "Incorrect character during conversion, allowed are a-z and 0-9" );
-        return std::make_tuple( reply, 1 );
+        return std::make_tuple( reply, 100 );
     }
 
     int number;
@@ -94,13 +94,13 @@ std::tuple< std::vector<int>, int > decode_zcode( const std::string & code ) {
     QString _code = QString::fromLatin1( code.c_str() );
     QStringList num_let = _code.split("/");
     if( num_let.count() != 2 ) {
-        return std::make_tuple( std::vector<int>(), 1 );
+        return std::make_tuple( std::vector<int>(), 101 );
     }
 
     bool ok = false;
     int number = num_let.first().toInt( &ok );
     if( !ok ) {
-        return std::make_tuple( std::vector<int>(), 2 );
+        return std::make_tuple( std::vector<int>(), 102 );
     }
 
     std::string letters = num_let.last().toUtf8().constData();
@@ -118,7 +118,7 @@ std::tuple< std::vector<int>, int > decode_zcode( const std::string & code ) {
         int subtracted, error;
         std::tie( workingvar, subtracted, error ) = div2( workingvar );
         if( error != 0 ) {
-            return std::make_tuple( std::vector<int>(), 3 );
+            return std::make_tuple( std::vector<int>(), 103 );
         }
         bits.push_back( subtracted );
         // print "After div $workingvar/${reply[2]}"
@@ -237,11 +237,11 @@ std::tuple< std::vector<int>, int > str_01_to_24_bit_pack_numbers( const std::st
         bool ok = false;
         int bit = str.toInt( &ok );
         if( !ok ) {
-            return make_tuple( std::vector<int>(), 1 );
+            return make_tuple( std::vector<int>(), 104 );
         }
 
         if( bit != 0 && bit != 1 ) {
-            return make_tuple( std::vector<int>(), 2 );
+            return make_tuple( std::vector<int>(), 105 );
         }
 
         bits.push_back( bit );
@@ -261,7 +261,7 @@ std::tuple< std::vector<int>, int > arr_01_to_24_bit_pack_numbers( const std::ve
     // Take packs of 24 bits, convert each to number and store in array
     for ( i = size - 1; i >= 0; i-- ) {
         if( bits[i] != 0 && bits[i] != 1 ) {
-            return std::make_tuple( std::vector<int>(), 1 );
+            return std::make_tuple( std::vector<int>(), 106 );
         }
 
         pack.push_back( bits[i] );
