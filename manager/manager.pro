@@ -63,3 +63,41 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../libgit2/
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../libgit2/release/git2.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../libgit2/debug/git2.lib
 else:unix: PRE_TARGETDEPS += $$PWD/../libgit2/libgit2.a
+
+
+
+MAC_SDK  = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
+if( !exists( $$MAC_SDK) ) {
+  error("The selected Mac OSX SDK does not exist at $$MAC_SDK!")
+}
+
+# CoreFoundation
+QMAKE_LFLAGS += -F$$MAC_SDK/System/Library/Frameworks/CoreFoundation.framework
+LIBS += -framework CoreFoundation
+
+# Security
+QMAKE_LFLAGS += -F/System/Library/Frameworks/Security.framework
+LIBS += -framework Security
+
+# Iconv
+macx: LIBS += -L$$PWD/../../../../../usr/lib/ -liconv
+INCLUDEPATH += $$PWD/../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include
+DEPENDPATH += $$PWD/../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include
+
+# Curl
+macx: LIBS += -L$$PWD/../../../../../usr/lib/ -lcurl
+
+INCLUDEPATH += $$PWD/../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include
+DEPENDPATH += $$PWD/../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include
+
+# LibSSH2
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/libssh2/1.7.0/lib/ -lssh2
+
+INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/libssh2/1.7.0/include
+DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/libssh2/1.7.0/include
+
+# Zlib
+macx: LIBS += -L$$PWD/../../../../../usr/lib/ -lz
+
+INCLUDEPATH += $$PWD/../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include
+DEPENDPATH += $$PWD/../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include
