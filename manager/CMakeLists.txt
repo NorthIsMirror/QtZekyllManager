@@ -19,11 +19,25 @@ set( CMAKE_INCLUDE_CURRENT_DIR ON )
 set( CMAKE_AUTOMOC ON )
 
 # Widgets finds its own dependencies (QtGui and QtCore).
-find_package( Qt5Widgets ${QT_VERSION_REQ} REQUIRED )
+find_package( Qt5Widgets ${QT_VERSION_REQ} QUIET )
+if( NOT Qt5Widgets_FOUND )
+    message( "=" )
+    message( "= Could not find Qt5 (its Widgets component). Set CMAKE_PREFIX_PATH to where Qt is installed. =" )
+    message( "=" )
+    message( FATAL_ERROR "Some components have not been found" )
+endif()
+
 get_target_property( QT_QMAKE_EXECUTABLE Qt5::qmake LOCATION )
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    find_package( CoreFoundation REQUIRED )
+if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
+    find_package( CoreFoundation QUIET )
+    if( NOT CoreFoundation_FOUND )
+        message( "=" )
+        message( "= Could not find CoreFoundation library. Set CMAKE_FRAMEWORK_PATH to where Xcode's frameworks are located. =" )
+        message( "= It's a path like: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/ =" )
+        message( "=" )
+        message( FATAL_ERROR "Some components have not been found" )
+    endif()
 endif()
 
 SET( SRCS
