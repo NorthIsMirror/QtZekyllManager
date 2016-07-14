@@ -42,6 +42,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget_3->horizontalHeader()->setStretchLastSection( true );
     ui->tableWidget_3->setColumnHidden(0, true);
 
+    QString PATH = QString::fromLocal8Bit( qgetenv("PATH") );
+    if( PATH.indexOf( ":" ) != -1 ) {
+        PATH += ":" + QString::fromLocal8Bit( qgetenv("HOME") ) + "/.zekyll/zekyll";
+    }
+    qputenv( "PATH", PATH.toLocal8Bit() );
+
     zkiresize_ = new ZkIResize();
 
     // Connect ZkIResize to obtain list of zekylls
