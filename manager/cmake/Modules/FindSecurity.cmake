@@ -1,0 +1,5 @@
+find_path( SECURITY_INCLUDE_DIRS NAMES Security/Security.h )
+find_library( SECURITY_LIBRARIES NAMES Security )
+if( SECURITY_INCLUDE_DIRS AND SECURITY_LIBRARIES )
+    set( SECURITY_FOUND TRUE )
+endif ()
