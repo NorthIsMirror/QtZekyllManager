@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     zmeditor.cpp \
     myqtablewidget.cpp \
     git.cpp \
-    lgit.cpp
+    lgit.cpp \
+    mycodeeditor.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -45,7 +46,8 @@ HEADERS  += mainwindow.h \
     zmeditor.h \
     myqtablewidget.h \
     git.h \
-    lgit.h
+    lgit.h \
+    mycodeeditor.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \
@@ -101,3 +103,17 @@ macx: LIBS += -L$$PWD/../../../../../usr/lib/ -lz
 
 INCLUDEPATH += $$PWD/../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include
 DEPENDPATH += $$PWD/../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qodeedit/release/ -lQodeEdit
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qodeedit/debug/ -lQodeEdit
+else:unix: LIBS += -L$$OUT_PWD/../qodeedit/ -lQodeEdit
+
+INCLUDEPATH += $$PWD/../qodeedit/src
+DEPENDPATH += $$PWD/../qodeedit/src
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qodeedit/release/libQodeEdit.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qodeedit/debug/libQodeEdit.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qodeedit/release/QodeEdit.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qodeedit/debug/QodeEdit.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../qodeedit/libQodeEdit.a

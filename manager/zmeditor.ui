@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QPlainTextEdit" name="textEdit"/>
+    <widget class="MyCodeEditor" name="textEdit"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -57,6 +57,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyCodeEditor</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">mycodeeditor.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
