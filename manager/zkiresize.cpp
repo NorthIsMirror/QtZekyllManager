@@ -1,5 +1,9 @@
 #include "zkiresize.h"
+#include "singleton.h"
+#include "messages.h"
 #include <QDebug>
+
+#define MessagesI Singleton<Messages>::instance()
 
 ZkIResize::ZkIResize(QObject *parent) : QObject(parent)
 {
@@ -57,7 +61,9 @@ void ZkIResize::list() {
     process_list_.kill();
     process_list_.waitForFinished(50);
     process_list_.start("zkiresize", arguments_list_);
-    process_list_.waitForStarted();
+    if(!process_list_.waitForStarted()) {
+        MessagesI.AppendMessageT("<font color=red>Failed to communicate with the zekyll backend (zkiresize) for list operation</font>");
+    }
 }
 
 void ZkIResize::consistent() {
@@ -67,7 +73,9 @@ void ZkIResize::consistent() {
     process_consistent_.kill();
     process_consistent_.waitForFinished(50);
     process_consistent_.start("zkiresize", arguments_consistent_);
-    process_consistent_.waitForStarted();
+    if(!process_consistent_.waitForStarted()) {
+        MessagesI.AppendMessageT("<font color=red>Failed to communicate with the zekyll backend (zkiresize)</font>");
+    }
 }
 
 void ZkIResize::resize(int current_size, int new_size) {
@@ -82,5 +90,7 @@ void ZkIResize::resize(int current_size, int new_size) {
     process_resize_.kill();
     process_resize_.waitForFinished(50);
     process_resize_.start("zkiresize", arguments_resize_);
-    process_resize_.waitForStarted();
+    if(!process_resize_.waitForStarted()) {
+        MessagesI.AppendMessageT("<font color=red>Failed to communicate with the zekyll backend (zkiresize) for resize operation</font>");
+    }
 }
