@@ -600,10 +600,10 @@ void MainWindow::on_zcode_editingFinished()
     applyCodeSelectors( bits );
 }
 
-bool MainWindow::applyCodeSelectors( const vector<int> & bits ) {
-    bool retval = true;
+int MainWindow::applyCodeSelectors( const vector<int> & bits ) {
+    int retval = 0;
     if( lzcsde_list_.count() < bits.size() ) {
-        retval = false;
+        retval += 160;
         MessagesI.AppendMessageT( QString( "Warning: Code is for index of size at least %1" ).arg(bits.size()) );
     }
 
@@ -623,12 +623,16 @@ bool MainWindow::applyCodeSelectors( const vector<int> & bits ) {
         QWidget *sel_widget = ui->tableWidget->cellWidget( row, 2 );
         QWidget *widget = qobject_cast<QWidget*>( sel_widget );
         if(!widget) {
+            retval += 161;
+            MessagesI.AppendMessageT( "Warning: Problems with data (7)" );
             continue;
         }
 
         QLayout *layout_general = widget->layout();
         QHBoxLayout *layout = qobject_cast<QHBoxLayout *>( layout_general );
         if(!layout) {
+            retval += 162;
+            MessagesI.AppendMessageT( "Warning: Problems with data (8)" );
             continue;
         }
 
@@ -652,12 +656,14 @@ bool MainWindow::applyCodeSelectors( const vector<int> & bits ) {
                         checkBox->setCheckState( Qt::Unchecked );
                     }
                 } else {
+                    retval += 163;
                     MessagesI.AppendMessageT( "Warning: Problems with data (1)" );
                 }
+            } else {
+                retval += 164;
+                MessagesI.AppendMessageT( "Warning: Problems with data (11)" );
             }
         }
-
-        return retval;
     }
 
 
