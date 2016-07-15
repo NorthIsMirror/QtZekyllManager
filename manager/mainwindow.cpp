@@ -577,4 +577,76 @@ void MainWindow::on_zcode_editingFinished()
             this->ui->site->setCurrentIndex( idx - 1 );
         }
     }
+
+    // Skip computed number of bits
+    bits.erase( bits.begin() + (bits.size() - to_skip), bits.end() );
+
+    // Two last bits are version
+    bits.erase( bits.begin() + (bits.size() - 2), bits.end() );
+
+    applyCodeSelectors( bits );
+}
+
+bool MainWindow::applyCodeSelectors( const vector<int> & bits ) {
+    bool retval = true;
+    if( lzcsde_list_.count() < (int)bits.size() ) {
+        retval = false;
+        MessagesI.AppendMessageT( QString( "Warning: Code is for index of size at least %1" ).arg(bits.size()) );
+    }
+
+    bool selected;
+    int rows = ui->tableWidget->rowCount();
+    for( int row = 0; row < rows; row ++ ) {
+        if( bits.size() - 1 < row ) {
+            selected  = false;
+        } else {
+            if( bits[ row ] == 0 ) {
+                selected = false;
+            } else {
+                selected = true;
+            }
+        }
+
+        QWidget *sel_widget = ui->tableWidget->cellWidget( row, 2 );
+        QWidget *widget = qobject_cast<QWidget*>( sel_widget );
+        if(!widget) {
+            continue;
+        }
+
+        QLayout *layout_general = widget->layout();
+        QHBoxLayout *layout = qobject_cast<QHBoxLayout *>( layout_general );
+        if(!layout) {
+            continue;
+        }
+
+        QTableWidgetItem *id_item = ui->tableWidget->item( row, 0 );
+
+        int count = layout->count();
+        for( int i = 0; i < count; i ++ ) {
+            QLayoutItem *l_item = layout->itemAt( i );
+            QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget()     );
+            if( checkBox && id_item ) {
+                QString id = id_item->text();
+                bool ok = false;
+                int intid = id.toInt( &ok );
+                if( ok ) {
+                    int idx = lzcsde_list_.findIdxOfId( intid );
+                    lzcsde_list_.entries()[idx].setChecked( selected );
+
+                    if( selected ) {
+                        checkBox->setCheckState( Qt::Checked );
+                    } else {
+                        checkBox->setCheckState( Qt::Unchecked );
+                    }
+                } else {
+                    MessagesI.AppendMessageT( "Warning: incorrect internal data (1)" );
+                }
+            }
+        }
+
+        return retval;
+    }
+
+
+    return retval;
 }

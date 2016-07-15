@@ -52,6 +52,8 @@ private:
     void insertLZSDETableRow(QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
                                 const QString & description, const QString & error);
 
+    bool applyCodeSelectors( const std::vector<int> & bits );
+
 signals:
     void repositoryChanged();
 

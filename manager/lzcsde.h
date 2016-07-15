@@ -59,7 +59,7 @@ public:
 
     const LZCSDE_Entry & getId( const QString & id );
 
-    const QVector<LZCSDE_Entry> & entries() { return entries_; }
+    QVector<LZCSDE_Entry> & entries() { return entries_; }
 
     int findIdxOfId( int id );
 
