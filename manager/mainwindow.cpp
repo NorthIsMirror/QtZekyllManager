@@ -95,6 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     create_codes_map();
     create_rcodes_map();
+    create_sites_maps();
 
     zkiresize_->setIndex( current_index_ );
     reloadRepository();

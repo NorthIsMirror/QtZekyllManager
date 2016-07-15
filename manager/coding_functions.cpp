@@ -1,11 +1,16 @@
 #include "coding_functions.h"
 #include "math_functions.h"
+#include <iostream>
+#include <sstream>
 #include <string>
+#include <algorithm>
 #include <QDebug>
 #include <QMap>
 
 QMap<QString, QString> codes;
 QMap<QString, QString> rcodes;
+QMap<QString, QString> sites;
+QMap<QString, QString> rsites;
 
 // FUNCTION: setIndex {{{
 // Sets ZKL_INDEX_ZEKYLLS array which contains all
@@ -32,7 +37,98 @@ std::tuple< std::vector<std::string>, int> setIndex(int index) {
 }
 // }}}
 
+// input – bits decoded from zcode
+// first reply = bits to skip
+// second reply = ( file "" rev "" repo "" wordrev "" chksum "" site "" unused1 "" unused2 "" unused3 "" error "" )
+std::tuple< int, QMap<QString,QString>, int > process_meta_data( const std::vector<int> & _bits ) {
+    int size = _bits.size();
+    std::vector<int> bits = _bits;
+    std::reverse( bits.begin(), bits.end() );
 
+    std::stringstream ss;
+    std::copy( bits.begin(), bits.end(), std::ostream_iterator<int>(ss,""));
+    QString strbits = QString::fromStdString( ss.str() );
+
+    QRegExp rx("^[01]+$");
+    if( rx.indexIn(strbits) == -1 ) {
+        return std::make_tuple( 0, QMap<QString, QString>(), 120 );
+    }
+
+    // We will use this value to compute how much bits were skipped
+    int init_len = strbits.count();
+
+    int REPLY, error = 0;
+    QMap< QString, QString > decoded;
+    decoded["file"] = "";
+    decoded["rev"] = "";
+    decoded["repo"] = "";
+    decoded["wordrev"] = "";
+    decoded["chksum"] = "";
+    decoded["site"] = "";
+    decoded["unused1"] = "";
+    decoded["unused2"] = "";
+    decoded["unused3"] = "";
+    decoded["error"] = "";
+
+    // Is there SS?
+    QString str = strbits.left( codes["ss"].count() );
+    if( str == codes["ss"] ) {
+        strbits = strbits.mid( codes["ss"].count() );
+        str = strbits.left( codes["ss"].count() );
+
+        // Is there immediate following SS?
+        if( str == codes["ss"] ) {
+            // We should skip one SS and there is nothing to decode
+            return std::make_tuple( codes["ss"].count(), decoded, 0 );
+        }
+
+        //
+        // Follows meta data, decode it
+        //
+
+        // keys of the 'decoded' hash
+        QString current_selector="error";
+        int trylen;
+        QString mat, trystr;
+        while ( 1 ) {
+            mat="";
+            for ( trylen = 6; trylen <= 7; trylen ++ ) {
+                // Take substring of len $trylen and check if
+                // it matches any Huffman code
+                trystr = strbits.left( trylen );
+                if( rcodes.contains( trystr )) {
+                    mat = rcodes[ trystr ];
+                    break;
+                }
+            }
+
+            if( mat == "" ) {
+                return std::make_tuple( 0, decoded, 121 );
+            }
+
+            // Skip decoded bits
+            strbits = strbits.mid( trylen );
+
+            // Handle what has been matched, either selector or data
+            if( mat == "ss" ) {
+                break;
+            } else if( decoded.contains(mat) ) {
+                current_selector = mat;
+            } else {
+                if( current_selector == "site" ) {
+                    mat = rsites[ mat ];
+                }
+                decoded[ current_selector ].append( mat );
+            }
+        }
+
+        REPLY = init_len - strbits.count();
+    } else {
+        REPLY = 0;
+    }
+
+    return std::make_tuple( REPLY, decoded, error );
+}
 
 void create_codes_map() {
     codes["ss"]      = "101000";
@@ -194,4 +290,14 @@ void create_rcodes_map() {
     rcodes["1100111"] = "B";
     rcodes["1100101"] = "D";
     rcodes["1100100"] = "C";
+}
+
+void create_sites_maps() {
+        sites["gh"] = "1";
+        sites["bb"] = "2";
+        sites["gl"] = "3";
+
+        rsites["1"] = "gh";
+        rsites["2"] = "bb";
+        rsites["3"] = "gl";
 }
