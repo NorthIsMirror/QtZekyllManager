@@ -546,9 +546,14 @@ void MainWindow::handle_zkiresize_resize( int exitCode, QStringList entries ) {
 
 void MainWindow::on_zcode_editingFinished()
 {
+    QString input = ui->zcode->text().trimmed();
+    if( input == "" ) {
+        return;
+    }
+
     vector<int> bits;
     int error;
-    tie( bits, error ) = decode_zcode( ui->zcode->text().toStdString() );
+    tie( bits, error ) = decode_zcode( input.toStdString() );
     if( error != 0 ) {
         MessagesI.AppendMessageT( QString("<font color=red>Error %1 during decoding the entered Zcode</font>").arg( error ) );
     }
