@@ -67,7 +67,7 @@ public:
 
     bool updateDescriptionOfId( const QString & id, const QString & description );
 
-    int count() const { return entries_.count(); }
+    unsigned int count() const { return entries_.count(); }
 };
 
 #endif // LZCSDE_H

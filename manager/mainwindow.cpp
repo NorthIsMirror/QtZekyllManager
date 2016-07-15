@@ -550,7 +550,7 @@ void MainWindow::on_zcode_editingFinished()
     int error;
     tie( bits, error ) = decode_zcode( ui->zcode->text().toStdString() );
     if( error != 0 ) {
-        MessagesI.AppendMessageT( QString("<font color=red>Error %1 during decoding the entered Zcode").arg( error ) );
+        MessagesI.AppendMessageT( QString("<font color=red>Error %1 during decoding the entered Zcode</font>").arg( error ) );
     }
 
     int to_skip;
@@ -578,26 +578,34 @@ void MainWindow::on_zcode_editingFinished()
         }
     }
 
-    // Skip computed number of bits
-    bits.erase( bits.begin() + (bits.size() - to_skip), bits.end() );
+    if( to_skip > bits.size() ) {
+        MessagesI.AppendMessageT("Warning: Problems with data (2)");
+    } else {
+        // Skip computed number of bits
+        bits.erase( bits.begin() + (bits.size() - to_skip), bits.end() );
+    }
 
-    // Two last bits are version
-    bits.erase( bits.begin() + (bits.size() - 2), bits.end() );
+    if( 2 > bits.size() ) {
+        MessagesI.AppendMessageT("Warning: Problems with data (3)");
+    } else {
+        // Two last bits are version
+        bits.erase( bits.begin() + (bits.size() - 2), bits.end() );
+    }
 
     applyCodeSelectors( bits );
 }
 
 bool MainWindow::applyCodeSelectors( const vector<int> & bits ) {
     bool retval = true;
-    if( lzcsde_list_.count() < (int)bits.size() ) {
+    if( lzcsde_list_.count() < bits.size() ) {
         retval = false;
         MessagesI.AppendMessageT( QString( "Warning: Code is for index of size at least %1" ).arg(bits.size()) );
     }
 
     bool selected;
     int rows = ui->tableWidget->rowCount();
-    for( int row = 0; row < rows; row ++ ) {
-        if( bits.size() - 1 < row ) {
+    for( unsigned int row = 0; row < rows; row ++ ) {
+        if( bits.size() < row + 1 ) {
             selected  = false;
         } else {
             if( bits[ row ] == 0 ) {
@@ -639,7 +647,7 @@ bool MainWindow::applyCodeSelectors( const vector<int> & bits ) {
                         checkBox->setCheckState( Qt::Unchecked );
                     }
                 } else {
-                    MessagesI.AppendMessageT( "Warning: incorrect internal data (1)" );
+                    MessagesI.AppendMessageT( "Warning: Problems with data (1)" );
                 }
             }
         }
