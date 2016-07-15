@@ -93,6 +93,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(&MessagesI, SIGNAL(messagesChanged(const QStringList&)), this, SLOT(updateMessages(const QStringList&)) );
     QObject::connect(this->ui->tabWidget, SIGNAL(thirdTabMarkingEnough()), this, SLOT(stopThirdTabMarking()));
 
+    create_codes_map();
+    create_rcodes_map();
+
     zkiresize_->setIndex( current_index_ );
     reloadRepository();
 
