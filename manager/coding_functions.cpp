@@ -4,9 +4,6 @@
 #include <QDebug>
 #include <QMap>
 
-using namespace std;
-
-
 QMap<QString, QString> codes;
 QMap<QString, QString> rcodes;
 
@@ -14,9 +11,9 @@ QMap<QString, QString> rcodes;
 // Sets ZKL_INDEX_ZEKYLLS array which contains all
 // zekylls that potentially can be part of the index
 //
-std::tuple<vector<string>, int> setIndex(int index) {
+std::tuple< std::vector<std::string>, int> setIndex(int index) {
 
-    vector<string> ZKL_INDEX_ZEKYLLS;
+    std::vector<std::string> ZKL_INDEX_ZEKYLLS;
 
     // Compute first element pointed to by index
     int first=(index-1)*150;
@@ -24,14 +21,14 @@ std::tuple<vector<string>, int> setIndex(int index) {
     int error=0;
     for ( int i=first; i<=(first+150-1); i ++ ) {
         // Convert the number to base 36 with leading zeros
-        std::tuple< vector<char>, int > result = convert_integer_to_base_36(i);
-        error += get<1>( result );
-        string zekyll = string( get<0>(result).begin(), get<0>(result).end() );
-        ZKL_INDEX_ZEKYLLS.push_back(zekyll);
+        std::tuple< std::vector<char>, int > result = convert_integer_to_base_36(i);
+        error += std::get<1>( result );
+        std::string zekyll = std::string( std::get<0>( result ).begin(), std::get<0>( result ).end() );
+        ZKL_INDEX_ZEKYLLS.push_back( zekyll );
     }
     // foreach(const string& s, ZKL_INDEX_ZEKYLLS) { qDebug() << QString(s.c_str()); }
 
-    return make_tuple( ZKL_INDEX_ZEKYLLS, error );
+    return std::make_tuple( ZKL_INDEX_ZEKYLLS, error );
 }
 // }}}
 
