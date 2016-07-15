@@ -34,7 +34,7 @@ public:
         entry.setId(id);
         entry.setListing(listing);
         entry.setZekyll(zekyll);
-        entry.setChecked(false);
+        entry.setChecked(true);
         entry.setSection(section);
         entry.setDescription(description);
         entry.setError("");

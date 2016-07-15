@@ -17,7 +17,7 @@ bool LZCSDE::insertFromListing( int id, const QString & listing ) {
         entry.setId( id );
         entry.setListing( listing );
         entry.setZekyll( rx1.cap(1) );
-        entry.setChecked( false );
+        entry.setChecked( true );
         entry.setSection( rx1.cap(2) );
         entry.setDescription( rx1.cap(3) );
         entry.setError( rx1.cap(4) );
@@ -29,7 +29,7 @@ bool LZCSDE::insertFromListing( int id, const QString & listing ) {
         entry.setId( id );
         entry.setListing( listing );
         entry.setZekyll( rx2.cap(1) );
-        entry.setChecked( false );
+        entry.setChecked( true );
         entry.setSection( "" );
         entry.setDescription( "" );
         entry.setError( rx2.cap(2) );
@@ -41,7 +41,7 @@ bool LZCSDE::insertFromListing( int id, const QString & listing ) {
         entry.setId( id );
         entry.setListing( listing );
         entry.setZekyll( rx3.cap(1) );
-        entry.setChecked( false );
+        entry.setChecked( true );
         entry.setSection( rx3.cap(2) );
         entry.setDescription( rx3.cap(3) );
         entry.setError( "" );
