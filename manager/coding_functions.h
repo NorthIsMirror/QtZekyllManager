@@ -10,6 +10,10 @@ std::tuple< std::vector<std::string> , int > setIndex(int index);
 void create_codes_map();
 void create_rcodes_map();
 void create_sites_maps();
+QMap< QString, QString > & getCodes();
+QMap< QString, QString > & getRCodes();
+QMap< QString, QString > & getSites();
+QMap< QString, QString > & getRSites();
 std::tuple< int, QMap<QString,QString>, int > process_meta_data( const std::vector<int> & _bits );
 
 #endif // CODING_FUNCTIONS_H

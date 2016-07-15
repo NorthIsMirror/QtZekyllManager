@@ -543,3 +543,38 @@ void MainWindow::handle_zkiresize_resize( int exitCode, QStringList entries ) {
         MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend (1):</font> ") + error_decode );
     }
 }
+
+void MainWindow::on_zcode_editingFinished()
+{
+    vector<int> bits;
+    int error;
+    tie( bits, error ) = decode_zcode( ui->zcode->text().toStdString() );
+    if( error != 0 ) {
+        MessagesI.AppendMessageT( QString("<font color=red>Error %1 during decoding the entered Zcode").arg( error ) );
+    }
+
+    int to_skip;
+    QMap< QString, QString > decoded;
+    tie( to_skip, decoded, error ) = process_meta_data( bits );
+
+    this->ui->file->setText( decoded["file"] );
+    this->ui->rev->setText( decoded["rev"] );
+    this->ui->userRepo->setText( decoded["repo"] );
+    if( decoded["site"] == "" ) {
+        this->ui->site->setCurrentIndex( 0 );
+    } else {
+        QString strIdx = getSites()[ decoded["site"] ];
+        if( strIdx == "" ) {
+            MessagesI.AppendMessageT( "Warning: decoded incorrect site, falling back to GH" );
+            this->ui->site->setCurrentIndex( 0 );
+        } else {
+            bool ok = false;
+            int idx = strIdx.toInt( &ok );
+            if( !ok ) {
+                MessagesI.AppendMessageT( "Warning: decoded incorrect site, falling back to GH" );
+                this->ui->site->setCurrentIndex( 0 );
+            }
+            this->ui->site->setCurrentIndex( idx - 1 );
+        }
+    }
+}

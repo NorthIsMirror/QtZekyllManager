@@ -173,7 +173,23 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="site"/>
+       <widget class="QComboBox" name="site">
+        <item>
+         <property name="text">
+          <string>gh</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>bb</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>gl</string>
+         </property>
+        </item>
+       </widget>
       </item>
      </layout>
     </item>

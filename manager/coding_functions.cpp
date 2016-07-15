@@ -301,3 +301,8 @@ void create_sites_maps() {
         rsites["2"] = "bb";
         rsites["3"] = "gl";
 }
+
+QMap< QString, QString > & getCodes() { return codes; }
+QMap< QString, QString > & getRCodes() { return rcodes; }
+QMap< QString, QString > & getSites() { return sites; }
+QMap< QString, QString > & getRSites() { return rsites; }

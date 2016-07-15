@@ -74,6 +74,7 @@ private slots:
     void on_minus_clicked();
     void on_save_clicked();
     void on_tableWidget_itemChanged(QTableWidgetItem *item);
+    void on_zcode_editingFinished();
 };
 
 #endif // MAINWINDOW_H
