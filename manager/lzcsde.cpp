@@ -105,10 +105,15 @@ bool LZCSDE::removeId( const QString & id ) {
 bool LZCSDE::move( int sourceId, int destId ) {
     int sourceIdx = findIdxOfId( sourceId );
     int destIdx = findIdxOfId( destId );
+    if( sourceIdx == -1 || destIdx == -1 ) {
+        return false;
+    }
+
     LZCSDE_Entry source = entries_[ sourceIdx ];
     LZCSDE_Entry dest = entries_[ destIdx ];
     entries_[ destIdx ] = source;
     entries_[ sourceIdx ] = dest;
+    return true;
 }
 
 int LZCSDE::findIdxOfId( int id ) {
@@ -145,6 +150,7 @@ bool LZCSDE::updateSectionOfId( const QString & id, const QString & section ) {
     }
 
     entries_[idx].setSection( section );
+    return true;
 }
 
 bool LZCSDE::updateDescriptionOfId( const QString & id, const QString & description ) {
@@ -160,4 +166,5 @@ bool LZCSDE::updateDescriptionOfId( const QString & id, const QString & descript
     }
 
     entries_[idx].setDescription( description );
+    return true;
 }
