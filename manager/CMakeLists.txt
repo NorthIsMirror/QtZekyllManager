@@ -178,10 +178,12 @@ target_link_libraries( QtZekyllManager Qt5::Widgets ${CoreFoundation_LIBRARIES}
                        ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${HTTP_PARSER_LIBRARIES} ${OPENSSL_LIBRARIES}
                        ${ICONV_LIBRARIES} ${SECURITY_LIBRARIES} ${LIBSSH2_LIBRARIES}
                        $<TARGET_PROPERTY:git2,INTERFACE_LINK_LIBRARIES>
+                       $<TARGET_PROPERTY:QScintilla2,INTERFACE_LINK_LIBRARIES>
 )
 
 target_include_directories( QtZekyllManager PRIVATE ${Qt5Widgets_INCLUDE_DIRS} ${CoreFoundation_INCLUDE_DIRS}
                             ${ZLIB_INCLUDE_DIRS} ${CURL_INCLUDE_DIRS} ${HTTP_PARSER_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR}
                             ${ICONV_INCLUDE_DIR} ${SECURITY_INCLUDE_DIRS} ${LIBSSH2_INCLUDE_DIRS}
                             $<TARGET_PROPERTY:git2,INTERFACE_INCLUDE_DIRECTORIES>
+                            $<TARGET_PROPERTY:QScintilla2,INTERFACE_INCLUDE_DIRECTORIES>
 )

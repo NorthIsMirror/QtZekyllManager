@@ -8,6 +8,6 @@ if( NOT CMAKE_PREFIX_PATH )
     #set( CMAKE_PREFIX_PATH /usr/local/Cellar/qt5/5.6.1 )
 endif()
 
-add_subdirectory(qodeedit)
+add_subdirectory(qscintilla2/Qt4Qt5)
 add_subdirectory(libgit2)
 add_subdirectory(manager)
