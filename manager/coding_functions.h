@@ -15,5 +15,10 @@ QMap< QString, QString > & getRCodes();
 QMap< QString, QString > & getSites();
 QMap< QString, QString > & getRSites();
 std::tuple< int, QMap<QString,QString>, int > process_meta_data( const std::vector<int> & _bits );
+int BitsStart( std::vector<int> & dest );
+int BitsWithPreamble( std::vector<int> & dest, const QString & type, const QString & data );
+int BitsStop( std::vector<int> & dest );
+std::tuple< bool, int > BitsCompareSuffix( const std::vector<int> & bits, const QString & strBits );
+int BitsRemoveIfStartStop( std::vector<int> & bits );
 
 #endif // CODING_FUNCTIONS_H

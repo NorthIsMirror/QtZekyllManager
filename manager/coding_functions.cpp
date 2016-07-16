@@ -130,6 +130,172 @@ std::tuple< int, QMap<QString,QString>, int > process_meta_data( const std::vect
     return std::make_tuple( REPLY, decoded, error );
 }
 
+int insertBitsFromStrBits( std::vector<int> & dest, const QString & str ) {
+    int error = 0;
+    QStringList list = str.split( "", QString::SkipEmptyParts );
+    bool was = false;
+    foreach( const QString & b, list ) {
+        was = true;
+        if( b == "1" ) {
+            dest.push_back( 1 );
+        } else if( b == "0" ) {
+            dest.push_back( 0 );
+        } else {
+            error += 157;
+            dest.push_back( 1 );
+        }
+    }
+
+    if( !was ) {
+        error += 257;
+    }
+    return error;
+}
+
+int BitsStart( std::vector<int> & dest ) {
+    int error = insertBitsFromStrBits( dest, codes["ss"] );
+    if( error ) {
+        error += 10000;
+    }
+    return error;
+}
+
+std::tuple< std::vector<int>, int > BitsForString( const QString & data ) {
+    int error = 0;
+    std::vector<int> out;
+    QStringList list = data.trimmed().split( "", QString::SkipEmptyParts );
+    foreach( const QString & l, list ) {
+        QString strbits = codes[l];
+        if( strbits.count() == 0 ) {
+            error += 163;
+        } else {
+            error += insertBitsFromStrBits( out, strbits );
+        }
+    }
+
+    return std::make_tuple( out, error );
+}
+
+int BitsWithPreamble( std::vector<int> & dest, const QString & type, const QString & data ) {
+    int error;
+    std::vector<int> bits;
+    std::tie( bits, error ) = BitsForString( data );
+    if( error ) {
+        error += 20000;
+    }
+
+    if( bits.size() > 0 ) {
+        QString preambleStrBits = codes[ type ].trimmed();
+        if( preambleStrBits.count() > 0 ) {
+            // Preamble
+            int newerror = insertBitsFromStrBits( dest, preambleStrBits );
+            if( newerror ) {
+                newerror += 30000;
+            }
+            error += newerror;
+
+            // Data
+            dest.insert( dest.end(), bits.begin(), bits.end() );
+        } else {
+            error += 40000;
+        }
+    }
+
+    return error;
+}
+
+int BitsStop( std::vector<int> & dest ) {
+    int error = insertBitsFromStrBits( dest, codes["ss"] );
+    if( error ) {
+        error += 50000;
+    }
+    return error;
+}
+
+// FUNCTION: BitsCompareSuffix {{{2
+// Compares suffix of the longer "$1" with whole "$2"
+std::tuple< bool, int > BitsCompareSuffix( const std::vector<int> & bits, const QString & strBits ) {
+    int error = 0;
+
+    QStringList list = strBits.trimmed().split( "", QString::SkipEmptyParts );
+    std::vector<int> bits2;
+
+    if( list.size() == 0 ) {
+        error += 193;
+        return std::make_tuple( true, error );
+    }
+
+    foreach( const QString & b, list ) {
+        if( b == "1" ) {
+            bits2.push_back( 1 );
+        } else if ( b == "0" ) {
+            bits2.push_back( 0 );
+        } else {
+            error += 233;
+            bits2.push_back( 1 );
+        }
+    }
+
+    if( bits.size() < bits2.size() ) {
+        return std::make_tuple( 0, error );
+    }
+
+    // Check if short_bits occur at the end of long_bits
+    int beg_idx = bits.size() - bits2.size();
+    int end_idx = bits.size();
+    bool not_equal = false;
+    int s = 0;
+    for ( int l = beg_idx; l < end_idx; l++ ) {
+        if( bits[l] != bits2[s] ) {
+            not_equal = true;
+            break;
+        }
+
+        if( (bits[l] != 0 && bits[l] != 1) || (bits2[s] != 0 && bits2[s] != 1) ) {
+            error += 277;
+        }
+
+        s += 1;
+    }
+
+    return std::make_tuple( !not_equal, error );
+}
+
+// FUNCTION: BitsRemoveIfStartStop() {{{2
+// This function removes any SS bits if meta-data is empty
+int BitsRemoveIfStartStop( std::vector<int> & bits ) {
+    bool result;
+    int error;
+
+    std::tie( result, error ) = BitsCompareSuffix( bits, codes[ "ss" ] );
+    error += error ? 60000 : 0;
+
+    if( result ) {
+        bits.erase( bits.end() - codes["ss"].count(), bits.end() );
+
+        int error2;
+        std::tie( result, error2 ) = BitsCompareSuffix( bits, codes[ "ss" ] );
+        error += error2 ? error2 + 70000 : 0;
+
+        if( result ) {
+            bits.erase( bits.end() - codes["ss"].count(), bits.end() );
+            // Two consecutive SS bits occured, correct removal
+        } else {
+            // We couldn't remove second SS bits, so it means
+            // that there is some meta data, and we should
+            // restore already removed last SS bits
+            int error3 = insertBitsFromStrBits( bits, codes["ss"] );
+            error += error3 ? error3 + 80000 : 0;
+        }
+    } else {
+        // This shouldn't happen, this function must be
+        // called after adding SS bits
+        error += 90000;
+    }
+
+    return error;
+}
+
 void create_codes_map() {
     codes["ss"]      = "101000";
     codes["file"]    = "100111";
