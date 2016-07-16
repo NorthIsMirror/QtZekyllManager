@@ -801,3 +801,18 @@ void MainWindow::on_rev_editingFinished()
 {
     recomputeZcode();
 }
+
+void MainWindow::on_file_editingFinished()
+{
+    recomputeZcode();
+}
+
+void MainWindow::on_userRepo_editingFinished()
+{
+    recomputeZcode();
+}
+
+void MainWindow::on_site_currentIndexChanged(int index)
+{
+    recomputeZcode();
+}

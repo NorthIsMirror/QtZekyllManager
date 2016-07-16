@@ -80,6 +80,9 @@ private slots:
     void on_tableWidget_itemChanged(QTableWidgetItem *item);
     void on_zcode_editingFinished();
     void on_rev_editingFinished();
+    void on_file_editingFinished();
+    void on_userRepo_editingFinished();
+    void on_site_currentIndexChanged(int index);
 };
 
 #endif // MAINWINDOW_H
