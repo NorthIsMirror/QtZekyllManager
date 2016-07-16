@@ -321,14 +321,15 @@ std::tuple<bool, QString> MainWindow::getProcessedZcodeInput()
 std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
 {
     int retval = 0;
-    if( lzcsde_list_.count() != ui->tableWidget->rowCount() ) {
+    if( int( lzcsde_list_.count() ) != ui->tableWidget->rowCount() ) {
         retval += 140;
         MessagesI.AppendMessageT( QString( "Warning: Problems with data (%1/%2)" ).arg( lzcsde_list_.count() ).arg( ui->tableWidget->rowCount() ) );
     }
 
     vector<int> selectors;
 
-    int rows = ui->tableWidget->rowCount();
+    int _rows = ui->tableWidget->rowCount();
+    unsigned int rows = (unsigned int) ( _rows >= 0 ? _rows : 0 );
     for( unsigned int row = 0; row < rows; row ++ ) {
         QWidget *sel_widget = ui->tableWidget->cellWidget( row, 2 );
         QWidget *widget = qobject_cast<QWidget*>( sel_widget );
@@ -698,11 +699,13 @@ void MainWindow::on_zcode_editingFinished()
         }
     }
 
-    if( to_skip > bits.size() ) {
-        MessagesI.AppendMessageT("Warning: Problems with data (7)");
-    } else {
-        // Skip computed number of bits
-        bits.erase( bits.end() - to_skip, bits.end() );
+    if( to_skip >= 0 ) {
+        if( ((unsigned int) to_skip) > bits.size() ) {
+            MessagesI.AppendMessageT("Warning: Problems with data (7)");
+        } else {
+            // Skip computed number of bits
+            bits.erase( bits.end() - to_skip, bits.end() );
+        }
     }
 
     if( 2 > bits.size() ) {
@@ -727,7 +730,8 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_ ) {
     }
 
     bool selected;
-    int rows = ui->tableWidget->rowCount();
+    int _rows = ui->tableWidget->rowCount();
+    unsigned int rows = (unsigned int) ( _rows >= 0 ? _rows : 0 );
     for( unsigned int row = 0; row < rows; row ++ ) {
         if( bits.size() < row + 1 ) {
             selected  = false;
@@ -893,6 +897,10 @@ bool MainWindow::recomputeZcode()
         } else {
             MessagesI.AppendMessageT( "Allowed characters are: <b>a-z</b>, <b>A-Z</b>, <b>0-9</b>, <b>/</b>, <b>~</b>, <b>-</b>, <b>_</b>, <b>.</b>, <b>space</b>" );
         }
+
+        return false;
+    } else {
+        return true;
     }
 }
 
