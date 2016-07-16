@@ -619,7 +619,7 @@ void MainWindow::handle_zkiresize_resize( int exitCode, QStringList entries ) {
 
     QString error_decode = decode_zkiresize_exit_code(exitCode);
     if( error_decode != "" ) {
-        MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend (1):</font> ") + error_decode );
+        MessagesI.AppendMessageT( tr("<font color=green>Message from Zekyll backend (1):</font> ") + error_decode );
     }
 }
 
@@ -627,7 +627,31 @@ void MainWindow::on_zcode_editingFinished()
 {
     QString input = ui->zcode->text().trimmed();
     if( input == "" ) {
+        ui->zcode->setText( QString( "%1/" ).arg( current_index_ ) );
         return;
+    }
+
+    QStringList parts = input.split("/", QString::KeepEmptyParts );
+    if( parts.count() != 2 ) {
+        if( parts.count() == 1 ) {
+            parts.prepend( QString( "%1" ).arg( current_index_ ) );
+            input = parts.join( "/" );
+            ui->zcode->setText( input );
+        } else {
+            MessagesI.AppendMessageT( "Warning: incorrect Zcode enterred" );
+            return;
+        }
+    } else {
+        if( parts.first() == "" ) {
+            parts.first() = QString( "%1" ).arg( current_index_ );
+        }
+
+        input = parts.join( "/" );
+        ui->zcode->setText( input );
+
+        if( parts.last() == "" ) {
+            return;
+        }
     }
 
     vector<int> bits;
@@ -847,7 +871,7 @@ bool MainWindow::recomputeZcode()
     std::string zcode2( zcode.begin(), zcode.end() );
     QString zcode3 = QString::fromStdString( zcode2 );
 
-    ui->zcode->setText( zcode3 );
+    ui->zcode->setText( QString( "%1/" ).arg( current_index_ ) + zcode3 );
 
     if( error ) {
         int exam = error - 1630000;
