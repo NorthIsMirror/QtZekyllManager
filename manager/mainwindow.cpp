@@ -303,7 +303,7 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
         QWidget *widget = qobject_cast<QWidget*>( sel_widget );
         if(!widget) {
             retval += 141;
-            MessagesI.AppendMessageT( "Warning: Problems with data (5)" );
+            MessagesI.AppendMessageT( "Warning: Problems with data (2)" );
             continue;
         }
 
@@ -311,7 +311,7 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
         QHBoxLayout *layout = qobject_cast<QHBoxLayout *>( layout_general );
         if(!layout) {
             retval += 142;
-            MessagesI.AppendMessageT( "Warning: Problems with data (6)" );
+            MessagesI.AppendMessageT( "Warning: Problems with data (3)" );
             continue;
         }
 
@@ -332,17 +332,17 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
 
                     if( selected1 != selected2 ) {
                         lzcsde_list_.entries()[idx].setChecked( selected1 );
-                        MessagesI.AppendMessageT( "Warning: Problems with data (12)" );
+                        MessagesI.AppendMessageT( "Warning: Problems with data (4)" );
                     }
 
                     selectors.push_back( selected1 );
                 } else {
                     retval += 143;
-                    MessagesI.AppendMessageT( "Warning: Problems with data (10)" );
+                    MessagesI.AppendMessageT( "Warning: Problems with data (5)" );
                 }
             } else {
                 retval += 144;
-                MessagesI.AppendMessageT( "Warning: Problems with data (9)" );
+                MessagesI.AppendMessageT( "Warning: Problems with data (6)" );
             }
         }
     }
@@ -663,14 +663,14 @@ void MainWindow::on_zcode_editingFinished()
     }
 
     if( to_skip > bits.size() ) {
-        MessagesI.AppendMessageT("Warning: Problems with data (2)");
+        MessagesI.AppendMessageT("Warning: Problems with data (7)");
     } else {
         // Skip computed number of bits
         bits.erase( bits.begin() + (bits.size() - to_skip), bits.end() );
     }
 
     if( 2 > bits.size() ) {
-        MessagesI.AppendMessageT("Warning: Problems with data (3)");
+        MessagesI.AppendMessageT("Warning: Problems with data (8)");
     } else {
         // Two last bits are version
         bits.erase( bits.begin() + (bits.size() - 2), bits.end() );
@@ -703,7 +703,7 @@ int MainWindow::applyCodeSelectors( const vector<int> & bits ) {
         QWidget *widget = qobject_cast<QWidget*>( sel_widget );
         if(!widget) {
             retval += 161;
-            MessagesI.AppendMessageT( "Warning: Problems with data (7)" );
+            MessagesI.AppendMessageT( "Warning: Problems with data (9)" );
             continue;
         }
 
@@ -711,7 +711,7 @@ int MainWindow::applyCodeSelectors( const vector<int> & bits ) {
         QHBoxLayout *layout = qobject_cast<QHBoxLayout *>( layout_general );
         if(!layout) {
             retval += 162;
-            MessagesI.AppendMessageT( "Warning: Problems with data (8)" );
+            MessagesI.AppendMessageT( "Warning: Problems with data (10)" );
             continue;
         }
 
@@ -736,11 +736,11 @@ int MainWindow::applyCodeSelectors( const vector<int> & bits ) {
                     }
                 } else {
                     retval += 163;
-                    MessagesI.AppendMessageT( "Warning: Problems with data (1)" );
+                    MessagesI.AppendMessageT( "Warning: Problems with data (11)" );
                 }
             } else {
                 retval += 164;
-                MessagesI.AppendMessageT( "Warning: Problems with data (11)" );
+                MessagesI.AppendMessageT( "Warning: Problems with data (12)" );
             }
         }
     }
