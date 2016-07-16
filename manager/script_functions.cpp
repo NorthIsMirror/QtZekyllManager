@@ -123,3 +123,14 @@ QString decode_zkrewrite_exit_code( int exitCode ) {
 
     return error_decode;
 }
+
+QString reverseQString( const QString & str)
+{
+    QString str_rev;
+    for( QString::const_iterator i = str.constEnd(); i != str.constBegin(); )
+    {
+        -- i;
+        str_rev.append( *i );
+    }
+    return str_rev;
+}

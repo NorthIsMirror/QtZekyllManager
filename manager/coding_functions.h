@@ -25,5 +25,7 @@ std::tuple<int, QStringList> BitsWithPreamble( std::vector<int> & dest, const QS
 int BitsStop( std::vector<int> & dest );
 std::tuple< bool, int > BitsCompareSuffix( const std::vector<int> & bits, const QString & strBits );
 int BitsRemoveIfStartStop( std::vector<int> & bits );
+std::tuple< bool, int > BitsCompareSuffix( const std::vector<int> & bits, const QString & strBits );
+int insertBitsFromStrBits( std::vector<int> & dest, const QString & str );
 
 #endif // CODING_FUNCTIONS_H

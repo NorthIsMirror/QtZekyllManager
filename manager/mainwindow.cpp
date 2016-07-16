@@ -810,12 +810,27 @@ bool MainWindow::recomputeZcode()
     // Empty meta-data?
     error += BitsRemoveIfStartStop( appendix );
 
-    // Append meta-data bits
-    // They go to end, and are reversed, so to decode, one can
-    // first reverse whole sequence, to have meta-data waiting
-    // in the beginning, in order
-    std::reverse( appendix.begin(), appendix.end() );
-    bits.insert( bits.end(), appendix.begin(), appendix.end() );
+    if( appendix.size() == 0 ) {
+        QString str_bits = getCodes()[ "ss" ].trimmed();
+        QString rev_str_bits = reverseQString( str_bits );
+
+        // This cannot happen with current version bits
+        bool result;
+        std::tie( result, newerror ) = BitsCompareSuffix( bits, rev_str_bits );
+        error += newerror;
+        if( result ) {
+            // No metadata but 'ss' at end – add another one to
+            // mark that the 'ss' is a real data
+            error += insertBitsFromStrBits( bits, rev_str_bits );
+        }
+    } else {
+        // Append meta-data bits
+        // They go to end, and are reversed, so to decode, one can
+        // first reverse whole sequence, to have meta-data waiting
+        // in the beginning, in order
+        std::reverse( appendix.begin(), appendix.end() );
+        bits.insert( bits.end(), appendix.begin(), appendix.end() );
+    }
 
     // Create Zcode
     std::vector<char> zcode;
@@ -834,7 +849,7 @@ bool MainWindow::recomputeZcode()
         int exam = error - 1630000;
         // Display if there is other error besides use of invalid characters
         if( exam % 163 ) {
-            MessagesI.AppendMessageT( QString("Warning: Computing the code ended with code %1").arg( error ) );
+            MessagesI.AppendMessageT( QString("Warning: Computation ended with code %1").arg( error ) );
         } else {
             MessagesI.AppendMessageT( "Allowed characters are: <b>a-z</b>, <b>A-Z</b>, <b>0-9</b>, <b>/</b>, <b>~</b>, <b>-</b>, <b>_</b>, <b>.</b>, <b>space</b>" );
         }
