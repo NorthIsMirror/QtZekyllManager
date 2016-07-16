@@ -287,6 +287,37 @@ bool MainWindow::errorOnDisallowedChars(const QString &type, const QStringList &
     return false;
 }
 
+std::tuple<bool, QString> MainWindow::getProcessedZcodeInput()
+{
+    QString input = ui->zcode->text().trimmed();
+    if( input == "" ) {
+        input = QString( "%1/" ).arg( current_index_ );
+        return std::make_tuple( false, input );
+    }
+
+    QStringList parts = input.split("/", QString::KeepEmptyParts );
+    if( parts.count() != 2 ) {
+        if( parts.count() == 1 ) {
+            parts.prepend( QString( "%1" ).arg( current_index_ ) );
+            input = parts.join( "/" );
+        } else {
+            MessagesI.AppendMessageT( "Warning: incorrect Zcode enterred" );
+            return std::make_tuple( false, input );
+        }
+    } else {
+        if( parts.first() == "" ) {
+            parts.first() = QString( "%1" ).arg( current_index_ );
+        }
+        input = parts.join( "/" );
+
+        if( parts.last() == "" ) {
+            return std::make_tuple( false, input );
+        }
+    }
+
+    return std::make_tuple( true, input );
+}
+
 std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
 {
     int retval = 0;
@@ -625,33 +656,14 @@ void MainWindow::handle_zkiresize_resize( int exitCode, QStringList entries ) {
 
 void MainWindow::on_zcode_editingFinished()
 {
-    QString input = ui->zcode->text().trimmed();
-    if( input == "" ) {
-        ui->zcode->setText( QString( "%1/" ).arg( current_index_ ) );
+    bool has_correct_data;
+    QString input;
+    std::tie( has_correct_data, input ) = getProcessedZcodeInput();
+
+    ui->zcode->setText( input );
+
+    if( !has_correct_data ) {
         return;
-    }
-
-    QStringList parts = input.split("/", QString::KeepEmptyParts );
-    if( parts.count() != 2 ) {
-        if( parts.count() == 1 ) {
-            parts.prepend( QString( "%1" ).arg( current_index_ ) );
-            input = parts.join( "/" );
-            ui->zcode->setText( input );
-        } else {
-            MessagesI.AppendMessageT( "Warning: incorrect Zcode enterred" );
-            return;
-        }
-    } else {
-        if( parts.first() == "" ) {
-            parts.first() = QString( "%1" ).arg( current_index_ );
-        }
-
-        input = parts.join( "/" );
-        ui->zcode->setText( input );
-
-        if( parts.last() == "" ) {
-            return;
-        }
     }
 
     vector<int> bits;

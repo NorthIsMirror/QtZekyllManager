@@ -129,7 +129,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="zcode"/>
+       <widget class="MyQLineEdit" name="zcode"/>
       </item>
      </layout>
     </item>
@@ -440,6 +440,11 @@
    <class>MyQTableWidget</class>
    <extends>QTableWidget</extends>
    <header location="global">myqtablewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyQLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">myqlineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

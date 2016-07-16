@@ -84,6 +84,10 @@ private slots:
     void on_file_editingFinished();
     void on_userRepo_editingFinished();
     void on_site_currentIndexChanged(int index);
+
+public:
+    int currentIndex() const { return current_index_; }
+    std::tuple< bool, QString > getProcessedZcodeInput();
 };
 
 #endif // MAINWINDOW_H
