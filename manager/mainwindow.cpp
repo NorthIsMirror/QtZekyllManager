@@ -666,14 +666,14 @@ void MainWindow::on_zcode_editingFinished()
         MessagesI.AppendMessageT("Warning: Problems with data (7)");
     } else {
         // Skip computed number of bits
-        bits.erase( bits.begin() + (bits.size() - to_skip), bits.end() );
+        bits.erase( bits.end() - to_skip, bits.end() );
     }
 
     if( 2 > bits.size() ) {
         MessagesI.AppendMessageT("Warning: Problems with data (8)");
     } else {
         // Two last bits are version
-        bits.erase( bits.begin() + (bits.size() - 2), bits.end() );
+        bits.erase( bits.end() - 2, bits.end() );
     }
 
     applyCodeSelectors( bits );
