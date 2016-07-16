@@ -273,6 +273,20 @@ void MainWindow::insertLZSDETableRow(QTableWidget * tableWidget, int id, const Q
     tableWidget->setItem(row, 4, errorItem);
 }
 
+bool MainWindow::errorOnDisallowedChars(const QString &type, const QStringList &invalidChars)
+{
+    if( !invalidChars.empty() ) {
+        QString name = getNames()[ type ];
+        if( name.count() > 0 ) {
+            MessagesI.AppendMessageT("Invalid characters in " + name + ": <b>" + invalidChars.join("</b>, <b>") + "</b>, they are skipped");
+        } else {
+            MessagesI.AppendMessageT("Invalid characters used: <b>" + invalidChars.join("</b>, <b>") + "</b>, they are skipped");
+        }
+        return true;
+    }
+    return false;
+}
+
 std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
 {
     int retval = 0;
@@ -759,17 +773,40 @@ bool MainWindow::recomputeZcode()
     std::reverse( bits.begin(), bits.end() );
 
     std::vector<int> appendix;
+    int newerror;
+    QStringList invalidChars;
+
+    // Meta-data start
     error += BitsStart( appendix );
-    error += BitsWithPreamble( appendix, "rev",  ui->rev->text() );
-    error += BitsWithPreamble( appendix, "file", ui->file->text() );
-    error += BitsWithPreamble( appendix, "repo", ui->userRepo->text() );
+
+    // Revision
+    std::tie( newerror, invalidChars ) = BitsWithPreamble( appendix, "rev",  ui->rev->text() );
+    error += newerror;
+    errorOnDisallowedChars( "rev", invalidChars );
+
+    // File name
+    std::tie( newerror, invalidChars ) = BitsWithPreamble( appendix, "file", ui->file->text() );
+    error += newerror;
+    errorOnDisallowedChars( "file", invalidChars );
+
+    // User/repo
+    std::tie( newerror, invalidChars ) = BitsWithPreamble( appendix, "repo", ui->userRepo->text() );
+    error += newerror;
+    errorOnDisallowedChars( "repo", invalidChars );
+
+    // Site
     int siteId = ui->site->currentIndex() + 1;
     // Github is the default
     if( siteId != 1 ) {
         QString strSiteId = QString("%1").arg( siteId );
-        error += BitsWithPreamble( appendix, "site", strSiteId );
+        std::tie( newerror, invalidChars ) = BitsWithPreamble( appendix, "site", strSiteId );
+        error += newerror;
+        errorOnDisallowedChars( "site", invalidChars );
     }
+
+    // Meta-data end
     error += BitsStop( appendix );
+
     // Empty meta-data?
     error += BitsRemoveIfStartStop( appendix );
 
@@ -780,14 +817,14 @@ bool MainWindow::recomputeZcode()
     std::reverse( appendix.begin(), appendix.end() );
     bits.insert( bits.end(), appendix.begin(), appendix.end() );
 
-    // Encode
+    // Create Zcode
     std::vector<char> zcode;
     std::vector<int> numbers;
     int error2;
     std::tie( zcode, numbers, error2 ) = encode_zcode_arr01( bits );
     error += error2;
 
-    // Convert to QString
+    // Convert Zcode to QString
     std::string zcode2( zcode.begin(), zcode.end() );
     QString zcode3 = QString::fromStdString( zcode2 );
 
@@ -799,7 +836,7 @@ bool MainWindow::recomputeZcode()
         if( exam % 163 ) {
             MessagesI.AppendMessageT( QString("Warning: Computing the code ended with code %1").arg( error ) );
         } else {
-            MessagesI.AppendMessageT( "Allowed characters are: <b>a-z</b>, <b>0-9</b>, <b>/</b>, <b>~</b>, <b>-</b>, <b>_</b>, <b>.</b>, <b>space</b>" );
+            MessagesI.AppendMessageT( "Allowed characters are: <b>a-z</b>, <b>A-Z</b>, <b>0-9</b>, <b>/</b>, <b>~</b>, <b>-</b>, <b>_</b>, <b>.</b>, <b>space</b>" );
         }
     }
 }

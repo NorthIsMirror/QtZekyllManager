@@ -52,6 +52,7 @@ private:
     void insertLZSDETableRow(QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
                                 const QString & description, const QString & error);
 
+    bool errorOnDisallowedChars( const QString & type, const QStringList & invalidChars );
     std::tuple< std::vector<int>, int > gatherCodeSelectors();
     int applyCodeSelectors( const std::vector<int> & bits );
     bool recomputeZcode();

@@ -7,8 +7,6 @@
 #include <QDebug>
 #include <QMap>
 
-#define MessagesI Singleton<Messages>::instance()
-
 QMap<QString, QString> codes;
 QMap<QString, QString> rcodes;
 QMap<QString, QString> sites;
@@ -181,7 +179,7 @@ std::tuple< std::vector<int>, int, QStringList > BitsForString( const QString & 
     return std::make_tuple( out, error, invalidChars );
 }
 
-int BitsWithPreamble( std::vector<int> & dest, const QString & type, const QString & data ) {
+std::tuple<int, QStringList> BitsWithPreamble( std::vector<int> & dest, const QString & type, const QString & data ) {
     QStringList invalidChars;
     int error;
     std::vector<int> bits;
@@ -207,15 +205,7 @@ int BitsWithPreamble( std::vector<int> & dest, const QString & type, const QStri
         }
     }
 
-    if( !invalidChars.empty() ) {
-        QString name = names[ type ];
-        if( name.count() > 0 ) {
-            MessagesI.AppendMessageT("Invalid characters in " + name + ": <b>" + invalidChars.join("</b>, <b>") + "</b>, they are skipped");
-        } else {
-            MessagesI.AppendMessageT("Invalid characters used: <b>" + invalidChars.join("</b>, <b>") + "</b>, they are skipped");
-        }
-    }
-    return error;
+    return std::make_tuple( error, invalidChars );
 }
 
 int BitsStop( std::vector<int> & dest ) {
