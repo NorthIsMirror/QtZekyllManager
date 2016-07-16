@@ -20,6 +20,9 @@ public:
     void AppendMessageT(const QString & message, QStringList & arr);
     void AppendMessageT(const QString & message, std::vector<std::string> & arr);
 
+private:
+    QStringList GetMessagesNoRepeat( const QStringList & _messages );
+
 signals:
     void messagesChanged( const QStringList & messages );
 };
