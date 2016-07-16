@@ -733,3 +733,71 @@ int MainWindow::applyCodeSelectors( const vector<int> & bits ) {
 
     return retval;
 }
+
+bool MainWindow::recomputeZcode()
+{
+    vector<int> bits;
+
+    // Version
+    bits.push_back( 0 );
+    bits.push_back( 0 );
+
+    vector<int> selectors;
+    int error;
+    std::tie( selectors, error ) = gatherCodeSelectors();
+    if( error ) {
+        MessagesI.AppendMessageT("Warning: Gathering data for Zcode wasn't without problems");
+    }
+
+    // The selectors of zekylls
+    // Reverse them, so that selectors for later zekylls
+    // will be simply skipped if they are zero – when the
+    // bits sequence will be divided by 36 when converting
+    // to radix-36
+    bits.insert( bits.end(), selectors.begin(), selectors.end() );
+    std::reverse( bits.begin(), bits.end() );
+
+    std::vector<int> appendix;
+    error += BitsStart( appendix );
+    error += BitsWithPreamble( appendix, "rev",  ui->rev->text() );
+    error += BitsWithPreamble( appendix, "file", ui->file->text() );
+    error += BitsWithPreamble( appendix, "repo", ui->userRepo->text() );
+    int siteId = ui->site->currentIndex() + 1;
+    // Github is the default
+    if( siteId != 1 ) {
+        QString strSiteId = QString("%1").arg( siteId );
+        error += BitsWithPreamble( appendix, "site", strSiteId );
+    }
+    error += BitsStop( appendix );
+    // Empty meta-data?
+    error += BitsRemoveIfStartStop( appendix );
+
+    // Append meta-data bits
+    // They go to end, and are reversed, so to decode, one can
+    // first reverse whole sequence, to have meta-data waiting
+    // in the beginning, in order
+    std::reverse( appendix.begin(), appendix.end() );
+    bits.insert( bits.end(), appendix.begin(), appendix.end() );
+
+    // Encode
+    std::vector<char> zcode;
+    std::vector<int> numbers;
+    int error2;
+    std::tie( zcode, numbers, error2 ) = encode_zcode_arr01( bits );
+    error += error2;
+
+    // Convert to QString
+    std::string zcode2( zcode.begin(), zcode.end() );
+    QString zcode3 = QString::fromStdString( zcode2 );
+
+    ui->zcode->setText( zcode3 );
+
+    if( error ) {
+        MessagesI.AppendMessageT( QString("Warning: Computing the code ended with code %1").arg( error ) );
+    }
+}
+
+void MainWindow::on_rev_editingFinished()
+{
+    recomputeZcode();
+}

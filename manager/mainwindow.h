@@ -54,6 +54,7 @@ private:
 
     std::tuple< std::vector<int>, int > gatherCodeSelectors();
     int applyCodeSelectors( const std::vector<int> & bits );
+    bool recomputeZcode();
 
 signals:
     void repositoryChanged();
@@ -78,6 +79,7 @@ private slots:
     void on_save_clicked();
     void on_tableWidget_itemChanged(QTableWidgetItem *item);
     void on_zcode_editingFinished();
+    void on_rev_editingFinished();
 };
 
 #endif // MAINWINDOW_H
