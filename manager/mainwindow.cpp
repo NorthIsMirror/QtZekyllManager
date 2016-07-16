@@ -679,7 +679,11 @@ void MainWindow::on_zcode_editingFinished()
     applyCodeSelectors( bits );
 }
 
-int MainWindow::applyCodeSelectors( const vector<int> & bits ) {
+int MainWindow::applyCodeSelectors( const std::vector<int> & bits_ ) {
+    // Have upper zekylls first
+    std::vector<int> bits = bits_;
+    std::reverse( bits.begin(), bits.end() );
+
     int retval = 0;
     if( lzcsde_list_.count() < bits.size() ) {
         retval += 160;

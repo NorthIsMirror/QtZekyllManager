@@ -54,7 +54,7 @@ private:
 
     bool errorOnDisallowedChars( const QString & type, const QStringList & invalidChars );
     std::tuple< std::vector<int>, int > gatherCodeSelectors();
-    int applyCodeSelectors( const std::vector<int> & bits );
+    int applyCodeSelectors( const std::vector<int> & bits_ );
     bool recomputeZcode();
 
 signals:
