@@ -7,10 +7,13 @@
 #include <QDebug>
 #include <QMap>
 
+#define MessagesI Singleton<Messages>::instance()
+
 QMap<QString, QString> codes;
 QMap<QString, QString> rcodes;
 QMap<QString, QString> sites;
 QMap<QString, QString> rsites;
+QMap<QString, QString> names;
 
 // FUNCTION: setIndex {{{
 // Sets ZKL_INDEX_ZEKYLLS array which contains all
@@ -160,26 +163,29 @@ int BitsStart( std::vector<int> & dest ) {
     return error;
 }
 
-std::tuple< std::vector<int>, int > BitsForString( const QString & data ) {
+std::tuple< std::vector<int>, int, QStringList > BitsForString( const QString & data ) {
+    QStringList invalidChars;
     int error = 0;
     std::vector<int> out;
     QStringList list = data.trimmed().split( "", QString::SkipEmptyParts );
     foreach( const QString & l, list ) {
         QString strbits = codes[l];
         if( strbits.count() == 0 ) {
+            invalidChars << l;
             error += 163;
         } else {
             error += insertBitsFromStrBits( out, strbits );
         }
     }
 
-    return std::make_tuple( out, error );
+    return std::make_tuple( out, error, invalidChars );
 }
 
 int BitsWithPreamble( std::vector<int> & dest, const QString & type, const QString & data ) {
+    QStringList invalidChars;
     int error;
     std::vector<int> bits;
-    std::tie( bits, error ) = BitsForString( data );
+    std::tie( bits, error, invalidChars ) = BitsForString( data );
     if( error ) {
         error += 1630000;
     }
@@ -201,6 +207,14 @@ int BitsWithPreamble( std::vector<int> & dest, const QString & type, const QStri
         }
     }
 
+    if( !invalidChars.empty() ) {
+        QString name = names[ type ];
+        if( name.count() > 0 ) {
+            MessagesI.AppendMessageT("Invalid characters in " + name + ": <b>" + invalidChars.join("</b>, <b>") + "</b>, they are skipped");
+        } else {
+            MessagesI.AppendMessageT("Invalid characters used: <b>" + invalidChars.join("</b>, <b>") + "</b>, they are skipped");
+        }
+    }
     return error;
 }
 
@@ -468,7 +482,15 @@ void create_sites_maps() {
         rsites["3"] = "gl";
 }
 
+void create_helper_maps() {
+    names["rev"] = "revision";
+    names["file"] = "file name";
+    names["repo"] = "user/repo";
+    names["site"] = "site";
+}
+
 QMap< QString, QString > & getCodes() { return codes; }
 QMap< QString, QString > & getRCodes() { return rcodes; }
 QMap< QString, QString > & getSites() { return sites; }
 QMap< QString, QString > & getRSites() { return rsites; }
+QMap< QString, QString > & getNames() { return names; }

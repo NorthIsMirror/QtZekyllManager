@@ -96,6 +96,7 @@ MainWindow::MainWindow(QWidget *parent) :
     create_codes_map();
     create_rcodes_map();
     create_sites_maps();
+    create_helper_maps();
 
     zkiresize_->setIndex( current_index_ );
     reloadRepository();
@@ -793,7 +794,13 @@ bool MainWindow::recomputeZcode()
     ui->zcode->setText( zcode3 );
 
     if( error ) {
-        MessagesI.AppendMessageT( QString("Warning: Computing the code ended with code %1").arg( error ) );
+        int exam = error - 1630000;
+        // Display if there is other error besides use of invalid characters
+        if( exam % 163 ) {
+            MessagesI.AppendMessageT( QString("Warning: Computing the code ended with code %1").arg( error ) );
+        } else {
+            MessagesI.AppendMessageT( "Allowed characters are: <b>a-z</b>, <b>0-9</b>, <b>/</b>, <b>~</b>, <b>-</b>, <b>_</b>, <b>.</b>, <b>space</b>" );
+        }
     }
 }
 
