@@ -272,6 +272,70 @@ void MainWindow::insertLZSDETableRow(QTableWidget * tableWidget, int id, const Q
     tableWidget->setItem(row, 4, errorItem);
 }
 
+std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
+{
+    int retval = 0;
+    if( lzcsde_list_.count() != ui->tableWidget->rowCount() ) {
+        retval += 140;
+        MessagesI.AppendMessageT( QString( "Warning: Problems with data (%1/%2)" ).arg( lzcsde_list_.count() ).arg( ui->tableWidget->rowCount() ) );
+    }
+
+    vector<int> selectors;
+
+    int rows = ui->tableWidget->rowCount();
+    for( unsigned int row = 0; row < rows; row ++ ) {
+        QWidget *sel_widget = ui->tableWidget->cellWidget( row, 2 );
+        QWidget *widget = qobject_cast<QWidget*>( sel_widget );
+        if(!widget) {
+            retval += 141;
+            MessagesI.AppendMessageT( "Warning: Problems with data (5)" );
+            continue;
+        }
+
+        QLayout *layout_general = widget->layout();
+        QHBoxLayout *layout = qobject_cast<QHBoxLayout *>( layout_general );
+        if(!layout) {
+            retval += 142;
+            MessagesI.AppendMessageT( "Warning: Problems with data (6)" );
+            continue;
+        }
+
+        QTableWidgetItem *id_item = ui->tableWidget->item( row, 0 );
+
+        int count = layout->count();
+        for( int i = 0; i < count; i ++ ) {
+            QLayoutItem *l_item = layout->itemAt( i );
+            QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget()     );
+            if( checkBox && id_item ) {
+                QString id = id_item->text();
+                bool ok = false;
+                int intid = id.toInt( &ok );
+                if( ok ) {
+                    int idx = lzcsde_list_.findIdxOfId( intid );
+                    bool selected1 = checkBox->checkState() == Qt::Checked;
+                    bool selected2 = lzcsde_list_.entries()[idx].checked();
+
+                    if( selected1 != selected2 ) {
+                        lzcsde_list_.entries()[idx].setChecked( selected1 );
+                        MessagesI.AppendMessageT( "Warning: Problems with data (12)" );
+                    }
+
+                    selectors.push_back( selected1 );
+                } else {
+                    retval += 143;
+                    MessagesI.AppendMessageT( "Warning: Problems with data (10)" );
+                }
+            } else {
+                retval += 144;
+                MessagesI.AppendMessageT( "Warning: Problems with data (9)" );
+            }
+        }
+    }
+
+
+    return std::make_tuple( selectors, retval );
+}
+
 void MainWindow::browse()
 {
     QString msg_incorrect = tr("Incorrect path selected");
