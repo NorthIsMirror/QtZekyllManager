@@ -155,7 +155,7 @@ int insertBitsFromStrBits( std::vector<int> & dest, const QString & str ) {
 int BitsStart( std::vector<int> & dest ) {
     int error = insertBitsFromStrBits( dest, codes["ss"] );
     if( error ) {
-        error += 10000;
+        error += 1570000;
     }
     return error;
 }
@@ -181,7 +181,7 @@ int BitsWithPreamble( std::vector<int> & dest, const QString & type, const QStri
     std::vector<int> bits;
     std::tie( bits, error ) = BitsForString( data );
     if( error ) {
-        error += 20000;
+        error += 1630000;
     }
 
     if( bits.size() > 0 ) {
@@ -190,14 +190,14 @@ int BitsWithPreamble( std::vector<int> & dest, const QString & type, const QStri
             // Preamble
             int newerror = insertBitsFromStrBits( dest, preambleStrBits );
             if( newerror ) {
-                newerror += 30000;
+                newerror += 1930000;
             }
             error += newerror;
 
             // Data
             dest.insert( dest.end(), bits.begin(), bits.end() );
         } else {
-            error += 40000;
+            error += 2330000;
         }
     }
 
@@ -207,7 +207,7 @@ int BitsWithPreamble( std::vector<int> & dest, const QString & type, const QStri
 int BitsStop( std::vector<int> & dest ) {
     int error = insertBitsFromStrBits( dest, codes["ss"] );
     if( error ) {
-        error += 50000;
+        error += 2570000;
     }
     return error;
 }
@@ -268,14 +268,14 @@ int BitsRemoveIfStartStop( std::vector<int> & bits ) {
     int error;
 
     std::tie( result, error ) = BitsCompareSuffix( bits, codes[ "ss" ] );
-    error += error ? 60000 : 0;
+    error += error ? 2770000 : 0;
 
     if( result ) {
         bits.erase( bits.end() - codes["ss"].count(), bits.end() );
 
         int error2;
         std::tie( result, error2 ) = BitsCompareSuffix( bits, codes[ "ss" ] );
-        error += error2 ? error2 + 70000 : 0;
+        error += error2 ? error2 + 3110000 : 0;
 
         if( result ) {
             bits.erase( bits.end() - codes["ss"].count(), bits.end() );
@@ -285,12 +285,12 @@ int BitsRemoveIfStartStop( std::vector<int> & bits ) {
             // that there is some meta data, and we should
             // restore already removed last SS bits
             int error3 = insertBitsFromStrBits( bits, codes["ss"] );
-            error += error3 ? error3 + 80000 : 0;
+            error += error3 ? error3 + 3370000 : 0;
         }
     } else {
         // This shouldn't happen, this function must be
         // called after adding SS bits
-        error += 90000;
+        error += 3730000;
     }
 
     return error;
