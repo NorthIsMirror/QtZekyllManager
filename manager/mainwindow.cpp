@@ -153,7 +153,9 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
     lzcsde_section_.clear();
     lzcsde_section_ = lzcsde_list_;
 
-    sectionOrderOnLZCSDE( lzcsde_section_ );
+    if( sectionOrderOnLZCSDE( lzcsde_section_ ) ) {
+        MessagesI.AppendMessageT("Warning: Problems with data (16)");
+    }
     foreach( const LZCSDE_Entry & entry, lzcsde_section_.entries() ) {
         insertLZCSDTableRow(ui->tableWidget_2, entry.id(), entry.zekyll(), entry.checked(), entry.section(), entry.description());
     }

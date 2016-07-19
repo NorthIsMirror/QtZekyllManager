@@ -215,7 +215,30 @@ QString reverseQString( const QString & str)
     return str_rev;
 }
 
+char section_letters[26] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+
 int sectionOrderOnLZCSDE( LZCSDE & lzcsde ) {
     int error = 0;
+    QVector<LZCSDE_Entry> new_entries;
+    const QVector<LZCSDE_Entry> & entries = lzcsde.entries();
+    int size = entries.count();
+
+    for( int a = 0; a < 26; ++ a ) {
+        char selected_section = section_letters[a];
+        for( int i = 0; i < size; ++ i ) {
+            if( QString( selected_section ) != entries[i].section() ) {
+                continue;
+            }
+
+            new_entries.push_back( entries[i] );
+        }
+    }
+
+    if( new_entries.count() != entries.count() ) {
+        error = 1;
+    } else {
+        lzcsde.entries() = new_entries;
+    }
+
     return error;
 }
