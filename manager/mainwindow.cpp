@@ -1001,10 +1001,7 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
                 int rows2 = ui->tableWidget_2->rowCount();
                 for( int row2 = 0; row2 < rows2; row2 ++ ) {
                     QTableWidgetItem *item = ui->tableWidget_2->item( row2, 0 );
-                    if( !item ) {
-                        continue;
-                    }
-                    if( item->text() != strId ) {
+                    if( !item || item->text() != strId ) {
                         continue;
                     }
 
