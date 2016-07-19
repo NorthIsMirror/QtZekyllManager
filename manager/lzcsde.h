@@ -55,9 +55,9 @@ public:
 
     QStringList getZekylls();
 
-    const LZCSDE_Entry & getId( int id );
+    LZCSDE_Entry & getId( int id );
 
-    const LZCSDE_Entry & getId( const QString & id );
+    LZCSDE_Entry & getId( const QString & id );
 
     QVector<LZCSDE_Entry> & entries() { return entries_; }
 

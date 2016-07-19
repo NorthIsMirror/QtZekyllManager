@@ -53,16 +53,16 @@ bool LZCSDE::insertFromListing( int id, const QString & listing ) {
     }
 }
 
-const LZCSDE_Entry & LZCSDE::getId( int id ) {
-    foreach( const LZCSDE_Entry & entry, entries_ ) {
-        if( id == entry.id() ) {
-            return entry;
+LZCSDE_Entry & LZCSDE::getId( int id ) {
+    for( QVector<LZCSDE_Entry>::iterator it = entries_.begin(); it != entries().end(); it ++ ) {
+        if( id == it->id() ) {
+            return *it;
         }
     }
     return dummy_entry_;
 }
 
-const LZCSDE_Entry & LZCSDE::getId( const QString & id ) {
+LZCSDE_Entry & LZCSDE::getId( const QString & id ) {
     bool ok = false;
     int intid = id.toInt(&ok);
     if( ok ) {

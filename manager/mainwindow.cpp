@@ -218,6 +218,8 @@ void MainWindow::insertLZCSDTableRow(QTableWidget * tableWidget, int id, const Q
     } else {
         checkBox->setCheckState(Qt::Unchecked);
     }
+    checkBox->setProperty("id", id);
+    connect( checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxStateChanged(int)) );
 
     QWidget *widget = new QWidget();
     QHBoxLayout *layout = new QHBoxLayout(widget);
@@ -447,6 +449,28 @@ void MainWindow::reloadRepository() {
     zkiresize_->setRepoPath( current_path_ );
     zkiresize_->setIndex( current_index_ );
     zkiresize_->list();
+}
+
+void MainWindow::checkBoxStateChanged( int state )
+{
+    QCheckBox * box = qobject_cast< QCheckBox * >( sender() );
+    if( !box || !box->parent() ) {
+        return;
+    }
+    bool ok = false;
+    int id = box->property("id").toInt( &ok );
+    if( !ok ) {
+        MessagesI.AppendMessageT("Warning: Problems with data (13)");
+        return;
+    }
+
+    LZCSDE_Entry & entry = lzcsde_list_.getId( id );
+    if( entry.id() == -1 ) {
+        MessagesI.AppendMessageT("Warning: Problems with data (14)");
+        return;
+    }
+
+    entry.setChecked( state != 0 );
 }
 
  void MainWindow::updateMessages( const QStringList & messages ) {

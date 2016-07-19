@@ -73,7 +73,8 @@ public slots:
 private slots:
     void browse();
     void reloadRepository();
-    void on_tableWidget_cellDoubleClicked(int row, int column);
+    void checkBoxStateChanged( int state );
+    void on_tableWidget_cellDoubleClicked( int row, int column );
     void on_up_clicked();
     void on_down_clicked();
     void on_minus_clicked();
