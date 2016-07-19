@@ -59,8 +59,8 @@ private:
 
     Ui::MainWindow *ui;
 
-    void insertLZCSDTableRow(QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description);
-    void insertLZSDETableRow(QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
+    void insertLZCSDTableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description);
+    void insertLZSDETableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
                                 const QString & description, const QString & error);
 
     void setupDeferredApplyOfCodeSelectors( const std::vector<int> & bits ) { isDeferredApplyPrepared_ = true; deferredCodeSelectors_ = bits; }

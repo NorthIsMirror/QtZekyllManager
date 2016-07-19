@@ -144,7 +144,7 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
         if (rx.indexIn(str) != -1) {
             counter ++;
             lzcsde_list_.insertFromListing(counter, str);
-            insertLZCSDTableRow(ui->tableWidget, counter, rx.cap(1), true, rx.cap(2), rx.cap(3));
+            insertLZCSDTableRow( "list", ui->tableWidget, counter, rx.cap(1), true, rx.cap(2), rx.cap(3) );
         }
     }
 
@@ -157,7 +157,7 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
         MessagesI.AppendMessageT("Warning: Problems with data (16)");
     }
     foreach( const LZCSDE_Entry & entry, lzcsde_section_.entries() ) {
-        insertLZCSDTableRow(ui->tableWidget_2, entry.id(), entry.zekyll(), entry.checked(), entry.section(), entry.description());
+        insertLZCSDTableRow( "section", ui->tableWidget_2, entry.id(), entry.zekyll(), entry.checked(), entry.section(), entry.description() );
     }
 
     current_size_of_index_ = lzcsde_list_.count();
@@ -203,11 +203,11 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
         if (rx1.indexIn(str) != -1) {
             counter ++;
             lzcsde_consistent_.insertFromListing(counter, str);
-            insertLZSDETableRow(ui->tableWidget_3, counter, rx1.cap(1), rx1.cap(2), rx1.cap(3), rx1.cap(4));
+            insertLZSDETableRow( "consistent", ui->tableWidget_3, counter, rx1.cap(1), rx1.cap(2), rx1.cap(3), rx1.cap(4) );
         } else if (rx2.indexIn(str) != -1 ) {
             counter ++;
             lzcsde_consistent_.insertFromListing(counter, str);
-            insertLZSDETableRow(ui->tableWidget_3, counter, rx2.cap(1), "", "", rx2.cap(2));
+            insertLZSDETableRow( "consistent", ui->tableWidget_3, counter, rx2.cap(1), "", "", rx2.cap(2) );
         } else {
             // TODO report inproper input
         }
@@ -227,7 +227,7 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
     applyDeferredCodeSelectors( false );
 }
 
-void MainWindow::insertLZCSDTableRow(QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description) {
+void MainWindow::insertLZCSDTableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description) {
     QTableWidgetItem *idItem = new QTableWidgetItem(QString("%1").arg(id));
     idItem->setFlags(idItem->flags() ^ Qt::ItemIsEditable);
     idItem->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
@@ -271,7 +271,7 @@ void MainWindow::insertLZCSDTableRow(QTableWidget * tableWidget, int id, const Q
     tableWidget->setItem(row, 4, descriptionItem);
 }
 
-void MainWindow::insertLZSDETableRow(QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
+void MainWindow::insertLZSDETableRow(const QString & lzsde, QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
                                         const QString & description, const QString & error)
 {
     QTableWidgetItem *idItem = new QTableWidgetItem(QString("%1").arg(id));
@@ -299,6 +299,8 @@ void MainWindow::insertLZSDETableRow(QTableWidget * tableWidget, int id, const Q
     tableWidget->setItem(row, 2, sectionItem);
     tableWidget->setItem(row, 3, descriptionItem);
     tableWidget->setItem(row, 4, errorItem);
+
+    Q_UNUSED( lzsde );
 }
 
 int MainWindow::applyDeferredCodeSelectors( bool silent )
