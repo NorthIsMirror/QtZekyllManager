@@ -1,6 +1,7 @@
 #include "script_functions.h"
 #include <QStringList>
 #include <QRegExp>
+#include <QDir>
 #include <QFileInfo>
 #include <QDebug>
 
@@ -44,6 +45,79 @@ std::tuple< QString, QString, int > getRepoFromPath( const QString & path ) {
         // returned path and first element – as a fallback – the input path
         return make_tuple( path, nodes.join("/") + "/" + last, MY_ONLY_PATH );
     }
+}
+
+std::tuple< QString, QString, int > getPathFromRepo( const QString & _base_path, const QString & _repo_or_path ) {
+    QString base_path = _base_path.trimmed();
+    QString repo_or_path = _repo_or_path.trimmed();
+
+    // Both mark if a return data is available (if not empty)
+    QString last_node, path;
+
+    // First check if the string matches repo spec
+    QRegExp rx;
+
+    // xy@user/repo/rev
+    rx = QRegExp( "^([a-zA-Z][a-zA-Z])@([a-zA-Z0-9][a-zA-Z0-9-]*)[/]([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_-]+)$" );
+    if( rx.indexIn( repo_or_path ) != -1 ) {
+        last_node = rx.cap(1) + "---" + rx.cap(2) + "---" + rx.cap(3) + "---" + rx.cap(4);
+    } else {
+        // user/repo/rev
+        rx = QRegExp( "^([a-zA-Z0-9][a-zA-Z0-9-]*)[/]([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_-]+)$" );
+        if( rx.indexIn( repo_or_path ) != -1 ) {
+            last_node = QString("gh---") + rx.cap(1) + "---" + rx.cap(2) + "---" + rx.cap(3);
+        } else {
+            // xy@user/repo
+            rx = QRegExp( "^([a-zA-Z][a-zA-Z])@([a-zA-Z0-9][a-zA-Z0-9-]*)[/]([a-zA-Z0-9_-]+)$" );
+            if( rx.indexIn( repo_or_path ) != -1 ) {
+                last_node = rx.cap(1) + "---" + rx.cap(2) + "---" + rx.cap(3) + "---master";
+            } else {
+                // user/repo
+                rx = QRegExp( "^([a-zA-Z0-9][a-zA-Z0-9-]*)[/]([a-zA-Z0-9_-]+)$" );
+                if( rx.indexIn( repo_or_path ) != -1 ) {
+                    last_node = QString("gh---") + rx.cap(1) + "---" + rx.cap(2) + "---master";
+                }
+            }
+        }
+    }
+
+    if( last_node.size() > 0 ) {
+        QFileInfo finfo = QFileInfo( QDir(_base_path), last_node ).absoluteFilePath();
+        path = finfo.absoluteFilePath();
+        if( finfo.exists() ) {
+            return std::make_tuple( repo_or_path, path, MY_REPO_AND_PATH );
+        } else {
+            // Repeat input data in first element, return faulty path in second element
+            return std::make_tuple( repo_or_path, path, MY_GENERAL_ERROR );
+        }
+    } else {
+        QFileInfo finfo( repo_or_path );
+        if( !finfo.isAbsolute() ) {
+            finfo = QFileInfo( QDir( base_path ), repo_or_path );
+        }
+
+        if( !finfo.exists() ) {
+            finfo = QFileInfo( finfo.dir(), "" );
+        }
+
+        // Remember something for erroneous return
+        path = finfo.absoluteFilePath();
+
+        if( finfo.exists() ) {
+            if( finfo.isFile() ) {
+                finfo = QFileInfo( finfo.dir(), "" );
+            }
+
+            path = finfo.absoluteFilePath();
+
+            // Just repeat the input data in first element, the actual
+            // output is the second element
+            return std::make_tuple( repo_or_path, path, MY_ONLY_PATH );
+        }
+    }
+
+    // Repeat input data in first element, return "something" in second
+    return std::make_tuple( repo_or_path, path, MY_GENERAL_ERROR );
 }
 
 QString decode_zkiresize_exit_code( int exitCode ) {

@@ -11,6 +11,7 @@ enum {
 };
 
 std::tuple< QString, QString, int > getRepoFromPath( const QString & path );
+std::tuple< QString, QString, int > getPathFromRepo( const QString & base_path, const QString & repo_or_path );
 QString decode_zkiresize_exit_code( int exitCode );
 QString decode_zkrewrite_exit_code( int exitCode );
 QString reverseQString( const QString & str);

@@ -100,6 +100,8 @@ private slots:
     void on_userRepo_editingFinished();
     void on_site_currentIndexChanged(int index);
 
+    void on_curRepoCombo_activated(int index);
+
 public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();

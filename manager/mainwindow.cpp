@@ -1026,3 +1026,37 @@ void MainWindow::on_site_currentIndexChanged(int index)
 {
     recomputeZcode();
 }
+
+void MainWindow::on_curRepoCombo_activated(int index)
+{
+    // This will not happen (would for currentIndexChanged)
+    if( combo_box_reactions_limited_ ) {
+        return;
+    }
+
+    QString selected = ui->curRepoCombo->itemText( index );
+    QString repo, path;
+    int error;
+    tie( repo, path, error ) = getPathFromRepo( repos_paths_[0], selected );
+
+    // Error 0 – we've gotten repo, and decoded a path – all as expected
+    if( error == MY_REPO_AND_PATH ) {
+        current_repo_ = repo;
+        current_path_ = path;
+        selected = repo;
+    // Error 2 – things are little unexpected, we've directly gotten path
+    } else if ( error == MY_ONLY_PATH ) {
+        current_repo_ = "";
+        current_path_ = path;
+        selected = path;
+    // Error 1 – true error, incorrect selection
+    } else if ( error == MY_GENERAL_ERROR ) {
+        selected = msg_incorrect_;
+    }
+
+    processCurRepoCombo( selected, error );
+
+    if( error == MY_REPO_AND_PATH || error == MY_ONLY_PATH ) {
+        emit repositoryChanged();
+    }
+}
