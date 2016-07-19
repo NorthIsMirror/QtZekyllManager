@@ -832,6 +832,11 @@ void MainWindow::on_zcode_editingFinished()
 }
 
 int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent ) {
+    // If there is no code then limit operation
+    if( ui->zcode->text().trimmed().count() == 0 ) {
+        silent = true;
+    }
+
     // Have upper zekylls first
     std::vector<int> bits = bits_;
     std::reverse( bits.begin(), bits.end() );
