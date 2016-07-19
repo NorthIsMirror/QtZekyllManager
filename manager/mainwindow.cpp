@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     isConsistent_(true),
     is_loading_(false),
     isDeferredApplyPrepared_(false),
+    combo_box_reactions_limited_(false),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -98,6 +99,13 @@ MainWindow::MainWindow(QWidget *parent) :
     create_rcodes_map();
     create_sites_maps();
     create_helper_maps();
+
+    // Prepare default repositories directory
+    home_path_ = qgetenv("HOME");
+    if( home_path_.size() < 1 ) {
+        home_path_.setRawData("~", 1);
+    }
+    repos_paths_.push_back( QString::fromLocal8Bit(home_path_) + "/.zekyll/repos" );
 
     zkiresize_->setIndex( current_index_ );
     reloadRepository();
@@ -424,46 +432,57 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
 
 void MainWindow::browse()
 {
-    QString msg_incorrect = tr("Incorrect path selected");
-    QString directory = QFileDialog::getExistingDirectory(this,
-                               tr("Select repository"), QDir::homePath() + "/.zekyll/repos");
+    QString directory = QFileDialog::getExistingDirectory( this, tr("Select repository"), repos_paths_[0] );
 
     if (!directory.isEmpty()) {
         QString repo, path, selected;
         int error;
         tie(repo, path, error) = getRepoFromPath( directory );
 
-        if( error == 0 ) {
+        if( error == MY_REPO_AND_PATH ) {
             current_repo_ = repo;
             current_path_ = path;
             selected = repo;
-        } else if ( error == 2 ) {
+        } else if ( error == MY_ONLY_PATH ) {
             current_repo_ = "";
             current_path_ = path;
             selected = path;
-        } else if ( error == 1 ) {
-            selected = msg_incorrect;
+        } else if ( error == MY_GENERAL_ERROR ) {
+            selected = msg_incorrect_;
+        } else {
+            selected = tr("Unknown error");
         }
 
-        // Remove any previous "Incorrect path selected"
-        if( error == 0 || error == 2 ) {
-            int idx = ui->curRepoCombo->findText(msg_incorrect);
-            if( idx != -1) {
-                ui->curRepoCombo->removeItem( idx );
-            }
-        }
+        processCurRepoCombo( selected, error );
 
-        // Add item if new
-        if (ui->curRepoCombo->findText(selected) == -1) {
-            ui->curRepoCombo->addItem(selected);
-        }
-
-        ui->curRepoCombo->setCurrentIndex(ui->curRepoCombo->findText(selected));
-
-        if( error == 0 || error == 2 ) {
+        if( error == MY_REPO_AND_PATH || error == MY_ONLY_PATH ) {
             emit repositoryChanged();
         }
     }
+}
+
+void MainWindow::processCurRepoCombo(const QString &selected, int error)
+{
+    // We, not the user, are changing the combo box
+    limitComboBoxReactions( true );
+
+    // Remove any previous "Incorrect path selected"
+    if( error == 0 || error == 2 ) {
+        int idx = ui->curRepoCombo->findText(msg_incorrect_);
+        if( idx != -1) {
+            ui->curRepoCombo->removeItem( idx );
+        }
+    }
+
+    // Add item if new
+    if (ui->curRepoCombo->findText(selected) == -1) {
+        ui->curRepoCombo->addItem(selected);
+    }
+
+    ui->curRepoCombo->setCurrentIndex(ui->curRepoCombo->findText(selected));
+
+    // We, not the user, are changing the combo box
+    limitComboBoxReactions( false );
 }
 
 void MainWindow::reloadRepository() {

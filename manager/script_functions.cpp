@@ -11,12 +11,16 @@ std::tuple< QString, QString, int > getRepoFromPath( const QString & path ) {
     QString last = nodes.takeLast();
 
     if( fileInfo.isFile() && fileInfo.exists() ) {
+        // Remove last path node, as it is regular file
         last = nodes.takeLast();
         fileInfo = QFileInfo( nodes.join("/") );
     }
 
     if( !fileInfo.isDir() ) {
-        return make_tuple( path, nodes.join("/") + "/" + last, 1 );
+        // Couldn't find directory at given path,
+        // return the path unmodified and our
+        // possibly processed version
+        return make_tuple( path, nodes.join("/") + "/" + last, MY_GENERAL_ERROR );
     }
 
     QRegExp rx("^([a-z0-9][a-z0-9])---([a-zA-Z0-9][a-zA-Z0-9-]*)---([a-zA-Z0-9_-]+)---([a-zA-Z0-9_/.~-]+)$");
@@ -34,9 +38,11 @@ std::tuple< QString, QString, int > getRepoFromPath( const QString & path ) {
             result += "/";
             result += rx.cap(4);
         }
-        return make_tuple( result.join(""), nodes.join("/") + "/" + last, 0 );
+        return make_tuple( result.join(""), nodes.join("/") + "/" + last, MY_REPO_AND_PATH );
     } else {
-        return make_tuple( path, nodes.join("/") + "/" + last, 2 );
+        // In case of this partial error, second tuple's element contains the
+        // returned path and first element – as a fallback – the input path
+        return make_tuple( path, nodes.join("/") + "/" + last, MY_ONLY_PATH );
     }
 }
 

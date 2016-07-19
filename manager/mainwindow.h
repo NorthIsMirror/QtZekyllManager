@@ -49,6 +49,12 @@ private:
 
     bool isDeferredApplyPrepared_;
     std::vector<int> deferredCodeSelectors_;
+    bool combo_box_reactions_limited_;
+
+    QString msg_incorrect_ = tr("Incorrect path selected");
+
+    QByteArray home_path_;
+    QVector<QString> repos_paths_;
 
     Ui::MainWindow *ui;
 
@@ -58,6 +64,7 @@ private:
 
     void setupDeferredApplyOfCodeSelectors( const std::vector<int> & bits ) { isDeferredApplyPrepared_ = true; deferredCodeSelectors_ = bits; }
     int applyDeferredCodeSelectors( bool silent );
+    void limitComboBoxReactions( bool should_limit ) { combo_box_reactions_limited_ = should_limit; }
     bool errorOnDisallowedChars( const QString & type, const QStringList & invalidChars );
     std::tuple< std::vector<int>, int > gatherCodeSelectors();
     int applyCodeSelectors( const std::vector<int> & bits_, bool silent = false );
@@ -78,6 +85,7 @@ public slots:
 
 private slots:
     void browse();
+    void processCurRepoCombo( const QString & selected, int error );
     void reloadRepository();
     void checkBoxStateChanged( int state );
     void on_tableWidget_cellDoubleClicked( int row, int column );
