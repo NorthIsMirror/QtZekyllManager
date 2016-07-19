@@ -317,7 +317,7 @@
            <number>5</number>
           </property>
           <attribute name="verticalHeaderVisible">
-           <bool>false</bool>
+           <bool>true</bool>
           </attribute>
           <column/>
           <column/>
