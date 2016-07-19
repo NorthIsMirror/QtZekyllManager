@@ -366,9 +366,9 @@ int MainWindow::setCheckedInTable( bool selected, QTableWidget *table, int row, 
     return retval;
 }
 
-int MainWindow::setCheckedViaTableInLZCSDE( bool selected, QTableWidget *table, LZCSDE & lzcsde, int row, bool silent )
+std::tuple<int,int> MainWindow::setCheckedViaTableInLZCSDE( bool selected, QTableWidget *table, LZCSDE & lzcsde, int row, bool silent )
 {
-    int retval = 0;
+    int retval = 0, retid = -1;
     QTableWidgetItem *id_item = table->item( row, 0 );
     if( id_item ) {
         QString id = id_item->text();
@@ -378,6 +378,7 @@ int MainWindow::setCheckedViaTableInLZCSDE( bool selected, QTableWidget *table, 
             int idx = lzcsde.findIdxOfId( intid );
             if( idx != -1 ) {
                 lzcsde.entries()[idx].setChecked( selected );
+                retid = intid;
             } else {
                 retval += 173;
                 if( !silent ) {
@@ -397,7 +398,7 @@ int MainWindow::setCheckedViaTableInLZCSDE( bool selected, QTableWidget *table, 
         }
     }
 
-    return retval;
+    return std::make_tuple( retval, retid );
 }
 
 bool MainWindow::errorOnDisallowedChars(const QString &type, const QStringList &invalidChars)
@@ -1014,8 +1015,33 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
 
         // Set LZCSDE entry
         if( retval2 == 0 ) {
-            retval2 = setCheckedViaTableInLZCSDE( selected, ui->tableWidget, lzcsde_list_, row, silent );
+            int id;
+            std::tie( retval2, id ) = setCheckedViaTableInLZCSDE( selected, ui->tableWidget, lzcsde_list_, row, silent );
             retval += retval2;
+
+            // Set CheckBox in section order list
+            if( retval2 == 0 && id != -1 ) {
+                QString strId = QString( "%1" ).arg( id );
+                int rows2 = ui->tableWidget_2->rowCount();
+                for( int row2 = 0; row2 < rows2; row2 ++ ) {
+                    QTableWidgetItem *item = ui->tableWidget_2->item( row2, 0 );
+                    if( !item ) {
+                        continue;
+                    }
+                    if( item->text() != strId ) {
+                        continue;
+                    }
+
+                    // Found the ID, meaning row is also known
+                    int retval2 = setCheckedInTable( selected, ui->tableWidget_2, row2, silent );
+                    break;
+                }
+            } else {
+                retval += 179;
+                if( !silent ) {
+                    MessagesI.AppendMessageT( "Warning: Problems with data (22)" );
+                }
+            }
         }
     }
 
