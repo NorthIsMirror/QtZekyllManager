@@ -472,6 +472,8 @@ void MainWindow::checkBoxStateChanged( int state )
     }
 
     entry.setChecked( state != 0 );
+
+    recomputeZcode();
 }
 
  void MainWindow::updateMessages( const QStringList & messages ) {
