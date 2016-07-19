@@ -150,6 +150,13 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
 
     lzcsde_initial_.clear();
     lzcsde_initial_ = lzcsde_list_;
+    lzcsde_section_.clear();
+    lzcsde_section_ = lzcsde_list_;
+
+    sectionOrderOnLZCSDE( lzcsde_section_ );
+    foreach( const LZCSDE_Entry & entry, lzcsde_section_.entries() ) {
+        insertLZCSDTableRow(ui->tableWidget_2, entry.id(), entry.zekyll(), entry.checked(), entry.section(), entry.description());
+    }
 
     current_size_of_index_ = lzcsde_list_.count();
     this->ui->indexSize->setText( QString("%1").arg( current_size_of_index_ ) );

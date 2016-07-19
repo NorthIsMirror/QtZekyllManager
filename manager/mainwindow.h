@@ -40,6 +40,7 @@ private:
     Git *git_;
 
     LZCSDE lzcsde_list_;
+    LZCSDE lzcsde_section_;
     LZCSDE lzcsde_consistent_;
 
     LZCSDE lzcsde_initial_;

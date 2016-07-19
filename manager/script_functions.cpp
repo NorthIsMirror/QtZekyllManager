@@ -214,3 +214,8 @@ QString reverseQString( const QString & str)
     }
     return str_rev;
 }
+
+int sectionOrderOnLZCSDE( LZCSDE & lzcsde ) {
+    int error = 0;
+    return error;
+}
