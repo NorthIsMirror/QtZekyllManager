@@ -321,6 +321,67 @@ int MainWindow::applyDeferredCodeSelectors( bool silent )
     return 0;
 }
 
+int MainWindow::setCheckedForTable( bool selected, QTableWidget *table, int row, bool silent )
+{
+    int retval = 0;
+
+    QWidget *awidget = table->cellWidget( row, 2 );
+    QWidget *widget = qobject_cast<QWidget*>( awidget );
+    if(!widget) {
+        retval += 161;
+        if( !silent ) {
+            MessagesI.AppendMessageT( "Warning: Problems with data (9)" );
+        }
+        return retval;
+    }
+
+    QLayout *layout_general = widget->layout();
+    QHBoxLayout *layout = qobject_cast<QHBoxLayout *>( layout_general );
+    if(!layout) {
+        retval += 162;
+        if( !silent ) {
+            MessagesI.AppendMessageT( "Warning: Problems with data (10)" );
+        }
+        return retval;
+    }
+
+    // Also prepare item
+    QTableWidgetItem *id_item = table->item( row, 0 );
+
+    int count = layout->count();
+    for( int i = 0; i < count; i ++ ) {
+        QLayoutItem *l_item = layout->itemAt( i );
+        QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget() );
+        if( checkBox && id_item ) {
+            QString id = id_item->text();
+            bool ok = false;
+            int intid = id.toInt( &ok );
+            if( ok ) {
+                int idx = lzcsde_list_.findIdxOfId( intid );
+                lzcsde_list_.entries()[idx].setChecked( selected );
+
+                if( selected ) {
+                    checkBox->setCheckState( Qt::Checked );
+                } else {
+                    checkBox->setCheckState( Qt::Unchecked );
+                }
+            } else {
+                retval += 163;
+                if( !silent ) {
+                    MessagesI.AppendMessageT( "Warning: Problems with data (11)" );
+                }
+            }
+        } else {
+            retval += 164;
+            if( !silent ) {
+                MessagesI.AppendMessageT( "Warning: Problems with data (12)" );
+            }
+        }
+    }
+
+    return retval;
+}
+
 bool MainWindow::errorOnDisallowedChars(const QString &type, const QStringList &invalidChars)
 {
     if( !invalidChars.empty() ) {
@@ -929,58 +990,7 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
             }
         }
 
-        QWidget *sel_widget = ui->tableWidget->cellWidget( row, 2 );
-        QWidget *widget = qobject_cast<QWidget*>( sel_widget );
-        if(!widget) {
-            retval += 161;
-            if( !silent ) {
-                MessagesI.AppendMessageT( "Warning: Problems with data (9)" );
-            }
-            continue;
-        }
-
-        QLayout *layout_general = widget->layout();
-        QHBoxLayout *layout = qobject_cast<QHBoxLayout *>( layout_general );
-        if(!layout) {
-            retval += 162;
-            if( !silent ) {
-                MessagesI.AppendMessageT( "Warning: Problems with data (10)" );
-            }
-            continue;
-        }
-
-        QTableWidgetItem *id_item = ui->tableWidget->item( row, 0 );
-
-        int count = layout->count();
-        for( int i = 0; i < count; i ++ ) {
-            QLayoutItem *l_item = layout->itemAt( i );
-            QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget() );
-            if( checkBox && id_item ) {
-                QString id = id_item->text();
-                bool ok = false;
-                int intid = id.toInt( &ok );
-                if( ok ) {
-                    int idx = lzcsde_list_.findIdxOfId( intid );
-                    lzcsde_list_.entries()[idx].setChecked( selected );
-
-                    if( selected ) {
-                        checkBox->setCheckState( Qt::Checked );
-                    } else {
-                        checkBox->setCheckState( Qt::Unchecked );
-                    }
-                } else {
-                    retval += 163;
-                    if( !silent ) {
-                        MessagesI.AppendMessageT( "Warning: Problems with data (11)" );
-                    }
-                }
-            } else {
-                retval += 164;
-                if( !silent ) {
-                    MessagesI.AppendMessageT( "Warning: Problems with data (12)" );
-                }
-            }
-        }
+        retval += setCheckedForTable( selected, ui->tableWidget, row, silent );
     }
 
 
