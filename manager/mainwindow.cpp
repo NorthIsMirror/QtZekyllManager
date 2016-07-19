@@ -1074,3 +1074,8 @@ void MainWindow::on_curRepoCombo_activated(int index)
         emit repositoryChanged();
     }
 }
+
+void MainWindow::on_zcode_returnPressed()
+{
+    ui->zcode->clearFocus();
+}
