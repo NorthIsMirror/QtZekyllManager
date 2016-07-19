@@ -88,7 +88,7 @@ private slots:
     void browse();
     void processCurRepoCombo( const QString & selected, int error );
     void reloadRepository();
-    void checkBoxStateChanged( int state );
+    void checkBoxClicked( bool checked );
     void on_tableWidget_cellDoubleClicked( int row, int column );
     void on_up_clicked();
     void on_down_clicked();

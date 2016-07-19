@@ -244,8 +244,15 @@ void MainWindow::insertLZCSDTableRow(const QString & lzcsde, QTableWidget * tabl
     } else {
         checkBox->setCheckState(Qt::Unchecked);
     }
-    checkBox->setProperty("id", id);
-    connect( checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxStateChanged(int)) );
+    checkBox->setProperty( "id", id );
+    if( lzcsde == "list" ) {
+        checkBox->setProperty( "lzcsde", "list" );
+    } else if( lzcsde == "section" ) {
+        checkBox->setProperty( "lzcsde", "section" );
+    } else {
+        checkBox->setProperty( "lzcsde", "unknown" );
+    }
+    connect( checkBox, SIGNAL(clicked(bool)), this, SLOT(checkBoxClicked(bool)) );
 
     QWidget *widget = new QWidget();
     QHBoxLayout *layout = new QHBoxLayout(widget);
@@ -412,7 +419,7 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
         int count = layout->count();
         for( int i = 0; i < count; i ++ ) {
             QLayoutItem *l_item = layout->itemAt( i );
-            QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget()     );
+            QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget() );
             if( checkBox && id_item ) {
                 QString id = id_item->text();
                 bool ok = false;
@@ -534,7 +541,7 @@ void MainWindow::reloadRepository() {
     zkiresize_->list();
 }
 
-void MainWindow::checkBoxStateChanged( int state )
+void MainWindow::checkBoxClicked( bool checked )
 {
     QCheckBox * box = qobject_cast< QCheckBox * >( sender() );
     if( !box ) {
@@ -554,7 +561,59 @@ void MainWindow::checkBoxStateChanged( int state )
         return;
     }
 
-    entry.setChecked( state != 0 );
+    entry.setChecked( checked );
+
+    //
+    // Now apply the state change also on accompanying checkBox
+    //
+
+    QTableWidget *table;
+    if( box->property("lzcsde") == "list" ) {
+        table = ui->tableWidget_2;
+    } else if( box->property("lzcsde") == "section" ) {
+        table = ui->tableWidget;
+    } else {
+        recomputeZcode();
+        return;
+    }
+
+    QString strId = box->property("id").toString();
+    int rows = table->rowCount();
+    for( int row = 0; row < rows; row ++ ) {
+        QTableWidgetItem *item = table->item( row, 0 );
+        if( item->text() != strId ) {
+            continue;
+        }
+
+        QWidget *awidget = table->cellWidget( row, 2 );
+        QWidget *widget = qobject_cast<QWidget*>( awidget );
+        if(!widget) {
+            MessagesI.AppendMessageT( "Warning: Problems with data (17)" );
+            break;
+        }
+
+        QLayout *layout_general = widget->layout();
+        QHBoxLayout *layout = qobject_cast<QHBoxLayout *>( layout_general );
+        if(!layout) {
+            MessagesI.AppendMessageT( "Warning: Problems with data (18)" );
+            break;
+        }
+
+        int count = layout->count();
+        for( int i = 0; i < count; i ++ ) {
+            QLayoutItem *l_item = layout->itemAt( i );
+            QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget() );
+            if( !checkBox ) {
+                MessagesI.AppendMessageT( "Warning: Problems with data (19)" );
+                break;
+            }
+
+            checkBox->setCheckState( checked ? Qt::Checked : Qt::Unchecked );
+        }
+
+        // Single find is the correct situation
+        break;
+    }
 
     recomputeZcode();
 }
@@ -895,7 +954,7 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
         int count = layout->count();
         for( int i = 0; i < count; i ++ ) {
             QLayoutItem *l_item = layout->itemAt( i );
-            QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget()     );
+            QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget() );
             if( checkBox && id_item ) {
                 QString id = id_item->text();
                 bool ok = false;
