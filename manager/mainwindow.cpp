@@ -310,6 +310,8 @@ int MainWindow::applyDeferredCodeSelectors( bool silent )
         applyCodeSelectors( deferredCodeSelectors_, silent );
         deferredCodeSelectors_ = std::vector<int>();
     }
+
+    return 0;
 }
 
 bool MainWindow::errorOnDisallowedChars(const QString &type, const QStringList &invalidChars)
