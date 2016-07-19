@@ -14,9 +14,10 @@ void MyQLineEdit::focusInEvent(QFocusEvent *e)
       if( widget->objectName() == "MainWindow" ) {
           MainWindow *window = qobject_cast< MainWindow* >( widget );
           if( window ) {
-              int has_correct_data;
-              QString input;
-              std::tie( has_correct_data, input ) = window->getProcessedZcodeInput();
+              bool has_correct_data;
+              QString input, code;
+              int index;
+              std::tie( has_correct_data, input, index, code ) = window->getProcessedZcodeInput();
               setText( input );
 
               break;

@@ -289,12 +289,12 @@ bool MainWindow::errorOnDisallowedChars(const QString &type, const QStringList &
     return false;
 }
 
-std::tuple<bool, QString> MainWindow::getProcessedZcodeInput()
+std::tuple<bool, QString, int, QString> MainWindow::getProcessedZcodeInput()
 {
     QString input = ui->zcode->text().trimmed();
     if( input == "" ) {
         input = QString( "%1/" ).arg( current_index_ );
-        return std::make_tuple( false, input );
+        return std::make_tuple( false, input, current_index_, QString("") );
     }
 
     QStringList parts = input.split("/", QString::KeepEmptyParts );
@@ -304,7 +304,14 @@ std::tuple<bool, QString> MainWindow::getProcessedZcodeInput()
             input = parts.join( "/" );
         } else {
             MessagesI.AppendMessageT( "Warning: incorrect Zcode enterred" );
-            return std::make_tuple( false, input );
+            bool ok = false;
+            int index = parts.first().toInt( &ok );
+            if( !ok ) {
+                index = -1;
+            } else {
+                parts.pop_front();
+            }
+            return std::make_tuple( false, input, index, parts.join("/") );
         }
     } else {
         if( parts.first() == "" ) {
@@ -313,11 +320,23 @@ std::tuple<bool, QString> MainWindow::getProcessedZcodeInput()
         input = parts.join( "/" );
 
         if( parts.last() == "" ) {
-            return std::make_tuple( false, input );
+            bool ok = false;
+            int index = parts.first().toInt( &ok );
+            if( !ok ) {
+                index = -1;
+            }
+            return std::make_tuple( false, input, index, QString("") );
         }
     }
 
-    return std::make_tuple( true, input );
+    bool ok = false;
+    int index = parts.first().toInt( &ok );
+    if( !ok ) {
+        index = -1;
+    } else {
+        parts.pop_front();
+    }
+    return std::make_tuple( true, input, index, parts.join("/") );
 }
 
 std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
@@ -685,8 +704,9 @@ void MainWindow::handle_zkiresize_resize( int exitCode, QStringList entries ) {
 void MainWindow::on_zcode_editingFinished()
 {
     bool has_correct_data;
-    QString input;
-    std::tie( has_correct_data, input ) = getProcessedZcodeInput();
+    QString input, code;
+    int index;
+    std::tie( has_correct_data, input, index, code ) = getProcessedZcodeInput();
 
     ui->zcode->setText( input );
 

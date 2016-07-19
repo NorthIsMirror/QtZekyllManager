@@ -88,7 +88,7 @@ private slots:
 
 public:
     int currentIndex() const { return current_index_; }
-    std::tuple< bool, QString > getProcessedZcodeInput();
+    std::tuple<bool, QString, int, QString> getProcessedZcodeInput();
 };
 
 #endif // MAINWINDOW_H
