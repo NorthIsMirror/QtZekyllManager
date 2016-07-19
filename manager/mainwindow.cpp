@@ -486,6 +486,17 @@ void MainWindow::processCurRepoCombo(const QString &selected, int error)
 }
 
 void MainWindow::reloadRepository() {
+    // Maintain current code selectors
+    if( !isDeferredApplyPrepared_ ) {
+        std::vector<int> code_selectors;
+        int error;
+        std::tie( code_selectors, error ) = gatherCodeSelectors();
+        if( code_selectors.size() > 0 ) {
+            std::reverse( code_selectors.begin(), code_selectors.end() );
+            setupDeferredApplyOfCodeSelectors( code_selectors );
+        }
+    }
+
     is_loading_ = true;
     ui->tableWidget->setRowCount(0);
     ui->tableWidget_2->setRowCount(0);
