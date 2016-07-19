@@ -67,6 +67,7 @@ private:
     int applyDeferredCodeSelectors( bool silent );
     void limitComboBoxReactions( bool should_limit ) { combo_box_reactions_limited_ = should_limit; }
     int setCheckedForTable( bool selected, QTableWidget *table, int row, bool silent );
+    int setCheckedViaTableForLZCSDE( bool selected, QTableWidget *table, LZCSDE & lzcsde, int row, bool silent );
     bool errorOnDisallowedChars( const QString & type, const QStringList & invalidChars );
     std::tuple< std::vector<int>, int > gatherCodeSelectors();
     int applyCodeSelectors( const std::vector<int> & bits_, bool silent = false );

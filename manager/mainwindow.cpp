@@ -321,7 +321,7 @@ int MainWindow::applyDeferredCodeSelectors( bool silent )
     return 0;
 }
 
-int MainWindow::setCheckedForTable( bool selected, QTableWidget *table, int row, bool silent )
+int MainWindow::setCheckedInTable( bool selected, QTableWidget *table, int row, bool silent )
 {
     int retval = 0;
 
@@ -345,37 +345,55 @@ int MainWindow::setCheckedForTable( bool selected, QTableWidget *table, int row,
         return retval;
     }
 
-    // Also prepare item
-    QTableWidgetItem *id_item = table->item( row, 0 );
-
     int count = layout->count();
     for( int i = 0; i < count; i ++ ) {
         QLayoutItem *l_item = layout->itemAt( i );
         QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget() );
-        if( checkBox && id_item ) {
-            QString id = id_item->text();
-            bool ok = false;
-            int intid = id.toInt( &ok );
-            if( ok ) {
-                int idx = lzcsde_list_.findIdxOfId( intid );
-                lzcsde_list_.entries()[idx].setChecked( selected );
-
-                if( selected ) {
-                    checkBox->setCheckState( Qt::Checked );
-                } else {
-                    checkBox->setCheckState( Qt::Unchecked );
-                }
+        if( checkBox ) {
+            if( selected ) {
+                checkBox->setCheckState( Qt::Checked );
             } else {
-                retval += 163;
-                if( !silent ) {
-                    MessagesI.AppendMessageT( "Warning: Problems with data (11)" );
-                }
+                checkBox->setCheckState( Qt::Unchecked );
             }
         } else {
             retval += 164;
             if( !silent ) {
                 MessagesI.AppendMessageT( "Warning: Problems with data (12)" );
             }
+        }
+    }
+
+    return retval;
+}
+
+int MainWindow::setCheckedViaTableInLZCSDE( bool selected, QTableWidget *table, LZCSDE & lzcsde, int row, bool silent )
+{
+    int retval = 0;
+    QTableWidgetItem *id_item = table->item( row, 0 );
+    if( id_item ) {
+        QString id = id_item->text();
+        bool ok = false;
+        int intid = id.toInt( &ok );
+        if( ok ) {
+            int idx = lzcsde.findIdxOfId( intid );
+            if( idx != -1 ) {
+                lzcsde.entries()[idx].setChecked( selected );
+            } else {
+                retval += 173;
+                if( !silent ) {
+                    MessagesI.AppendMessageT( "Warning: Problems with data (21)" );
+                }
+            }
+        } else {
+            retval += 163;
+            if( !silent ) {
+                MessagesI.AppendMessageT( "Warning: Problems with data (11)" );
+            }
+        }
+    } else {
+        retval += 167;
+        if( !silent ) {
+            MessagesI.AppendMessageT( "Warning: Problems with data (20)" );
         }
     }
 
@@ -990,9 +1008,16 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
             }
         }
 
-        retval += setCheckedForTable( selected, ui->tableWidget, row, silent );
-    }
+        // Set CheckBox
+        int retval2 = setCheckedInTable( selected, ui->tableWidget, row, silent );
+        retval += retval2;
 
+        // Set LZCSDE entry
+        if( retval2 == 0 ) {
+            retval2 = setCheckedViaTableInLZCSDE( selected, ui->tableWidget, lzcsde_list_, row, silent );
+            retval += retval2;
+        }
+    }
 
     return retval;
 }
