@@ -773,7 +773,8 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_ ) {
     int retval = 0;
     if( lzcsde_list_.count() < bits.size() ) {
         retval += 160;
-        MessagesI.AppendMessageT( QString( "Warning: Code is for index of size at least %1" ).arg(bits.size()) );
+        MessagesI.AppendMessageT( QString( "Warning: Code is for index of size at least %1 (current index size: %2)" )
+                                  .arg( bits.size() ).arg( lzcsde_list_.count() ) );
     }
 
     bool selected;
