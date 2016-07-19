@@ -56,7 +56,7 @@ void ZkIResize::handleZkIResizeResize(int exitCode, QProcess::ExitStatus exitSta
 
 void ZkIResize::list() {
     arguments_list_.clear();
-    arguments_list_ << "-qn" << "--req" << "-p" << repoPath_ << "-i" << "1" << "--list";
+    arguments_list_ << "-qn" << "--req" << "-p" << repoPath_ << "-i" << QString( "%1" ).arg( index_ ) << "--list";
     //qDebug() << "List: " << arguments_list_;
     process_list_.kill();
     process_list_.waitForFinished(50);

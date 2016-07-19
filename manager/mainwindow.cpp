@@ -798,8 +798,10 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
     if( lzcsde_list_.count() < bits.size() ) {
         retval += 160;
         if( !silent ) {
-            MessagesI.AppendMessageT( QString( "Warning: Code is for index of size at least %1 (current index size: %2)" )
-                                      .arg( bits.size() ).arg( lzcsde_list_.count() ) );
+            MessagesI.AppendMessageT(
+                        QString( "Warning: Code is for index of size at least %1 (current index size: %2) - recomputing Zcode with new (limited) size" )
+                        .arg( bits.size() ).arg( lzcsde_list_.count() )
+            );
         }
     }
 
