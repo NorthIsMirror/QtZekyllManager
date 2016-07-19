@@ -661,35 +661,11 @@ void MainWindow::checkBoxClicked( bool checked )
     int rows = table->rowCount();
     for( int row = 0; row < rows; row ++ ) {
         QTableWidgetItem *item = table->item( row, 0 );
-        if( item->text() != strId ) {
+        if( !item || item->text() != strId ) {
             continue;
         }
 
-        QWidget *awidget = table->cellWidget( row, 2 );
-        QWidget *widget = qobject_cast<QWidget*>( awidget );
-        if(!widget) {
-            MessagesI.AppendMessageT( "Warning: Problems with data (17)" );
-            break;
-        }
-
-        QLayout *layout_general = widget->layout();
-        QHBoxLayout *layout = qobject_cast<QHBoxLayout *>( layout_general );
-        if(!layout) {
-            MessagesI.AppendMessageT( "Warning: Problems with data (18)" );
-            break;
-        }
-
-        int count = layout->count();
-        for( int i = 0; i < count; i ++ ) {
-            QLayoutItem *l_item = layout->itemAt( i );
-            QCheckBox *checkBox = qobject_cast<QCheckBox*>( l_item->widget() );
-            if( !checkBox ) {
-                MessagesI.AppendMessageT( "Warning: Problems with data (19)" );
-                break;
-            }
-
-            checkBox->setCheckState( checked ? Qt::Checked : Qt::Unchecked );
-        }
+        setCheckedInTable( checked, table, row, false );
 
         // Single find is the correct situation
         break;
