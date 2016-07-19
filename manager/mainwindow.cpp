@@ -492,6 +492,9 @@ void MainWindow::reloadRepository() {
         int error;
         std::tie( code_selectors, error ) = gatherCodeSelectors();
         if( code_selectors.size() > 0 ) {
+            while( code_selectors.size() > 0 && code_selectors.back() == 0 ) {
+                code_selectors.pop_back();
+            }
             std::reverse( code_selectors.begin(), code_selectors.end() );
             setupDeferredApplyOfCodeSelectors( code_selectors );
         }
