@@ -454,19 +454,20 @@ void MainWindow::reloadRepository() {
 void MainWindow::checkBoxStateChanged( int state )
 {
     QCheckBox * box = qobject_cast< QCheckBox * >( sender() );
-    if( !box || !box->parent() ) {
+    if( !box ) {
+        MessagesI.AppendMessageT("Warning: Problems with data (13)");
         return;
     }
     bool ok = false;
     int id = box->property("id").toInt( &ok );
     if( !ok ) {
-        MessagesI.AppendMessageT("Warning: Problems with data (13)");
+        MessagesI.AppendMessageT("Warning: Problems with data (14)");
         return;
     }
 
     LZCSDE_Entry & entry = lzcsde_list_.getId( id );
     if( entry.id() == -1 ) {
-        MessagesI.AppendMessageT("Warning: Problems with data (14)");
+        MessagesI.AppendMessageT("Warning: Problems with data (15)");
         return;
     }
 
