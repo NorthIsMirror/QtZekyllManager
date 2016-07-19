@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     isConsistent_(true),
     is_loading_(false),
+    isDeferredApplyPrepared_(false),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -121,6 +122,8 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
             MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend (1):</font> ") + error_decode );
         }
         is_loading_ = false;
+        // Expecting incorrect behavior, thus silent (i.e. the true)
+        applyDeferredCodeSelectors( true );
         return;
     }
 
@@ -151,6 +154,8 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
     // started, and whole listing actually stops there
     if( exitCode != 12 ) {
         is_loading_ = false;
+        // Expecting correct behavior, thus not silent (i.e. the false)
+        applyDeferredCodeSelectors( false );
     }
 }
 
@@ -162,6 +167,8 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
             MessagesI.AppendMessageT( tr("<font color=green>Message from the Zekyll backend (2):</font> ") + error_decode );
         }
         is_loading_ = false;
+        // Expecting correct behavior (list should went well), thus not silent (i.e. the false)
+        applyDeferredCodeSelectors( false );
         return;
     }
     isConsistent2_ = false;
@@ -199,6 +206,8 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
     }
 
     is_loading_ = false;
+    // Expecting correct behavior, thus not silent (i.e. the false)
+    applyDeferredCodeSelectors( false );
 }
 
 void MainWindow::insertLZCSDTableRow(QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description) {
@@ -273,6 +282,15 @@ void MainWindow::insertLZSDETableRow(QTableWidget * tableWidget, int id, const Q
     tableWidget->setItem(row, 2, sectionItem);
     tableWidget->setItem(row, 3, descriptionItem);
     tableWidget->setItem(row, 4, errorItem);
+}
+
+int MainWindow::applyDeferredCodeSelectors( bool silent )
+{
+    if( isDeferredApplyPrepared_ ) {
+        isDeferredApplyPrepared_ = false;
+        applyCodeSelectors( deferredCodeSelectors_, silent );
+        deferredCodeSelectors_ = std::vector<int>();
+    }
 }
 
 bool MainWindow::errorOnDisallowedChars(const QString &type, const QStringList &invalidChars)
@@ -762,10 +780,16 @@ void MainWindow::on_zcode_editingFinished()
         bits.erase( bits.end() - 2, bits.end() );
     }
 
-    applyCodeSelectors( bits );
+    if( index != current_index_ ) {
+        current_index_ = index;
+        setupDeferredApplyOfCodeSelectors( bits );
+        reloadRepository();
+    } else {
+        applyCodeSelectors( bits );
+    }
 }
 
-int MainWindow::applyCodeSelectors( const std::vector<int> & bits_ ) {
+int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent ) {
     // Have upper zekylls first
     std::vector<int> bits = bits_;
     std::reverse( bits.begin(), bits.end() );
@@ -773,8 +797,10 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_ ) {
     int retval = 0;
     if( lzcsde_list_.count() < bits.size() ) {
         retval += 160;
-        MessagesI.AppendMessageT( QString( "Warning: Code is for index of size at least %1 (current index size: %2)" )
-                                  .arg( bits.size() ).arg( lzcsde_list_.count() ) );
+        if( !silent ) {
+            MessagesI.AppendMessageT( QString( "Warning: Code is for index of size at least %1 (current index size: %2)" )
+                                      .arg( bits.size() ).arg( lzcsde_list_.count() ) );
+        }
     }
 
     bool selected;
@@ -795,7 +821,9 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_ ) {
         QWidget *widget = qobject_cast<QWidget*>( sel_widget );
         if(!widget) {
             retval += 161;
-            MessagesI.AppendMessageT( "Warning: Problems with data (9)" );
+            if( !silent ) {
+                MessagesI.AppendMessageT( "Warning: Problems with data (9)" );
+            }
             continue;
         }
 
@@ -803,7 +831,9 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_ ) {
         QHBoxLayout *layout = qobject_cast<QHBoxLayout *>( layout_general );
         if(!layout) {
             retval += 162;
-            MessagesI.AppendMessageT( "Warning: Problems with data (10)" );
+            if( !silent ) {
+                MessagesI.AppendMessageT( "Warning: Problems with data (10)" );
+            }
             continue;
         }
 
@@ -828,11 +858,15 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_ ) {
                     }
                 } else {
                     retval += 163;
-                    MessagesI.AppendMessageT( "Warning: Problems with data (11)" );
+                    if( !silent ) {
+                        MessagesI.AppendMessageT( "Warning: Problems with data (11)" );
+                    }
                 }
             } else {
                 retval += 164;
-                MessagesI.AppendMessageT( "Warning: Problems with data (12)" );
+                if( !silent ) {
+                    MessagesI.AppendMessageT( "Warning: Problems with data (12)" );
+                }
             }
         }
     }

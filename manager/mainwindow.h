@@ -35,7 +35,6 @@ private:
     bool is_loading_;
 
     std::vector<std::string> ZKL_INDEX_ZEKYLLS_;
-    Ui::MainWindow *ui;
     ZkIResize *zkiresize_;
     ZkRewrite *zkrewrite_;
     Git *git_;
@@ -48,13 +47,20 @@ private:
     LZCSDE lzcsde_deleted_;
     int new_size_of_index_;
 
+    bool isDeferredApplyPrepared_;
+    std::vector<int> deferredCodeSelectors_;
+
+    Ui::MainWindow *ui;
+
     void insertLZCSDTableRow(QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description);
     void insertLZSDETableRow(QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
                                 const QString & description, const QString & error);
 
+    void setupDeferredApplyOfCodeSelectors( const std::vector<int> & bits ) { isDeferredApplyPrepared_ = true; deferredCodeSelectors_ = bits; }
+    int applyDeferredCodeSelectors( bool silent );
     bool errorOnDisallowedChars( const QString & type, const QStringList & invalidChars );
     std::tuple< std::vector<int>, int > gatherCodeSelectors();
-    int applyCodeSelectors( const std::vector<int> & bits_ );
+    int applyCodeSelectors( const std::vector<int> & bits_, bool silent = false );
     bool recomputeZcode();
 
 signals:
