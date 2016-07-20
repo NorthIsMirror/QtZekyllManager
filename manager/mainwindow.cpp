@@ -108,11 +108,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     repos_paths_.push_back( QString::fromLocal8Bit(home_path_) + "/.zekyll/repos" );
 
-    zkiresize_->setIndex( current_index_ );
     reloadRepository();
-
-    tuple< vector<string>, int > set_index_result = setIndex( current_index_ );
-    ZKL_INDEX_ZEKYLLS_ = get<0>(set_index_result);
 }
 
 MainWindow::~MainWindow()
@@ -693,6 +689,12 @@ void MainWindow::reloadRepository() {
     sel_zekylls_initial_.clear();
     sel_zekylls_current_.clear();
     zekyllIDs_.clear();
+
+    int error;
+    std::tie( ZKL_INDEX_ZEKYLLS_, error ) = setIndex( current_index_ );
+    if( error != 0 ) {
+        MessagesI.AppendMessageT( QString( "Warning: index generation caused errors: %1" ).arg( error ) );
+    }
 
     git_->setRepoPath( current_path_ );
 
