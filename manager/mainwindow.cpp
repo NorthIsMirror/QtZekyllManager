@@ -160,7 +160,15 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
                 ids.push_back( counter );
                 it->second.second = true;
             } else {
-                selectedZekylls_[ zekyll ] = IdSelection( IdsVec(1, counter), true );
+                selectedZekylls_[ zekyll ] = IdSelection( IdsVec( 1, counter ), true );
+            }
+
+            ZekyllIDs::iterator it2 = zekyllIDs_.find( zekyll );
+            if( it2 != zekyllIDs_.end() ) {
+                IdsVec & ids2 = it2->second;
+                ids2.push_back( counter );
+            } else {
+                zekyllIDs_[ zekyll ] = IdsVec( 1, counter );
             }
         }
     }
@@ -629,6 +637,7 @@ void MainWindow::reloadRepository() {
     lzcsde_renamed_from_to_.second.clear();
     lzcsde_deleted_.clear();
     selectedZekylls_.clear();
+    zekyllIDs_.clear();
 
     git_->setRepoPath( current_path_ );
 

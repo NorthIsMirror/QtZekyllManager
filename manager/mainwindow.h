@@ -44,6 +44,7 @@ private:
     LZCSDE lzcsde_section_;
     LZCSDE lzcsde_consistent_;
     SelectedZekylls selectedZekylls_;
+    ZekyllIDs zekyllIDs_;
 
     LZCSDE lzcsde_initial_;
     std::pair<LZCSDE, LZCSDE> lzcsde_renamed_from_to_;
