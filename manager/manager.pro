@@ -47,7 +47,8 @@ HEADERS  += mainwindow.h \
     myqtablewidget.h \
     git.h \
     lgit.h \
-    myqlineedit.h
+    myqlineedit.h \
+    selectedzekylls.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \

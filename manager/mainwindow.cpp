@@ -145,6 +145,23 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
             counter ++;
             lzcsde_list_.insertFromListing(counter, str);
             insertLZCSDTableRow( "list", ui->tableWidget, counter, rx.cap(1), true, rx.cap(2), rx.cap(3) );
+
+            // Put this zekyll into SelectedZekylls data structure,
+            // that maps zekylls to all IDs they occupy (with no
+            // inconsistencies this will be single ID) and to
+            // selection state
+            // This structure holds one more information – by
+            // containing given zekyll it denotes that the zekyll
+            // was in listing
+            std::string zekyll = rx.cap(1).toStdString();
+            SelectedZekylls::iterator it = selectedZekylls_.find( zekyll );
+            if( it != selectedZekylls_.end() ) {
+                IdsVec & ids = it->second.first;
+                ids.push_back( counter );
+                it->second.second = true;
+            } else {
+                selectedZekylls_[ zekyll ] = IdSelection( IdsVec(1, counter), true );
+            }
         }
     }
 
@@ -611,6 +628,7 @@ void MainWindow::reloadRepository() {
     lzcsde_renamed_from_to_.first.clear();
     lzcsde_renamed_from_to_.second.clear();
     lzcsde_deleted_.clear();
+    selectedZekylls_.clear();
 
     git_->setRepoPath( current_path_ );
 

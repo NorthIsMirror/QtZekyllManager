@@ -10,6 +10,7 @@
 #include "zkrewrite.h"
 #include "git.h"
 #include "lzcsde.h"
+#include "selectedzekylls.h"
 
 namespace Ui {
 class MainWindow;
@@ -42,6 +43,7 @@ private:
     LZCSDE lzcsde_list_;
     LZCSDE lzcsde_section_;
     LZCSDE lzcsde_consistent_;
+    SelectedZekylls selectedZekylls_;
 
     LZCSDE lzcsde_initial_;
     std::pair<LZCSDE, LZCSDE> lzcsde_renamed_from_to_;
