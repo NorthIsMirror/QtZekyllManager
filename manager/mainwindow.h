@@ -88,19 +88,33 @@ public slots:
 
 private slots:
     void browse();
+
     void processCurRepoCombo( const QString & selected, int error );
+
     void reloadRepository();
+
     void checkBoxClicked( bool checked );
+
     void on_tableWidget_cellDoubleClicked( int row, int column );
+
     void on_up_clicked();
+
     void on_down_clicked();
+
     void on_minus_clicked();
+
     void on_save_clicked();
+
     void on_tableWidget_itemChanged(QTableWidgetItem *item);
+
     void on_zcode_editingFinished();
+
     void on_rev_editingFinished();
+
     void on_file_editingFinished();
+
     void on_userRepo_editingFinished();
+
     void on_site_currentIndexChanged(int index);
 
     void on_curRepoCombo_activated(int index);
