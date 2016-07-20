@@ -587,7 +587,7 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
         return std::make_tuple( selectors, retval );
     }
 
-    int size = ZKL_INDEX_ZEKYLLS_.size();
+    unsigned int size = ZKL_INDEX_ZEKYLLS_.size();
     for( unsigned int i = 0; i < size; i ++ ) {
         const std::string & zekyll = ZKL_INDEX_ZEKYLLS_[i];
 
