@@ -501,10 +501,26 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
         MessagesI.AppendMessageT( QString( "Warning: Problems with data (%1/%2)" ).arg( lzcsde_list_.count() ).arg( ui->tableWidget->rowCount() ) );
     }
 
-    vector<int> selectors;
-
+    // First find maximal zekyll
     int _rows = ui->tableWidget->rowCount();
     unsigned int rows = (unsigned int) ( _rows >= 0 ? _rows : 0 );
+    std::string max_zekyll;
+    for( unsigned int row = 0; row < rows; row ++ ) {
+        QTableWidgetItem *item = ui->tableWidget->item( row, 1 );
+        if( !item ) {
+            retval += 145;
+            MessagesI.AppendMessageT( "Warning: Problems with data (26)" );
+            continue;
+        }
+        QString qzekyll = item->text();
+        std::string zekyll = qzekyll.toStdString();
+        if( max_zekyll.size() == 0 || zekyll.compare(max_zekyll) > 0 ) {
+            max_zekyll = zekyll;
+        }
+    }
+
+    vector<int> selectors;
+
     for( unsigned int row = 0; row < rows; row ++ ) {
         QWidget *sel_widget = ui->tableWidget->cellWidget( row, 2 );
         QWidget *widget = qobject_cast<QWidget*>( sel_widget );
