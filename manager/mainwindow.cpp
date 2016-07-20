@@ -1310,30 +1310,42 @@ void MainWindow::on_curRepoCombo_activated(int index)
 
 void MainWindow::on_zcode_returnPressed()
 {
+    ui->zcode->blockSignals(true);
     ui->zcode->clearFocus();
+    ui->zcode->blockSignals(false);
 }
 
 void MainWindow::on_rev_returnPressed()
 {
+    ui->rev->blockSignals(true);
     ui->rev->clearFocus();
+    ui->rev->blockSignals(false);
 }
 
 void MainWindow::on_file_returnPressed()
 {
+    ui->file->blockSignals(true);
     ui->file->clearFocus();
+    ui->file->blockSignals(false);
 }
 
 void MainWindow::on_userRepo_returnPressed()
 {
+    ui->userRepo->blockSignals(true);
     ui->userRepo->clearFocus();
+    ui->userRepo->blockSignals(false);
 }
 
 void MainWindow::on_indexSize_returnPressed()
 {
+    ui->indexSize->blockSignals(true);
     ui->indexSize->clearFocus();
+    ui->indexSize->blockSignals(false);
 }
 
 void MainWindow::on_currentIndex_returnPressed()
 {
+    ui->currentIndex->blockSignals(true);
     ui->currentIndex->clearFocus();
+    ui->currentIndex->blockSignals(false);
 }
