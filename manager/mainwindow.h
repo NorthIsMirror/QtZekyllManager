@@ -63,6 +63,7 @@ private:
     void insertLZSDETableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
                                 const QString & description, const QString & error);
 
+    void processCurRepoCombo( const QString & selected, int error );
     void setupDeferredApplyOfCodeSelectors( const std::vector<int> & bits ) { isDeferredApplyPrepared_ = true; deferredCodeSelectors_ = bits; }
     int applyDeferredCodeSelectors( bool silent );
     void limitComboBoxReactions( bool should_limit ) { combo_box_reactions_limited_ = should_limit; }
@@ -88,8 +89,6 @@ public slots:
 
 private slots:
     void browse();
-
-    void processCurRepoCombo( const QString & selected, int error );
 
     void reloadRepository();
 
