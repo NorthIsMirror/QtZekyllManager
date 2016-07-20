@@ -269,6 +269,7 @@ void MainWindow::insertLZCSDTableRow(const QString & lzcsde, QTableWidget * tabl
         checkBox->setCheckState(Qt::Unchecked);
     }
     checkBox->setProperty( "id", id );
+    checkBox->setProperty( "zekyll", zekyll );
     if( lzcsde == "list" ) {
         checkBox->setProperty( "lzcsde", "list" );
     } else if( lzcsde == "section" ) {
@@ -710,6 +711,12 @@ void MainWindow::checkBoxClicked( bool checked )
         MessagesI.AppendMessageT("Warning: Problems with data (13)");
         return;
     }
+
+    // Reflect the toggle in SelectedZekylls structure
+    std::string zekyll = box->property("zekyll").toString().toStdString();
+    sel_zekylls_current_[ zekyll ].second = checked;
+
+    // Reflect the toggle in LZCSDE structure
     bool ok = false;
     int id = box->property("id").toInt( &ok );
     if( !ok ) {
@@ -726,7 +733,7 @@ void MainWindow::checkBoxClicked( bool checked )
     entry.setChecked( checked );
 
     //
-    // Now apply the state change also on accompanying checkBox
+    // Now reflect the toggle also on accompanying checkBox
     //
 
     QTableWidget *table;
