@@ -156,19 +156,19 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
             std::string zekyll = rx.cap(1).toStdString();
             SelectedZekylls::iterator it = selectedZekylls_.find( zekyll );
             if( it != selectedZekylls_.end() ) {
-                IdsVec & ids = it->second.first;
+                IDsVec & ids = it->second.first;
                 ids.push_back( counter );
                 it->second.second = true;
             } else {
-                selectedZekylls_[ zekyll ] = IdSelection( IdsVec( 1, counter ), true );
+                selectedZekylls_[ zekyll ] = IdSelection( IDsVec( 1, counter ), true );
             }
 
             ZekyllIDs::iterator it2 = zekyllIDs_.find( zekyll );
             if( it2 != zekyllIDs_.end() ) {
-                IdsVec & ids2 = it2->second;
+                IDsVec & ids2 = it2->second;
                 ids2.push_back( counter );
             } else {
-                zekyllIDs_[ zekyll ] = IdsVec( 1, counter );
+                zekyllIDs_[ zekyll ] = IDsVec( 1, counter );
             }
         }
     }

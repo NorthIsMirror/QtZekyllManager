@@ -7,11 +7,11 @@
 #include <utility>
 
 // Holds which zekylls are selected, together with IDs
-typedef std::vector<int> IdsVec;
-typedef std::pair< IdsVec, bool > IdSelection;
+typedef std::vector<int> IDsVec;
+typedef std::pair< IDsVec, bool > IdSelection;
 typedef std::map< std::string, IdSelection > SelectedZekylls;
 
 // More basic data structure that holds only IDs of zekyll
-typedef std::map< std::string, IdsVec > ZekyllIDs;
+typedef std::map< std::string, IDsVec > ZekyllIDs;
 
 #endif // SELECTEDZEKYLLS_H
