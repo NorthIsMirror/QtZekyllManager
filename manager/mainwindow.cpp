@@ -1044,12 +1044,15 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
     std::vector<int> bits = bits_;
     std::reverse( bits.begin(), bits.end() );
 
+    bool recompute_zcode = false;
+
     int retval = 0;
     if( lzcsde_list_.count() < bits.size() ) {
         retval += 160;
         if( !silent ) {
+            recompute_zcode = true;
             MessagesI.AppendMessageT(
-                        QString( "Warning: Code is for index of size at least %1 (current index size: %2) - recomputing Zcode with new (limited) size" )
+                        QString( "Warning: Zcode is for index of size at least %1 (current size: %2) – truncated the Zcode" )
                         .arg( bits.size() ).arg( lzcsde_list_.count() )
             );
         }
@@ -1136,6 +1139,12 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
                     MessagesI.AppendMessageT( "Warning: Problems with data (22)" );
                 }
             }
+        }
+    }
+
+    if( recompute_zcode ) {
+        if(!recomputeZcode()) {
+            retval += 2230000;
         }
     }
 
