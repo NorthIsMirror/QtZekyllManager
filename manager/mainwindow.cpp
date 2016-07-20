@@ -7,6 +7,7 @@
 #include "singleton.h"
 #include "messages.h"
 #include <QDebug>
+#include <QMap>
 #include <QRegExp>
 #include <QCheckBox>
 #include <QDir>

@@ -4,8 +4,13 @@
 #include <QMainWindow>
 #include <QTableWidget>
 #include <QTimer>
+#include <QVector>
+#include <QString>
+#include <QStringList>
+#include <QByteArray>
 #include <vector>
 #include <string>
+#include <tuple>
 #include "zkiresize.h"
 #include "zkrewrite.h"
 #include "git.h"
