@@ -1153,6 +1153,7 @@ void MainWindow::on_userRepo_editingFinished()
 
 void MainWindow::on_site_currentIndexChanged(int index)
 {
+    Q_UNUSED( index );
     recomputeZcode();
 }
 
