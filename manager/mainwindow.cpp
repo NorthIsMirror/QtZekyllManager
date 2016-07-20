@@ -1006,7 +1006,11 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
                     }
 
                     // Found the ID, meaning row is also known
-                    int retval2 = setCheckedInTable( selected, ui->tableWidget_2, row2, silent );
+                    retval2 = setCheckedInTable( selected, ui->tableWidget_2, row2, silent );
+                    retval += retval2 ? retval2 + 2110000 : 0;
+                    if( retval2 != 0 ) {
+                        MessagesI.AppendMessageT( QString( "Warning: Problems with data (23/%1)" ).arg( retval2 ) );
+                    }
                     break;
                 }
             } else {
