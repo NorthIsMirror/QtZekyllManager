@@ -43,7 +43,8 @@ private:
     LZCSDE lzcsde_list_;
     LZCSDE lzcsde_section_;
     LZCSDE lzcsde_consistent_;
-    SelectedZekylls selectedZekylls_;
+    SelectedZekylls sel_zekylls_initial_;
+    SelectedZekylls sel_zekylls_current_;
     ZekyllIDs zekyllIDs_;
 
     LZCSDE lzcsde_initial_;

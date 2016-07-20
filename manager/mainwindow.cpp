@@ -154,13 +154,13 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
             // containing given zekyll it denotes that the zekyll
             // was in listing
             std::string zekyll = rx.cap(1).toStdString();
-            SelectedZekylls::iterator it = selectedZekylls_.find( zekyll );
-            if( it != selectedZekylls_.end() ) {
+            SelectedZekylls::iterator it = sel_zekylls_initial_.find( zekyll );
+            if( it != sel_zekylls_initial_.end() ) {
                 IDsVec & ids = it->second.first;
                 ids.push_back( counter );
                 it->second.second = true;
             } else {
-                selectedZekylls_[ zekyll ] = IDSelection( IDsVec( 1, counter ), true );
+                sel_zekylls_initial_[ zekyll ] = IDSelection( IDsVec( 1, counter ), true );
             }
 
             ZekyllIDs::iterator it2 = zekyllIDs_.find( zekyll );
@@ -173,6 +173,8 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
         }
     }
 
+    sel_zekylls_current_.clear();
+    sel_zekylls_current_ = sel_zekylls_initial_;
     lzcsde_initial_.clear();
     lzcsde_initial_ = lzcsde_list_;
     lzcsde_section_.clear();
@@ -636,7 +638,8 @@ void MainWindow::reloadRepository() {
     lzcsde_renamed_from_to_.first.clear();
     lzcsde_renamed_from_to_.second.clear();
     lzcsde_deleted_.clear();
-    selectedZekylls_.clear();
+    sel_zekylls_initial_.clear();
+    sel_zekylls_current_.clear();
     zekyllIDs_.clear();
 
     git_->setRepoPath( current_path_ );
