@@ -1190,3 +1190,28 @@ void MainWindow::on_zcode_returnPressed()
 {
     ui->zcode->clearFocus();
 }
+
+void MainWindow::on_rev_returnPressed()
+{
+    ui->rev->clearFocus();
+}
+
+void MainWindow::on_file_returnPressed()
+{
+    ui->file->clearFocus();
+}
+
+void MainWindow::on_userRepo_returnPressed()
+{
+    ui->userRepo->clearFocus();
+}
+
+void MainWindow::on_indexSize_returnPressed()
+{
+    ui->indexSize->clearFocus();
+}
+
+void MainWindow::on_currentIndex_returnPressed()
+{
+    ui->currentIndex->clearFocus();
+}

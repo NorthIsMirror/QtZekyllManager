@@ -107,6 +107,16 @@ private slots:
 
     void on_zcode_returnPressed();
 
+    void on_rev_returnPressed();
+
+    void on_file_returnPressed();
+
+    void on_userRepo_returnPressed();
+
+    void on_indexSize_returnPressed();
+
+    void on_currentIndex_returnPressed();
+
 public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();
