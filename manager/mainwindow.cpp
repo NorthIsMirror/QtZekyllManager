@@ -1049,10 +1049,6 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
         retval += 160;
         if( !silent ) {
             recompute_zcode = true;
-            MessagesI.AppendMessageT(
-                        QString( "Warning: Zcode is for index of size at least %1 (current size: %2) – truncated the Zcode" )
-                        .arg( bits.size() ).arg( lzcsde_list_.count() )
-            );
         }
     }
 
@@ -1144,6 +1140,10 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
         if(!recomputeZcode()) {
             retval += 2230000;
         }
+        MessagesI.AppendMessageT(
+                    QString( "Warning: Zcode is for index of size at least <b>%1</b> (current size: <b>%2</b>) – truncated the Zcode: ")
+                    .arg( bits.size() ).arg( lzcsde_list_.count() ) + "<u><b>" + ui->zcode->text().trimmed() + "</b></u>"
+        );
     }
 
     return retval;
