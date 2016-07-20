@@ -8,8 +8,8 @@
 
 // Holds which zekylls are selected, together with IDs
 typedef std::vector<int> IDsVec;
-typedef std::pair< IDsVec, bool > IdSelection;
-typedef std::map< std::string, IdSelection > SelectedZekylls;
+typedef std::pair< IDsVec, bool > IDSelection;
+typedef std::map< std::string, IDSelection > SelectedZekylls;
 
 // More basic data structure that holds only IDs of zekyll
 typedef std::map< std::string, IDsVec > ZekyllIDs;

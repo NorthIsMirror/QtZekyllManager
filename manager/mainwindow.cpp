@@ -160,7 +160,7 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
                 ids.push_back( counter );
                 it->second.second = true;
             } else {
-                selectedZekylls_[ zekyll ] = IdSelection( IDsVec( 1, counter ), true );
+                selectedZekylls_[ zekyll ] = IDSelection( IDsVec( 1, counter ), true );
             }
 
             ZekyllIDs::iterator it2 = zekyllIDs_.find( zekyll );
