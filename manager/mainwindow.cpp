@@ -439,6 +439,7 @@ bool MainWindow::errorOnDisallowedChars(const QString &type, const QStringList &
     return false;
 }
 
+// bool - if there is meaningful data, QString - the data, int - index extracted, QString - code extracted
 std::tuple<bool, QString, int, QString> MainWindow::getProcessedZcodeInput()
 {
     QString input = ui->zcode->text().trimmed();
@@ -466,8 +467,8 @@ std::tuple<bool, QString, int, QString> MainWindow::getProcessedZcodeInput()
     } else {
         if( parts.first() == "" ) {
             parts.first() = QString( "%1" ).arg( current_index_ );
+            input = parts.join( "/" );
         }
-        input = parts.join( "/" );
 
         if( parts.last() == "" ) {
             bool ok = false;
