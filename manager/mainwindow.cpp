@@ -455,9 +455,8 @@ std::tuple<bool, QString, int, QString> MainWindow::getProcessedZcodeInput()
             input = parts.join( "/" );
         } else {
             MessagesI.AppendMessageT( "Warning: incorrect Zcode enterred" );
-            bool ok = false;
-            int index = parts.first().toInt( &ok );
-            if( !ok ) {
+            int index;
+            if( !to_int( parts.first(), &index ) ) {
                 index = -1;
             } else {
                 parts.pop_front();
@@ -471,18 +470,16 @@ std::tuple<bool, QString, int, QString> MainWindow::getProcessedZcodeInput()
         }
 
         if( parts.last() == "" ) {
-            bool ok = false;
-            int index = parts.first().toInt( &ok );
-            if( !ok ) {
+            int index;
+            if( !to_int( parts.first(), &index ) ) {
                 index = -1;
             }
             return std::make_tuple( false, input, index, QString("") );
         }
     }
 
-    bool ok = false;
-    int index = parts.first().toInt( &ok );
-    if( !ok ) {
+    int index;
+    if( !to_int( parts.first(), &index ) ) {
         index = -1;
     } else {
         parts.pop_front();

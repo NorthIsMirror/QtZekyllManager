@@ -242,3 +242,16 @@ int sectionOrderOnLZCSDE( LZCSDE & lzcsde ) {
 
     return error;
 }
+
+bool to_int( const QString & str, int *ret, bool *_ok ) {
+    if( !ret ) {
+        return false;
+    }
+    bool ok = false;
+    *ret = str.toInt( &ok );
+    if( _ok ) {
+        *_ok = ok;
+    }
+
+    return ok;
+}
