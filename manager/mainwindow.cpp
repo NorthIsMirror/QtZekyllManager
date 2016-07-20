@@ -1001,10 +1001,14 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
         }
     }
 
+    // Will rebuild selectedZekylls from bits_
+    // and ZKL_INDEX_ZEKYLLS
+    sel_zekylls_current_.clear();
+
     bool selected;
-    int _rows = ui->tableWidget->rowCount();
-    unsigned int rows = (unsigned int) ( _rows >= 0 ? _rows : 0 );
-    for( unsigned int row = 0; row < rows; row ++ ) {
+
+    unsigned int size = ZKL_INDEX_ZEKYLLS_.size();
+    for( unsigned int row = 0; row < size; row ++ ) {
         if( bits.size() < row + 1 ) {
             selected  = false;
         } else {
@@ -1013,6 +1017,35 @@ int MainWindow::applyCodeSelectors( const std::vector<int> & bits_, bool silent 
             } else {
                 selected = true;
             }
+        }
+
+        std::string zekyll = ZKL_INDEX_ZEKYLLS_[ row ];
+        IDsVec ids;
+        ZekyllIDs::iterator it = zekyllIDs_.find( zekyll );
+        if( it != zekyllIDs_.end() ) {
+            ids = it->second;
+        }
+        sel_zekylls_current_[ zekyll ] = IDSelection( ids, selected );
+    }
+
+    int _rows = ui->tableWidget->rowCount();
+    unsigned int rows = (unsigned int) ( _rows >= 0 ? _rows : 0 );
+    for( unsigned int row = 0; row < rows; row ++ ) {
+        // Establish zekyll
+        QTableWidgetItem *item = ui->tableWidget->item( row, 1 );
+        if( item ) {
+            QString qzekyll = item->text();
+            std::string zekyll = qzekyll.toStdString();
+            SelectedZekylls::iterator it = sel_zekylls_current_.find( zekyll );
+            if( it != sel_zekylls_current_.end() ) {
+                selected = it->second.second;
+            } else {
+                selected = false;
+                MessagesI.AppendMessageT( QString( "Warning: Problems with data (24/" + qzekyll + ")" ) );
+            }
+        } else {
+            selected = false;
+            MessagesI.AppendMessageT( QString( "Warning: Problems with data (25/%1)" ).arg( row ) );
         }
 
         // Set CheckBox
