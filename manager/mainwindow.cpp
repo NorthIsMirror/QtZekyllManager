@@ -501,9 +501,10 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
         MessagesI.AppendMessageT( QString( "Warning: Problems with data (%1/%2)" ).arg( lzcsde_list_.count() ).arg( ui->tableWidget->rowCount() ) );
     }
 
-    // First find maximal zekyll
     int _rows = ui->tableWidget->rowCount();
     unsigned int rows = (unsigned int) ( _rows >= 0 ? _rows : 0 );
+
+    // First find maximal zekyll
     std::string max_zekyll;
     for( unsigned int row = 0; row < rows; row ++ ) {
         QTableWidgetItem *item = ui->tableWidget->item( row, 1 );
@@ -519,7 +520,8 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
         }
     }
 
-    vector<int> selectors;
+    // Maps zekylls to their state
+    SelectorsMap selectorsMap;
 
     for( unsigned int row = 0; row < rows; row ++ ) {
         QWidget *sel_widget = ui->tableWidget->cellWidget( row, 2 );
@@ -558,7 +560,20 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
                         MessagesI.AppendMessageT( "Warning: Problems with data (4)" );
                     }
 
-                    selectors.push_back( selected1 );
+                    // Apply the state on selectorsMap, first finding zekyll
+                    QTableWidgetItem *zekyll_item = ui->tableWidget->item( row, 1 );
+                    if( !zekyll_item ) {
+                        retval += 146;
+                        MessagesI.AppendMessageT( "Warning: Problems with data (27)" );
+                    } else {
+                        QString qzekyll = zekyll_item->text().trimmed();
+                        std::string zekyll = qzekyll.toStdString();
+                        if( selectorsMap.count( zekyll ) > 0 ) {
+                            MessagesI.AppendMessageT( QString( "Warning: duplicate zekyll found (" + qzekyll + ") in row %1" ) .arg( row + 1 ) +
+                                                      ", it will overwrite preceding zekyll's Zcode data" );
+                        }
+                        selectorsMap[ zekyll ] = selected1;
+                    }
                 } else {
                     retval += 143;
                     MessagesI.AppendMessageT( "Warning: Problems with data (5)" );
@@ -570,7 +585,27 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
         }
     }
 
+    // Last stage – read selectorsMap in order of ZKL_INDEX_ZEKYLLS_
+    vector<int> selectors;
+    if( max_zekyll == "" ) {
+        return std::make_tuple( selectors, retval );
+    }
 
+    int size = ZKL_INDEX_ZEKYLLS_.size();
+    for( unsigned int i = 0; i < size; i ++ ) {
+        const std::string & zekyll = ZKL_INDEX_ZEKYLLS_[i];
+
+        SelectorsMap::iterator it = selectorsMap.find( zekyll );
+        bool selected = false;
+        if( it != selectorsMap.end() ) {
+            selected = it->second;
+        }
+        selectors.push_back( selected );
+
+        if( max_zekyll == ZKL_INDEX_ZEKYLLS_[i] ) {
+            break;
+        }
+    }
     return std::make_tuple( selectors, retval );
 }
 

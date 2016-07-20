@@ -14,4 +14,7 @@ typedef std::map< std::string, IDSelection > SelectedZekylls;
 // More basic data structure that holds only IDs of zekyll
 typedef std::map< std::string, IDsVec > ZekyllIDs;
 
+// A structure used in final stage of establishing selectors
+typedef std::map< std::string, bool > SelectorsMap;
+
 #endif // SELECTEDZEKYLLS_H
