@@ -112,17 +112,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QByteArray default_repo = qgetenv( "ZEKYLL_DEFAULT_REPO" );
     if( default_repo.size() > 0 ) {
         ZEKYLL_DEFAULT_REPO_ = QString::fromLocal8Bit( default_repo );
-        QString selected;
-        int error;
-        std::tie( selected, error ) = SetFromRepoOrPathGetSelection( ZEKYLL_DEFAULT_REPO_, true /* isRepo */ );
-        if( error == MY_REPO_AND_PATH || error == MY_ONLY_PATH ) {
-            // Setup combo box only when a path is correct
-            processCurRepoCombo( selected, error );
-            MessagesI.AppendMessageT( "Loading default repository ($ZEKYLL_DEFAULT_REPO): <b>" + ZEKYLL_DEFAULT_REPO_ + "</b>" );
-            reloadRepository();
-        } else {
-            MessagesI.AppendMessageT( "Default repository doesn't exist ($ZEKYLL_DEFAULT_REPO is \"<b>" + ZEKYLL_DEFAULT_REPO_ + "</b>\")" );
-        }
+        loadDefaultRepository();
     }
 }
 
@@ -1295,6 +1285,28 @@ std::tuple<QString, int> MainWindow::SetFromRepoOrPathGetSelection( QString repo
         // Error 1 – true error, incorrect selection
     } else if ( error == MY_GENERAL_ERROR ) {
         selected = msg_incorrect_;
+    }
+
+    return std::make_tuple( selected, error );
+}
+
+std::tuple<QString, int> MainWindow::loadDefaultRepository()
+{
+    if( ZEKYLL_DEFAULT_REPO_.count() == 0 ) {
+        MessagesI.AppendMessageT( "Environment variable $ZEKYLL_DEFAULT_REPO is not set. You can set it to repo string." );
+        return std::make_tuple( QString(""), MY_GENERAL_ERROR );
+    }
+
+    QString selected;
+    int error;
+    std::tie( selected, error ) = SetFromRepoOrPathGetSelection( ZEKYLL_DEFAULT_REPO_, true /* isRepo */ );
+    if( error == MY_REPO_AND_PATH || error == MY_ONLY_PATH ) {
+        // Setup combo box only when a path is correct
+        processCurRepoCombo( selected, error );
+        MessagesI.AppendMessageT( "Loading default repository ($ZEKYLL_DEFAULT_REPO): <b>" + ZEKYLL_DEFAULT_REPO_ + "</b>" );
+        reloadRepository();
+    } else {
+        MessagesI.AppendMessageT( "Default repository doesn't exist ($ZEKYLL_DEFAULT_REPO is \"<b>" + ZEKYLL_DEFAULT_REPO_ + "</b>\")" );
     }
 
     return std::make_tuple( selected, error );
