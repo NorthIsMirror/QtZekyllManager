@@ -106,6 +106,12 @@ std::tuple< QString, QString, int > getPathFromRepo( const QString & _base_path,
             finfo = QFileInfo( finfo.dir(), "" );
         }
 
+        // Shouldn't go further than base_path, _repo_or_path must provide something
+        if( finfo.absoluteFilePath() == base_path ) {
+            // Repeat input data in first element, return faulty path in second element
+            return std::make_tuple( repo_or_path, finfo.absoluteFilePath(), MY_GENERAL_ERROR );
+        }
+
         // Remember something for erroneous return
         path = finfo.absoluteFilePath();
 
