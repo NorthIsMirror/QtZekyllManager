@@ -64,7 +64,7 @@ std::tuple< std::vector<char>, int> numbers_to_letters(const std::vector<int> & 
 std::tuple< std::vector<int>, int> letters_to_numbers( const std::vector<char> & letters ) {
     std::vector<int> reply;
 
-    QString str = QString::fromLatin1( &letters[0], letters.size() );
+    QString str = QString::fromUtf8( &letters[0], letters.size() );
     QRegExp rx("^[a-z0-9]+$");
     rx.setCaseSensitivity( Qt::CaseSensitive );
     if ( rx.indexIn( str ) == -1 ) {
@@ -91,7 +91,7 @@ std::tuple< std::vector<int>, int> letters_to_numbers( const std::string & lette
 // Takes zekyl code, i.e. 1/someletters
 // and decodes it to sequence of bits
 std::tuple< std::vector<int>, int > decode_zcode( const std::string & code ) {
-    QString _code = QString::fromLatin1( code.c_str() );
+    QString _code = QString::fromStdString( code );
     QStringList num_let = _code.split("/");
     if( num_let.count() != 2 ) {
         return std::make_tuple( std::vector<int>(), 101 );
@@ -114,7 +114,7 @@ std::tuple< std::vector<int>, int > decode_zcode( const std::string & code ) {
     std::vector<int> bits;
     std::string workingvar = letters;
     QRegExp rx("^0*$");
-    while( rx.indexIn( QString::fromLatin1( workingvar.c_str() ) ) == -1 ) {
+    while( rx.indexIn( QString::fromStdString( workingvar ) ) == -1 ) {
         int subtracted, error;
         std::tie( workingvar, subtracted, error ) = div2( workingvar );
         if( error != 0 ) {
