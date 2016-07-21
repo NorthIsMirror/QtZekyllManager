@@ -142,6 +142,8 @@ private slots:
 
     void on_currentIndex_returnPressed();
 
+    void on_defaultRepoButton_clicked();
+
 public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();

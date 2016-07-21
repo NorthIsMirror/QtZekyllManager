@@ -1391,3 +1391,8 @@ void MainWindow::on_currentIndex_returnPressed()
     ui->currentIndex->clearFocus();
     ui->currentIndex->blockSignals(false);
 }
+
+void MainWindow::on_defaultRepoButton_clicked()
+{
+    loadDefaultRepository();
+}
