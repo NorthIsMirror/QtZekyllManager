@@ -76,6 +76,12 @@ std::tuple< QString, QString, int > getPathFromRepo( const QString & _base_path,
                 rx = QRegExp( "^([a-zA-Z0-9][a-zA-Z0-9-]*)[/]([a-zA-Z0-9_-]+)$" );
                 if( rx.indexIn( repo_or_path ) != -1 ) {
                     last_node = QString("gh---") + rx.cap(1) + "---" + rx.cap(2) + "---master";
+                } else {
+                    // user
+                    rx = QRegExp( "^([a-zA-Z0-9][a-zA-Z0-9-]*)$" );
+                    if( rx.indexIn( repo_or_path ) != -1 ) {
+                        last_node = QString("gh---") + rx.cap(1) + "---zkl---master";
+                    }
                 }
             }
         }
