@@ -82,6 +82,7 @@ private:
     std::tuple< std::vector<int>, int > gatherCodeSelectors();
     int applyCodeSelectors( const std::vector<int> & bits_, bool silent = false );
     bool recomputeZcode();
+    std::tuple<QString, int> SetFromRepoOrPathGetSelection( QString repoOrPath, bool isRepo );
 
 signals:
     void repositoryChanged();

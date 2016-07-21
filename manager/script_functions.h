@@ -5,7 +5,7 @@
 #include <tuple>
 #include <QString>
 
-enum {
+enum REPO_PATH_SITUATION {
     MY_ONLY_PATH = 1,
     MY_REPO_AND_PATH = 2,
     MY_GENERAL_ERROR = 3

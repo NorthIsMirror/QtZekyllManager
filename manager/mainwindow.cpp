@@ -609,24 +609,9 @@ void MainWindow::browse()
     QString directory = QFileDialog::getExistingDirectory( this, tr("Select repository"), repos_paths_[0] );
 
     if (!directory.isEmpty()) {
-        QString repo, path, selected;
+        QString selected;
         int error;
-        tie(repo, path, error) = getRepoFromPath( directory );
-
-        if( error == MY_REPO_AND_PATH ) {
-            current_repo_ = repo;
-            current_path_ = path;
-            selected = repo;
-        } else if ( error == MY_ONLY_PATH ) {
-            current_repo_ = "";
-            current_path_ = path;
-            selected = path;
-        } else if ( error == MY_GENERAL_ERROR ) {
-            selected = msg_incorrect_;
-        } else {
-            selected = tr("Unknown error");
-        }
-
+        std::tie( selected, error ) = SetFromRepoOrPathGetSelection( directory, false /* isRepo */ );
         processCurRepoCombo( selected, error );
 
         if( error == MY_REPO_AND_PATH || error == MY_ONLY_PATH ) {
@@ -1267,6 +1252,39 @@ bool MainWindow::recomputeZcode()
     }
 }
 
+// Sets current_repo_ and current_path_ from repo string or path.
+// Returns: repo string or path. Repo string when input was repo
+// or if given path pointed to well formated directory name. Path
+// when input was path with not well formated directory name. In
+// both cases the pointed directory must exist, otherwise
+// MY_GENERAL_ERROR is returned
+std::tuple<QString, int> MainWindow::SetFromRepoOrPathGetSelection( QString repoOrPath, bool isRepo ) {
+    QString repo, path, selected;
+    int error;
+    if( isRepo ) {
+        tie( repo, path, error ) = getPathFromRepo( repos_paths_[0], repoOrPath );
+    } else {
+        tie( repo, path, error ) = getRepoFromPath( repoOrPath );
+    }
+
+    // Error 0 – we've gotten repo, and decoded a path – all as expected
+    if( error == MY_REPO_AND_PATH ) {
+        current_repo_ = repo;
+        current_path_ = path;
+        selected = repo;
+        // Error 2 – things are little unexpected, we've directly gotten path
+    } else if ( error == MY_ONLY_PATH ) {
+        current_repo_ = "";
+        current_path_ = path;
+        selected = path;
+        // Error 1 – true error, incorrect selection
+    } else if ( error == MY_GENERAL_ERROR ) {
+        selected = msg_incorrect_;
+    }
+
+    return std::make_tuple( selected, error );
+}
+
 void MainWindow::on_rev_editingFinished()
 {
     recomputeZcode();
@@ -1296,25 +1314,8 @@ void MainWindow::on_curRepoCombo_activated(int index)
     }
 
     QString selected = ui->curRepoCombo->itemText( index );
-    QString repo, path;
     int error;
-    tie( repo, path, error ) = getPathFromRepo( repos_paths_[0], selected );
-
-    // Error 0 – we've gotten repo, and decoded a path – all as expected
-    if( error == MY_REPO_AND_PATH ) {
-        current_repo_ = repo;
-        current_path_ = path;
-        selected = repo;
-    // Error 2 – things are little unexpected, we've directly gotten path
-    } else if ( error == MY_ONLY_PATH ) {
-        current_repo_ = "";
-        current_path_ = path;
-        selected = path;
-    // Error 1 – true error, incorrect selection
-    } else if ( error == MY_GENERAL_ERROR ) {
-        selected = msg_incorrect_;
-    }
-
+    std::tie( selected, error ) = SetFromRepoOrPathGetSelection( selected, true /* isRepo */ );
     processCurRepoCombo( selected, error );
 
     if( error == MY_REPO_AND_PATH || error == MY_ONLY_PATH ) {
