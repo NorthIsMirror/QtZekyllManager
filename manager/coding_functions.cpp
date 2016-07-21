@@ -48,7 +48,7 @@ std::tuple< int, QMap<QString,QString>, int > process_meta_data( const std::vect
 
     std::stringstream ss;
     std::copy( bits.begin(), bits.end(), std::ostream_iterator<int>(ss,""));
-    QString strbits = QString::fromStdString( ss.str() );
+    QString strbits = QString::fromLatin1( ss.str().c_str() );
 
     QRegExp rx("^[01]+$");
     if( rx.indexIn(strbits) == -1 ) {
