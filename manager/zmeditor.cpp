@@ -19,21 +19,22 @@ void ZMEditor::setFile(QString fullPath) {
     filePath_ = fullPath;
     QFile file( filePath_ );
     file.open(QFile::ReadOnly | QFile::Text);
-    //ui->textEdit->setText(file.readAll());
+    ui->textEdit->setText(file.readAll());
+    ui->textEdit->setModified(false);
 }
 
 void ZMEditor::on_save_clicked()
 {
     QFile file( filePath_ );
     file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
-    //file.write( ui->textEdit->text().toUtf8().constData() );
-    //ui->textEdit->setModified(false);
+    file.write( ui->textEdit->text().toUtf8().constData() );
+    ui->textEdit->setModified(false);
 }
 
 
 void ZMEditor::on_close_clicked()
 {
-    if( ui->textEdit->document()->isModified() ) {
+    if( ui->textEdit->isModified() ) {
         CloseWithoutSavingDialog *dialog = new CloseWithoutSavingDialog(this);
         QObject::connect( dialog, SIGNAL(accepted(bool)), this, SLOT(closeWithoutSaving(bool)) );
 
