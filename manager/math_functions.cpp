@@ -68,7 +68,13 @@ std::tuple< std::vector<int>, int> letters_to_numbers( const std::vector<char> &
     QRegExp rx("^[a-z0-9]+$");
     rx.setCaseSensitivity( Qt::CaseSensitive );
     if ( rx.indexIn( str ) == -1 ) {
-        MessagesI.AppendMessageT( "Incorrect character during conversion, allowed are a-z and 0-9" );
+        rx = QRegExp("[^a-z0-9]");
+        QString message( "Incorrect character in Zcode" );
+        if ( rx.indexIn( str ) != -1 ) {
+            // Append the wrong character
+            message += QString( " (<b>%1</b>)" ).arg( rx.cap(0) );
+        }
+        MessagesI.AppendMessageT( message + ", allowed are a-z and 0-9" );
         return std::make_tuple( reply, 100 );
     }
 
