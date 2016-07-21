@@ -65,6 +65,7 @@ private:
 
     QByteArray home_path_;
     QVector<QString> repos_paths_;
+    QString ZEKYLL_DEFAULT_REPO_;
 
     Ui::MainWindow *ui;
 

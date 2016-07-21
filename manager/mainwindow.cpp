@@ -108,7 +108,22 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     repos_paths_.push_back( QString::fromLocal8Bit(home_path_) + "/.zekyll/repos" );
 
-    reloadRepository();
+    // Try to load default repository
+    QByteArray default_repo = qgetenv( "ZEKYLL_DEFAULT_REPO" );
+    if( default_repo.size() > 0 ) {
+        ZEKYLL_DEFAULT_REPO_ = QString::fromLocal8Bit( default_repo );
+        QString selected;
+        int error;
+        std::tie( selected, error ) = SetFromRepoOrPathGetSelection( ZEKYLL_DEFAULT_REPO_, true /* isRepo */ );
+        if( error == MY_REPO_AND_PATH || error == MY_ONLY_PATH ) {
+            // Setup combo box only when a path is correct
+            processCurRepoCombo( selected, error );
+            MessagesI.AppendMessageT( "Loading default repository ($ZEKYLL_DEFAULT_REPO): <b>" + ZEKYLL_DEFAULT_REPO_ + "</b>" );
+            reloadRepository();
+        } else {
+            MessagesI.AppendMessageT( "Default repository doesn't exist ($ZEKYLL_DEFAULT_REPO is \"<b>" + ZEKYLL_DEFAULT_REPO_ + "</b>\")" );
+        }
+    }
 }
 
 MainWindow::~MainWindow()
