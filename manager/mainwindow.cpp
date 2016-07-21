@@ -626,7 +626,7 @@ void MainWindow::processCurRepoCombo(const QString &selected, int error)
     limitComboBoxReactions( true );
 
     // Remove any previous "Incorrect path selected"
-    if( error == 0 || error == 2 ) {
+    if( error == MY_ONLY_PATH || error == MY_REPO_AND_PATH ) {
         int idx = ui->curRepoCombo->findText(msg_incorrect_);
         if( idx != -1) {
             ui->curRepoCombo->removeItem( idx );
