@@ -2,12 +2,37 @@
 #include "ui_zmeditor.h"
 #include "closewithoutsavingdialog.h"
 #include <QFile>
+#include <QColor>
+#include "Qsci/qscilexerbatch.h"
 
 ZMEditor::ZMEditor(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ZMEditor)
 {
     ui->setupUi(this);
+
+
+    font_.setFamily( "Courier" );
+    font_.setFixedPitch( true );
+    font_.setPointSize( 15 );
+    ui->textEdit->setFont( font_ );
+    ui->textEdit->setMarginsFont( font_ );
+
+    QFontMetrics fontmetrics( font_ );
+    ui->textEdit->setMarginsFont( font_ );
+    ui->textEdit->setMarginWidth( 0, fontmetrics.width("0000") + 6 );
+    ui->textEdit->setMarginLineNumbers( 0, true );
+    ui->textEdit->setMarginsBackgroundColor( QColor("#cccccc") );
+
+    //ui->textEdit->setBraceMatching( QsciScintilla::SloppyBraceMatch );
+
+    ui->textEdit->setCaretLineVisible( true );
+    ui->textEdit->setCaretLineBackgroundColor( QColor( "#ffe4e4" ) );
+
+    lexer_ = new QsciLexerBatch;
+    lexer_->setDefaultFont( font_ );
+    this->ui->textEdit->setLexer( lexer_ );
+    this->ui->textEdit->SendScintilla( QsciScintilla::SCI_STYLESETFONT, 1, "Courier" );
 }
 
 ZMEditor::~ZMEditor()

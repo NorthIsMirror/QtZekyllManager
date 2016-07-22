@@ -3,6 +3,9 @@
 
 #include <QDialog>
 #include <QString>
+#include <QFont>
+#include "Qsci/qsciscintilla.h"
+#include "Qsci/qscilexer.h"
 
 namespace Ui {
 class ZMEditor;
@@ -31,6 +34,9 @@ private slots:
 private:
     Ui::ZMEditor *ui;
     QString filePath_;
+
+    QFont font_;
+    QsciLexer *lexer_;
 };
 
 #endif // EDITOR_H
