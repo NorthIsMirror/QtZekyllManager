@@ -1396,3 +1396,19 @@ void MainWindow::on_defaultRepoButton_clicked()
 {
     loadDefaultRepository();
 }
+
+void MainWindow::on_currentIndex_editingFinished()
+{
+    int index;
+    QString str_index = ui->currentIndex->text().trimmed();
+    if( to_int( str_index, &index ) ) {
+        current_index_ = index;
+        reloadRepository();
+    } else {
+        MessagesI.AppendMessageT( "Enterred index number incorrect");
+        QRegExp rx( "[0-9]+" );
+        if( rx.indexIn( str_index ) != -1 ) {
+            ui->currentIndex->setText( rx.cap(0) );
+        }
+    }
+}
