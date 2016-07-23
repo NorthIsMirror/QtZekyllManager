@@ -85,6 +85,7 @@ private:
     bool recomputeZcode();
     std::tuple<QString, int> SetFromRepoOrPathGetSelection( QString repoOrPath, bool isRepo );
     std::tuple<QString, int> loadDefaultRepository();
+    bool stepIndexSize( bool subtract = false );
 
 signals:
     void repositoryChanged();
@@ -145,6 +146,10 @@ private slots:
     void on_defaultRepoButton_clicked();
 
     void on_currentIndex_editingFinished();
+
+    void on_sizeLeft_clicked();
+
+    void on_sizeRight_clicked();
 
 public:
     int currentIndex() const { return current_index_; }

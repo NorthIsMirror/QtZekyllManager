@@ -226,6 +226,32 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="maximumSize">
+           <size>
+            <width>50</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="sizeLeft">
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="arrowType">
+           <enum>Qt::LeftArrow</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="sizeRight">
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="arrowType">
+           <enum>Qt::RightArrow</enum>
+          </property>
          </widget>
         </item>
        </layout>
@@ -250,9 +276,35 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="maximumSize">
+           <size>
+            <width>50</width>
+            <height>16777215</height>
+           </size>
+          </property>
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QToolButton" name="indexLeft">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::LeftArrow</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="indexRight">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::RightArrow</enum>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer">

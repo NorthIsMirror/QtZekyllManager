@@ -1312,6 +1312,24 @@ std::tuple<QString, int> MainWindow::loadDefaultRepository()
     return std::make_tuple( selected, error );
 }
 
+bool MainWindow::stepIndexSize(bool subtract)
+{
+    int indexSize;
+    QString str_index_size = ui->indexSize->text().trimmed();
+    if( to_int( str_index_size, &indexSize ) ) {
+        indexSize = subtract? indexSize -1 : indexSize + 1;
+        indexSize = indexSize < 0 ? 0 : indexSize;
+        indexSize = indexSize > 150 ? 150 : indexSize;
+        ui->indexSize->setText( QString("%1").arg( indexSize ) );
+    } else {
+        MessagesI.AppendMessageT( "Incorrect index size");
+        QRegExp rx( "[0-9]+" );
+        if( rx.indexIn( str_index_size ) != -1 ) {
+            ui->indexSize->setText( rx.cap(0) );
+        }
+    }
+}
+
 void MainWindow::on_rev_editingFinished()
 {
     recomputeZcode();
@@ -1412,3 +1430,14 @@ void MainWindow::on_currentIndex_editingFinished()
         }
     }
 }
+
+void MainWindow::on_sizeLeft_clicked()
+{
+    stepIndexSize( true /* subtract */ );
+}
+
+void MainWindow::on_sizeRight_clicked()
+{
+    stepIndexSize();
+}
+
