@@ -1448,10 +1448,18 @@ void MainWindow::on_sizeRight_clicked()
 
 void MainWindow::on_indexLeft_clicked()
 {
-    stepIntegerQLineEdit( ui->currentIndex, 1, 311, "Incorrect current index", true /* subtract */ );
+    std::tuple<bool, int> result = stepIntegerQLineEdit( ui->currentIndex, 1, 311, "Incorrect current index", true /* subtract */ );
+    if( std::get<0>( result ) ) {
+        current_index_ = std::get<1>( result );
+        reloadRepository();
+    }
 }
 
 void MainWindow::on_indexRight_clicked()
 {
-    stepIntegerQLineEdit( ui->currentIndex, 1, 311, "Incorrect current index" );
+    std::tuple<bool, int> result = stepIntegerQLineEdit( ui->currentIndex, 1, 311, "Incorrect current index" );
+    if( std::get<0>( result ) ) {
+        current_index_ = std::get<1>( result );
+        reloadRepository();
+    }
 }
