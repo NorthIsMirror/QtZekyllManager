@@ -1314,13 +1314,16 @@ std::tuple<QString, int> MainWindow::loadDefaultRepository()
 
 bool MainWindow::stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, bool subtract )
 {
-    int integer;
+    int integer, integer_initial;
     QString str_integer = lineEdit->text().trimmed();
-    if( to_int( str_integer, &integer ) ) {
+    if( to_int( str_integer, &integer, &integer_initial ) ) {
         integer = subtract? integer -1 : integer + 1;
         integer = integer < min ? min : integer;
         integer = integer > max ? max : integer;
-        lineEdit->setText( QString("%1").arg( integer ) );
+        if( integer != integer_initial ) {
+            lineEdit->setText( QString("%1").arg( integer ) );
+            return true;
+        }
     } else {
         MessagesI.AppendMessageT( "Incorrect index size");
         QRegExp rx( "[0-9]+" );
@@ -1328,6 +1331,8 @@ bool MainWindow::stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, bo
             lineEdit->setText( rx.cap(0) );
         }
     }
+
+    return false;
 }
 
 void MainWindow::on_rev_editingFinished()
