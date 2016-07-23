@@ -151,6 +151,10 @@ private slots:
 
     void on_sizeRight_clicked();
 
+    void on_indexLeft_clicked();
+
+    void on_indexRight_clicked();
+
 public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();

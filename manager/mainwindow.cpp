@@ -1446,3 +1446,12 @@ void MainWindow::on_sizeRight_clicked()
     stepIntegerQLineEdit( ui->indexSize, 0, 150, "Incorrect index size" );
 }
 
+void MainWindow::on_indexLeft_clicked()
+{
+    stepIntegerQLineEdit( ui->currentIndex, 1, 311, "Incorrect current index", true /* subtract */ );
+}
+
+void MainWindow::on_indexRight_clicked()
+{
+    stepIntegerQLineEdit( ui->currentIndex, 1, 311, "Incorrect current index" );
+}
