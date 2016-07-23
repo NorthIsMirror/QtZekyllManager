@@ -31,12 +31,16 @@ private slots:
 
     void on_cancel_clicked();
 
+    void on_highlight_clicked();
+
 private:
-    Ui::ZMEditor *ui;
     QString filePath_;
 
     QFont font_;
-    QsciLexer *lexer_;
+    QsciLexer *lexer_[3];
+    int current_lexer_;
+
+    Ui::ZMEditor *ui;
 };
 
 #endif // EDITOR_H

@@ -4,9 +4,12 @@
 #include <QFile>
 #include <QColor>
 #include "Qsci/qscilexerbatch.h"
+#include "Qsci/qscilexermakefile.h"
+#include "Qsci/qscilexertex.h"
 
 ZMEditor::ZMEditor(QWidget *parent) :
     QDialog(parent),
+    current_lexer_(0),
     ui(new Ui::ZMEditor)
 {
     ui->setupUi(this);
@@ -29,9 +32,16 @@ ZMEditor::ZMEditor(QWidget *parent) :
     ui->textEdit->setCaretLineVisible( true );
     ui->textEdit->setCaretLineBackgroundColor( QColor( "#ffe4e4" ) );
 
-    lexer_ = new QsciLexerBatch;
-    lexer_->setDefaultFont( font_ );
-    this->ui->textEdit->setLexer( lexer_ );
+    lexer_[0] = new QsciLexerBatch;
+    lexer_[0]->setDefaultFont( font_ );
+
+    lexer_[1] = new QsciLexerTeX;
+    lexer_[1]->setDefaultFont( font_ );
+
+    lexer_[2] = new QsciLexerMakefile;
+    lexer_[2]->setDefaultFont( font_ );
+
+    this->ui->textEdit->setLexer( lexer_[ current_lexer_ ] );
     this->ui->textEdit->SendScintilla( QsciScintilla::SCI_STYLESETFONT, 1, "Courier" );
 }
 
@@ -78,4 +88,13 @@ void ZMEditor::closeWithoutSaving(bool _close) {
 void ZMEditor::on_cancel_clicked()
 {
     close();
+}
+
+void ZMEditor::on_highlight_clicked()
+{
+    current_lexer_ = (current_lexer_ + 1) % 3;
+    ui->textEdit->setLexer( lexer_[ current_lexer_ ] );
+    ui->textEdit->SendScintilla( QsciScintilla::SCI_STYLESETFONT, 1, "Courier" );
+
+    ui->highlight->setText( QString("Highlight: %1").arg( current_lexer_ + 1 ) );
 }
