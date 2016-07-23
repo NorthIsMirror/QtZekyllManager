@@ -1312,20 +1312,20 @@ std::tuple<QString, int> MainWindow::loadDefaultRepository()
     return std::make_tuple( selected, error );
 }
 
-bool MainWindow::stepIndexSize(bool subtract)
+bool MainWindow::stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, bool subtract )
 {
-    int indexSize;
-    QString str_index_size = ui->indexSize->text().trimmed();
-    if( to_int( str_index_size, &indexSize ) ) {
-        indexSize = subtract? indexSize -1 : indexSize + 1;
-        indexSize = indexSize < 0 ? 0 : indexSize;
-        indexSize = indexSize > 150 ? 150 : indexSize;
-        ui->indexSize->setText( QString("%1").arg( indexSize ) );
+    int integer;
+    QString str_integer = lineEdit->text().trimmed();
+    if( to_int( str_integer, &integer ) ) {
+        integer = subtract? integer -1 : integer + 1;
+        integer = integer < min ? min : integer;
+        integer = integer > max ? max : integer;
+        lineEdit->setText( QString("%1").arg( integer ) );
     } else {
         MessagesI.AppendMessageT( "Incorrect index size");
         QRegExp rx( "[0-9]+" );
-        if( rx.indexIn( str_index_size ) != -1 ) {
-            ui->indexSize->setText( rx.cap(0) );
+        if( rx.indexIn( str_integer ) != -1 ) {
+            lineEdit->setText( rx.cap(0) );
         }
     }
 }
@@ -1433,11 +1433,11 @@ void MainWindow::on_currentIndex_editingFinished()
 
 void MainWindow::on_sizeLeft_clicked()
 {
-    stepIndexSize( true /* subtract */ );
+    stepIntegerQLineEdit( ui->indexSize, 0, 150, true /* subtract */ );
 }
 
 void MainWindow::on_sizeRight_clicked()
 {
-    stepIndexSize();
+    stepIntegerQLineEdit( ui->indexSize, 0, 150 );
 }
 
