@@ -267,3 +267,12 @@ bool to_int( const QString & str, int *ret, bool *_ok ) {
 
     return ok;
 }
+
+bool to_int( const QString & str, int *ret, int *ret2, bool *_ok ) {
+    if( to_int( str, ret, _ok ) ) {
+        *ret2 = *ret;
+        return true;
+    }
+
+    return false;
+}

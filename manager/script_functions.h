@@ -18,5 +18,6 @@ QString decode_zkrewrite_exit_code( int exitCode );
 QString reverseQString( const QString & str);
 int sectionOrderOnLZCSDE( LZCSDE & lzcsde );
 bool to_int( const QString & str, int *ret, bool *ok = NULL );
+bool to_int( const QString & str, int *ret, int *ret2, bool *_ok = NULL );
 
 #endif // SCRIPT_FUNCTIONS_H
