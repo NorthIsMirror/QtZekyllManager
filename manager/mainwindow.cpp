@@ -1312,9 +1312,9 @@ std::tuple<QString, int> MainWindow::loadDefaultRepository()
     return std::make_tuple( selected, error );
 }
 
-bool MainWindow::stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, const QString &msg, bool subtract )
+std::tuple<bool, int> MainWindow::stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, const QString &msg, bool subtract )
 {
-    int integer, integer_initial;
+    int integer = 0, integer_initial = 0;
     QString str_integer = lineEdit->text().trimmed();
     if( to_int( str_integer, &integer, &integer_initial ) ) {
         integer = subtract? integer -1 : integer + 1;
@@ -1322,7 +1322,7 @@ bool MainWindow::stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, co
         integer = integer > max ? max : integer;
         if( integer != integer_initial ) {
             lineEdit->setText( QString("%1").arg( integer ) );
-            return true;
+            return std::make_tuple( true, integer );
         }
     } else {
         MessagesI.AppendMessageT( msg );
@@ -1332,7 +1332,7 @@ bool MainWindow::stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, co
         }
     }
 
-    return false;
+    return std::make_tuple( false, integer );
 }
 
 void MainWindow::on_rev_editingFinished()

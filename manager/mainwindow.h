@@ -85,7 +85,7 @@ private:
     bool recomputeZcode();
     std::tuple<QString, int> SetFromRepoOrPathGetSelection( QString repoOrPath, bool isRepo );
     std::tuple<QString, int> loadDefaultRepository();
-    bool stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, const QString & msg, bool subtract = false );
+    std::tuple<bool, int> stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, const QString & msg, bool subtract = false );
 
 signals:
     void repositoryChanged();
