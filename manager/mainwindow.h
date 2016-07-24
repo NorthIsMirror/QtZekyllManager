@@ -87,6 +87,7 @@ private:
     std::tuple<QString, int> SetFromRepoOrPathGetSelection( QString repoOrPath, bool isRepo );
     std::tuple<QString, int> loadDefaultRepository();
     std::tuple<bool, int> stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, const QString & msg, bool subtract = false );
+    int rememberScrollBars();
 
 signals:
     void repositoryChanged();

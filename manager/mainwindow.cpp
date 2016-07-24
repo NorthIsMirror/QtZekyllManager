@@ -104,9 +104,7 @@ MainWindow::MainWindow(QWidget *parent) :
     create_helper_maps();
 
     // Remember scroll bars' initial positions
-    vscroll_bar_value_[0] = ui->tableWidget->verticalScrollBar()->value();
-    vscroll_bar_value_[1] = ui->tableWidget_2->verticalScrollBar()->value();
-    vscroll_bar_value_[2] = ui->tableWidget_3->verticalScrollBar()->value();
+    rememberScrollBars();
 
     // Prepare default repositories directory
     home_path_ = qgetenv("HOME");
@@ -686,9 +684,8 @@ void MainWindow::reloadRepository() {
     is_loading_ = true;
 
     // Remember scroll bars positions
-    vscroll_bar_value_[0] = ui->tableWidget->verticalScrollBar()->value();
-    vscroll_bar_value_[1] = ui->tableWidget_2->verticalScrollBar()->value();
-    vscroll_bar_value_[2] = ui->tableWidget_3->verticalScrollBar()->value();
+    rememberScrollBars();
+
     ui->tableWidget->setRowCount(0);
     ui->tableWidget_2->setRowCount(0);
     ui->tableWidget_3->setRowCount(0);
@@ -1357,6 +1354,13 @@ std::tuple<bool, int> MainWindow::stepIntegerQLineEdit( QLineEdit *lineEdit, int
     }
 
     return std::make_tuple( false, integer );
+}
+
+int MainWindow::rememberScrollBars()
+{
+    vscroll_bar_value_[0] = ui->tableWidget->verticalScrollBar()->value();
+    vscroll_bar_value_[1] = ui->tableWidget_2->verticalScrollBar()->value();
+    vscroll_bar_value_[2] = ui->tableWidget_3->verticalScrollBar()->value();
 }
 
 void MainWindow::on_rev_editingFinished()
