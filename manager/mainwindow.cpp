@@ -1367,6 +1367,16 @@ int MainWindow::rememberScrollBars()
     vscroll_bar_value_.push_back( ui->tableWidget_3->verticalScrollBar()->value() );
 }
 
+bool MainWindow::setCurrentIndexInZcode()
+{
+    std::tuple<bool, QString, int, QString> result = getProcessedZcodeInput();
+
+    QStringList with_index( std::get<3>( result ) );
+    with_index.prepend( QString( "%1" ).arg( current_index_ )  );
+    ui->zcode->setText( with_index.join( "/" ) );
+    return true;
+}
+
 void MainWindow::on_rev_editingFinished()
 {
     recomputeZcode();
@@ -1483,6 +1493,7 @@ void MainWindow::on_indexLeft_clicked()
     std::tuple<bool, int> result = stepIntegerQLineEdit( ui->currentIndex, 1, 311, "Incorrect current index", true /* subtract */ );
     if( std::get<0>( result ) ) {
         current_index_ = std::get<1>( result );
+        setCurrentIndexInZcode();
         reloadRepository();
     }
 }
@@ -1492,6 +1503,7 @@ void MainWindow::on_indexRight_clicked()
     std::tuple<bool, int> result = stepIntegerQLineEdit( ui->currentIndex, 1, 311, "Incorrect current index" );
     if( std::get<0>( result ) ) {
         current_index_ = std::get<1>( result );
+        setCurrentIndexInZcode();
         reloadRepository();
     }
 }

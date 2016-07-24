@@ -88,6 +88,7 @@ private:
     std::tuple<QString, int> loadDefaultRepository();
     std::tuple<bool, int> stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, const QString & msg, bool subtract = false );
     int rememberScrollBars();
+    bool setCurrentIndexInZcode();
 
 signals:
     void repositoryChanged();
