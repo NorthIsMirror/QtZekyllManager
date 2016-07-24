@@ -12,6 +12,8 @@
 #include <QCheckBox>
 #include <QDir>
 #include <QFileDialog>
+#include <QTableWidget>
+#include <QScrollBar>
 
 #define MessagesI Singleton<Messages>::instance()
 
@@ -100,6 +102,11 @@ MainWindow::MainWindow(QWidget *parent) :
     create_rcodes_map();
     create_sites_maps();
     create_helper_maps();
+
+    // Remember scroll bars' initial positions
+    vscroll_bar_value_[0] = ui->tableWidget->verticalScrollBar()->value();
+    vscroll_bar_value_[1] = ui->tableWidget_2->verticalScrollBar()->value();
+    vscroll_bar_value_[2] = ui->tableWidget_3->verticalScrollBar()->value();
 
     // Prepare default repositories directory
     home_path_ = qgetenv("HOME");
@@ -196,6 +203,14 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
         MessagesI.AppendMessageT(tr("Index ") + QString("%1") . arg(current_index_) + tr(" is empty (go ahead and resize it), or selected path isn't a Zekyll repository"));
     }
 
+    // This method creates lzcsde_list_ and lzcsde_consistent_,
+    // thus two QScrollBar::setValue calls
+
+    // RESTORE SCROLL of Zekyll order list
+    ui->tableWidget->verticalScrollBar()->setValue( vscroll_bar_value_[0] );
+    // RESTORE SCROLL of Section order list
+    ui->tableWidget_2->verticalScrollBar()->setValue( vscroll_bar_value_[1] );
+
     // If exitCode is 12, there was inconsistent read
     // started, and whole listing actually stops there
     if( exitCode != 12 ) {
@@ -254,6 +269,10 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
     is_loading_ = false;
     // Expecting correct behavior, thus not silent (i.e. the false)
     applyDeferredCodeSelectors( false );
+
+    // RESTORE SCROLL of inconsistent list
+    // Single table created by this method -> single QScrollBar::setValue
+    ui->tableWidget_3->verticalScrollBar()->setValue( vscroll_bar_value_[2] );
 }
 
 void MainWindow::insertLZCSDTableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description) {
@@ -665,6 +684,11 @@ void MainWindow::reloadRepository() {
     }
 
     is_loading_ = true;
+
+    // Remember scroll bars positions
+    vscroll_bar_value_[0] = ui->tableWidget->verticalScrollBar()->value();
+    vscroll_bar_value_[1] = ui->tableWidget_2->verticalScrollBar()->value();
+    vscroll_bar_value_[2] = ui->tableWidget_3->verticalScrollBar()->value();
     ui->tableWidget->setRowCount(0);
     ui->tableWidget_2->setRowCount(0);
     ui->tableWidget_3->setRowCount(0);

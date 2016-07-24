@@ -67,6 +67,8 @@ private:
     QVector<QString> repos_paths_;
     QString ZEKYLL_DEFAULT_REPO_;
 
+    int vscroll_bar_value_[3];
+
     Ui::MainWindow *ui;
 
     void insertLZCSDTableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description);
