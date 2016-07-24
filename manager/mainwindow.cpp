@@ -1463,3 +1463,21 @@ void MainWindow::on_indexRight_clicked()
         reloadRepository();
     }
 }
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    switch( index ) {
+    case 0:
+        ui->up->setEnabled( true );
+        ui->down->setEnabled( true );
+        break;
+    case 1:
+    case 2:
+        ui->up->setEnabled( false );
+        ui->down->setEnabled( false );
+        break;
+    default:
+        MessagesI.AppendMessageT( "Warning: Qt internal error (1)" );
+        break;
+    }
+}
