@@ -205,9 +205,9 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
     // thus two QScrollBar::setValue calls
 
     // RESTORE SCROLL of Zekyll order list
-    ui->tableWidget->verticalScrollBar()->setValue( vscroll_bar_value_[0] );
+    ui->tableWidget->verticalScrollBar()->setValue( vscroll_bar_value_.size() >= 1 ? vscroll_bar_value_[0] : 0 );
     // RESTORE SCROLL of Section order list
-    ui->tableWidget_2->verticalScrollBar()->setValue( vscroll_bar_value_[1] );
+    ui->tableWidget_2->verticalScrollBar()->setValue( vscroll_bar_value_.size() >= 2 ? vscroll_bar_value_[1] : 0 );
 
     // If exitCode is 12, there was inconsistent read
     // started, and whole listing actually stops there
@@ -270,7 +270,7 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
 
     // RESTORE SCROLL of inconsistent list
     // Single table created by this method -> single QScrollBar::setValue
-    ui->tableWidget_3->verticalScrollBar()->setValue( vscroll_bar_value_[2] );
+    ui->tableWidget_3->verticalScrollBar()->setValue( vscroll_bar_value_.size() >= 3 ? vscroll_bar_value_[2] : 0 );
 }
 
 void MainWindow::insertLZCSDTableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description) {
