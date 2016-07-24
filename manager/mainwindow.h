@@ -82,7 +82,6 @@ private:
     bool errorOnDisallowedChars( const QString & type, const QStringList & invalidChars );
     std::tuple< std::vector<int>, int > gatherCodeSelectors();
     int applyCodeSelectors( const std::vector<int> & bits_, bool silent = false );
-    bool recomputeZcode();
     std::tuple<QString, int> SetFromRepoOrPathGetSelection( QString repoOrPath, bool isRepo );
     std::tuple<QString, int> loadDefaultRepository();
     std::tuple<bool, int> stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, const QString & msg, bool subtract = false );
@@ -158,6 +157,7 @@ private slots:
 public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();
+    bool recomputeZcode();
 };
 
 #endif // MAINWINDOW_H
