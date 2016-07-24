@@ -139,6 +139,7 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
         is_loading_ = false;
         // Expecting incorrect behavior, thus silent (i.e. the true)
         applyDeferredCodeSelectors( true );
+        recomputeZcode();
         return;
     }
 
@@ -217,6 +218,7 @@ void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
         is_loading_ = false;
         // Expecting correct behavior, thus not silent (i.e. the false)
         applyDeferredCodeSelectors( false );
+        recomputeZcode();
     }
 }
 
@@ -230,6 +232,7 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
         is_loading_ = false;
         // Expecting correct behavior (list should went well), thus not silent (i.e. the false)
         applyDeferredCodeSelectors( false );
+        recomputeZcode();
         return;
     }
     isConsistent2_ = false;
@@ -269,6 +272,7 @@ void MainWindow::handle_zkiresize_consistent(int exitCode, QStringList entries) 
     is_loading_ = false;
     // Expecting correct behavior, thus not silent (i.e. the false)
     applyDeferredCodeSelectors( false );
+    recomputeZcode();
 
     // RESTORE SCROLL of inconsistent list
     // Single table created by this method -> single QScrollBar::setValue
