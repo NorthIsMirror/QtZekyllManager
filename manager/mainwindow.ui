@@ -341,7 +341,7 @@
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Listing</string>
+        <string>Zekyll order listing</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
