@@ -67,7 +67,7 @@ private:
     QVector<QString> repos_paths_;
     QString ZEKYLL_DEFAULT_REPO_;
 
-    int vscroll_bar_value_[3];
+    QVector<int> vscroll_bar_value_;
 
     Ui::MainWindow *ui;
 

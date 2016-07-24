@@ -1358,9 +1358,10 @@ std::tuple<bool, int> MainWindow::stepIntegerQLineEdit( QLineEdit *lineEdit, int
 
 int MainWindow::rememberScrollBars()
 {
-    vscroll_bar_value_[0] = ui->tableWidget->verticalScrollBar()->value();
-    vscroll_bar_value_[1] = ui->tableWidget_2->verticalScrollBar()->value();
-    vscroll_bar_value_[2] = ui->tableWidget_3->verticalScrollBar()->value();
+    vscroll_bar_value_.clear();
+    vscroll_bar_value_.push_back( ui->tableWidget->verticalScrollBar()->value() );
+    vscroll_bar_value_.push_back( ui->tableWidget_2->verticalScrollBar()->value() );
+    vscroll_bar_value_.push_back( ui->tableWidget_3->verticalScrollBar()->value() );
 }
 
 void MainWindow::on_rev_editingFinished()
