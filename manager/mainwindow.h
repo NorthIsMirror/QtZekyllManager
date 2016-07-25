@@ -169,6 +169,8 @@ private slots:
 
     void on_gitReset_clicked();
 
+    void on_gitCommit_clicked();
+
 public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();

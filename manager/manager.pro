@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     myqtablewidget.cpp \
     git.cpp \
     lgit.cpp \
-    myqlineedit.cpp
+    myqlineedit.cpp \
+    commitdialog.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -48,11 +49,13 @@ HEADERS  += mainwindow.h \
     git.h \
     lgit.h \
     myqlineedit.h \
-    selectedzekylls.h
+    selectedzekylls.h \
+    commitdialog.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \
-    closewithoutsavingdialog.ui
+    closewithoutsavingdialog.ui \
+    commitdialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libgit2/release/ -lgit2
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libgit2/debug/ -lgit2

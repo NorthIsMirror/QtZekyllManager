@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "zmeditor.h"
+#include "commitdialog.h"
 #include "math_functions.h"
 #include "coding_functions.h"
 #include "script_functions.h"
@@ -1663,4 +1664,10 @@ void MainWindow::on_gitReset_clicked()
     } else {
         MessagesI.AppendMessageT( QString("Exit code of git reset: %1").arg( error ) );
     }
+}
+
+void MainWindow::on_gitCommit_clicked()
+{
+    CommitDialog *dialog = new CommitDialog(this);
+    dialog->exec();
 }
