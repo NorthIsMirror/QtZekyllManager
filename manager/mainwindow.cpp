@@ -592,7 +592,7 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
                     // Apply the state on selectorsMap, first finding zekyll
                     QTableWidgetItem *zekyll_item = ui->tableWidget->item( row, 1 );
                     if( !zekyll_item ) {
-                        retval += 146;
+                        retval += 145;
                         MessagesI.AppendMessageT( "Warning: Problems with data (27)" );
                     } else {
                         QString qzekyll = zekyll_item->text().trimmed();
@@ -621,20 +621,104 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
     }
 
     unsigned int size = ZKL_INDEX_ZEKYLLS_.size();
-    for( unsigned int i = 0; i < size; i ++ ) {
-        const std::string & zekyll = ZKL_INDEX_ZEKYLLS_[i];
+    _rows = ui->tableWidget->rowCount();
+    rows = (unsigned int) ( _rows >= 0 ? _rows : 0 );
+    unsigned int row;
+    unsigned int i;
+    for( i = 0, row = 0; i < size && row < rows; i ++, row ++ ) {
+        // Prepare common data: zekyll, table_zekyll, selectorsMap pointer (sub_it)
+        // Also perform some assert-like checks
+        const std::string & zekyll = ZKL_INDEX_ZEKYLLS_[ i ];
+        QTableWidgetItem* item = ui->tableWidget->item( row, 1 );
+        std::string table_zekyll;
+        SelectorsMap::iterator sub_it;
+        if( item ) {
+            table_zekyll = item->text().trimmed().toStdString();
+            sub_it = selectorsMap.find( table_zekyll );
+            if( sub_it == selectorsMap.end() ) {
+                retval += 146;
+                MessagesI.AppendMessageT( "Warning: Problems with data (28)" );
+            }
+        } else {
+            retval += 147;
+            MessagesI.AppendMessageT( "Warning: Problems with data (29)" );
+        }
 
         SelectorsMap::iterator it = selectorsMap.find( zekyll );
         bool selected = false;
         if( it != selectorsMap.end() ) {
-            selected = it->second;
+            // Expected zekyll exists in system, thus
+            // there is no hole and we should just
+            // read current table row's check box
+            // (selectorsMap has this value, filled
+            // above, but doesn't support duplicate
+            // zekylls – TODO) – by doing such read
+            // we follow any future order (i.e. zekyll
+            // assignment to entries) of index, behave
+            // like if rewrite was already performed
+            if( item ) {
+                if( sub_it != selectorsMap.end() ) {
+                    selected = sub_it->second;
+                }
+            }
+        } else {
+            // Has been the element removed?
+            ZekyllIDs::iterator it2 = zekyllIDs_.find( zekyll );
+            bool existed = false, was_removed = false;
+            if( it2 != zekyllIDs_.end() && it2->second.size() != 0 ) {
+                existed = true;
+            }
+
+            if( existed ) {
+                const IDsVec & ids = it2->second;
+
+                for( IDsVec::const_iterator it3 = ids.begin(); it3 != ids.end(); ++ it3 ) {
+                    // Was the element at our current position?
+                    if( *it3 == (row+1) ) {
+                        if( lzcsde_initial_.findIdxOfId( row+1 /* ID is defined as row number + 1 when LZCSDE is unmodified */ ) != -1 ) {
+                            was_removed = true;
+                            // The element has been removed, there
+                            // is no hole an we should just read
+                            // current table row's checkbox
+                            if( item ) {
+                                if( sub_it != selectorsMap.end() ) {
+                                    selected = sub_it->second;
+                                }
+                            }
+                        } else {
+                            was_removed = false;
+                            // Element doesn't exist and wasn't removed
+                            // – this means inconsistency in index and
+                            // we should increment i, but hold back with row
+                            // until we encounter ZKL_INDEX_ZEKYLLS_ zekyll
+                            // that exists in system
+                        }
+                        break;
+                    }
+                }
+
+                if( existed && !was_removed ) {
+                    retval += 148;
+                    MessagesI.AppendMessageT( "Warning: problems with data (30)" );
+                }
+
+                if( !was_removed ) {
+                    // There's a hole in zekyll listing, advance on
+                    // ZKL_INDEX_ZEKYLLS_, but not on table
+                    -- row;
+                }
+            } else {
+                -- row;
+            }
         }
+
         selectors.push_back( selected );
 
         if( max_zekyll == ZKL_INDEX_ZEKYLLS_[i] ) {
             break;
         }
     }
+
     return std::make_tuple( selectors, retval );
 }
 
