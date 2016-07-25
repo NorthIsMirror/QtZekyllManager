@@ -20,5 +20,6 @@ QString reverseQString( const QString & str);
 int sectionOrderOnLZCSDE( LZCSDE & lzcsde );
 bool to_int( const QString & str, int *ret, bool *ok = NULL );
 bool to_int( const QString & str, int *ret, int *ret2, bool *_ok = NULL );
+QString joinStdIntVector( const std::vector<int> & bits, const char *sep = NULL );
 
 #endif // SCRIPT_FUNCTIONS_H

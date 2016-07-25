@@ -1,4 +1,6 @@
 #include "script_functions.h"
+#include <sstream>
+#include <algorithm>
 #include <QStringList>
 #include <QRegExp>
 #include <QDir>
@@ -398,4 +400,13 @@ bool to_int( const QString & str, int *ret, int *ret2, bool *_ok ) {
     }
 
     return false;
+}
+
+QString joinStdIntVector( const std::vector<int> & bits, const char *sep ) {
+    if( !sep ) {
+        sep = "";
+    }
+    std::stringstream ss;
+    std::copy( bits.begin(), bits.end(), std::ostream_iterator<int>( ss, sep ) );
+    return QString::fromStdString( ss.str() );
 }
