@@ -5,6 +5,7 @@
 
 CommitDialog::CommitDialog(QWidget *parent) :
     QDialog(parent),
+    accepted_(false),
     ui(new Ui::CommitDialog)
 {
     ui->setupUi(this);
@@ -41,4 +42,16 @@ CommitDialog::CommitDialog(QWidget *parent) :
 CommitDialog::~CommitDialog()
 {
     delete ui;
+}
+
+void CommitDialog::on_buttonBox_accepted()
+{
+    accepted_ = true;
+    commitMessage_ = ui->textEdit->text();
+}
+
+void CommitDialog::on_buttonBox_rejected()
+{
+    accepted_ = false;
+    commitMessage_ = "";
 }
