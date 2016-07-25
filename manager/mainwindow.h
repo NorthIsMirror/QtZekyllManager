@@ -167,6 +167,8 @@ private slots:
 
     void on_tabWidget_currentChanged(int index);
 
+    void on_gitReset_clicked();
+
 public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();

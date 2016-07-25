@@ -13,12 +13,16 @@ public:
     explicit lgit(QObject *parent = 0);
     ~lgit();
 
-    void setRepo( const QString & repo_path ) { repo_path_ = repo_path; }
-    int openRepo();
+    void setRepoPath( const QString & repo_path ) { repo_path_ = repo_path; }
+    int hardReset();
 
 signals:
 
 public slots:
+
+private:
+    int openRepo();
+    int closeRepo();
 
 private:
     QString repo_path_;

@@ -728,6 +728,8 @@ void MainWindow::reloadRepository() {
         MessagesI.AppendMessageT( QString( "Warning: index generation caused errors: %1" ).arg( error ) );
     }
 
+    lgit_->setRepoPath( current_path_ );
+
     git_->setRepoPath( current_path_ );
 
     zkrewrite_->setRepoPath( current_path_ );
@@ -1565,5 +1567,16 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     default:
         MessagesI.AppendMessageT( "Warning: Qt internal error (1)" );
         break;
+    }
+}
+
+void MainWindow::on_gitReset_clicked()
+{
+    int error = lgit_->hardReset();
+    if( !error ) {
+        MessagesI.AppendMessageT( QString("Successfully performed hard reset on repository") + " <b>" + current_repo_ + "</b>" );
+        reloadRepository();
+    } else {
+        MessagesI.AppendMessageT( QString("Exit code of git reset: %1").arg( error ) );
     }
 }
