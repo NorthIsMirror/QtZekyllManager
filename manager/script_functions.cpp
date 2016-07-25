@@ -5,6 +5,39 @@
 #include <QFileInfo>
 #include <QDebug>
 
+typedef enum {
+        GIT_OK         =  0,
+
+        GIT_ERROR      = -1,
+        GIT_ENOTFOUND  = -3,
+        GIT_EEXISTS    = -4,
+        GIT_EAMBIGUOUS = -5,
+        GIT_EBUFS      = -6,
+
+        GIT_EUSER      = -7,
+
+        GIT_EBAREREPO       =  -8,
+        GIT_EUNBORNBRANCH   =  -9,
+        GIT_EUNMERGED       = -10,
+        GIT_ENONFASTFORWARD = -11,
+        GIT_EINVALIDSPEC    = -12,
+        GIT_ECONFLICT       = -13,
+        GIT_ELOCKED         = -14,
+        GIT_EMODIFIED       = -15,
+        GIT_EAUTH           = -16,
+        GIT_ECERTIFICATE    = -17,
+        GIT_EAPPLIED        = -18,
+        GIT_EPEEL           = -19,
+        GIT_EEOF            = -20,
+        GIT_EINVALID        = -21,
+        GIT_EUNCOMMITTED    = -22,
+        GIT_EDIRECTORY      = -23,
+        GIT_EMERGECONFLICT  = -24,
+
+        GIT_PASSTHROUGH     = -30,
+        GIT_ITEROVER        = -31,
+} lgit_error_code;
+
 using namespace std;
 std::tuple< QString, QString, int > getRepoFromPath( const QString & path ) {
     QFileInfo fileInfo = QFileInfo(path);
@@ -275,4 +308,93 @@ bool to_int( const QString & str, int *ret, int *ret2, bool *_ok ) {
     }
 
     return false;
+}
+
+QString decode_libgit2_error_code( int errorCode ) {
+    QString error_decode;
+    switch( errorCode )
+    {
+    case GIT_OK:
+        error_decode = "No actual error";
+        break;
+    case GIT_ERROR:
+        error_decode = "Generic error";
+        break;
+    case GIT_ENOTFOUND:
+        error_decode = "Requested object could not be found";
+        break;
+    case GIT_EEXISTS:
+        error_decode = "Object already exists preventing operation";
+        break;
+    case GIT_EAMBIGUOUS:
+        error_decode = "More than one object matches";
+        break;
+    case GIT_EBUFS:
+        error_decode = "Output buffer too short to hold data";
+        break;
+    case GIT_EUSER:
+        error_decode = "No actual error";
+        break;
+    case GIT_EBAREREPO:
+        error_decode = "Operation not allowed on bare repository";
+        break;
+    case GIT_EUNBORNBRANCH:
+        error_decode = "HEAD refers to branch with no commits";
+        break;
+    case GIT_EUNMERGED:
+        error_decode = "There is a merge in progress, this prevents operation";
+        break;
+    case GIT_ENONFASTFORWARD:
+        error_decode = "Reference is not fast-forwardable";
+        break;
+    case GIT_EINVALIDSPEC:
+        error_decode = "Name/ref_spec is not in a valid format";
+        break;
+    case GIT_ECONFLICT:
+        error_decode = "Checkout conflicts prevented operation";
+        break;
+    case GIT_ELOCKED:
+        error_decode = "Lock file prevented operation";
+        break;
+    case GIT_EMODIFIED:
+        error_decode = "Reference's value does not match expected";
+        break;
+    case GIT_EAUTH:
+        error_decode = "Authentication error";
+        break;
+    case GIT_ECERTIFICATE:
+        error_decode = "Server certificate is invalid";
+        break;
+    case GIT_EAPPLIED:
+        error_decode = "Patch/merge has already been applied";
+        break;
+    case GIT_EPEEL:
+        error_decode = "The requested peel operation is not possible";
+        break;
+    case GIT_EEOF:
+        error_decode = "Unexpected end of data";
+        break;
+    case GIT_EINVALID:
+        error_decode = "Invalid operation or input";
+        break;
+    case GIT_EUNCOMMITTED:
+        error_decode = "Uncommitted changes prevented operation";
+        break;
+    case GIT_EDIRECTORY:
+        error_decode = "The operation is not valid for a directory";
+        break;
+    case GIT_EMERGECONFLICT:
+        error_decode = "A merge conflict exists – cannot continue";
+        break;
+    case GIT_PASSTHROUGH:
+        error_decode = "Internal error";
+        break;
+    case GIT_ITEROVER:
+        error_decode = "Internal error (iterators) – not an actual error, but should not happen";
+        break;
+    default:
+        error_decode = "Unknown Git error";
+    }
+
+    return error_decode;
 }
