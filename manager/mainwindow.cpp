@@ -14,6 +14,7 @@
 #include <QFileDialog>
 #include <QTableWidget>
 #include <QScrollBar>
+#include <QSettings>
 
 #define MessagesI Singleton<Messages>::instance()
 
@@ -28,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    readSettings();
+
     ui->tabWidget->saveTheColor();
     ui->currentIndex->setText(tr("1"));
     current_index_ = 1;
@@ -634,7 +638,13 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
 }
 
 void MainWindow::on_actionQuit_triggered() {
+    writeSettings();
     QApplication::quit();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    writeSettings();
+    event->accept();
 }
 
 void MainWindow::browse()
@@ -1383,6 +1393,29 @@ bool MainWindow::setCurrentIndexInZcode()
     with_index.prepend( QString( "%1" ).arg( current_index_ )  );
     ui->zcode->setText( with_index.join( "/" ) );
     return true;
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings( "qtzekyllman.ini", QSettings::IniFormat );
+
+    settings.beginGroup( "Main" );
+    settings.setValue( "size", size() );
+    settings.setValue( "pos", pos() );
+    settings.endGroup();
+    settings.sync();
+
+    qDebug() << "Wrote settings INI (" << settings.fileName() << ")";
+}
+
+void MainWindow::readSettings()
+{
+    QSettings settings( "qtzekyllman.ini", QSettings::IniFormat );
+
+    settings.beginGroup("Main");
+    resize( settings.value( "size", QSize(800, 700) ).toSize() );
+    move( settings.value( "pos", QPoint(400, 170) ).toPoint() );
+    settings.endGroup();
 }
 
 void MainWindow::on_rev_editingFinished()

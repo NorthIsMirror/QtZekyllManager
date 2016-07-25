@@ -75,6 +75,7 @@ private:
     void insertLZSDETableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
                                 const QString & description, const QString & error);
 
+    void closeEvent(QCloseEvent *event);
     void processCurRepoCombo( const QString & selected, int error );
     void setupDeferredApplyOfCodeSelectors( const std::vector<int> & bits ) { isDeferredApplyPrepared_ = true; deferredCodeSelectors_ = bits; }
     int applyDeferredCodeSelectors( bool silent );
@@ -89,6 +90,8 @@ private:
     std::tuple<bool, int> stepIntegerQLineEdit( QLineEdit *lineEdit, int min, int max, const QString & msg, bool subtract = false );
     int rememberScrollBars();
     bool setCurrentIndexInZcode();
+    void writeSettings();
+    void readSettings();
 
 signals:
     void repositoryChanged();
