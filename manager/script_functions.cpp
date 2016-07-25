@@ -5,38 +5,39 @@
 #include <QFileInfo>
 #include <QDebug>
 
+// Own copy of enum from git2/errors.h
 typedef enum {
-        GIT_OK         =  0,
+        LGIT_OK         =  0,
 
-        GIT_ERROR      = -1,
-        GIT_ENOTFOUND  = -3,
-        GIT_EEXISTS    = -4,
-        GIT_EAMBIGUOUS = -5,
-        GIT_EBUFS      = -6,
+        LGIT_ERROR      = -1,
+        LGIT_ENOTFOUND  = -3,
+        LGIT_EEXISTS    = -4,
+        LGIT_EAMBIGUOUS = -5,
+        LGIT_EBUFS      = -6,
 
-        GIT_EUSER      = -7,
+        LGIT_EUSER      = -7,
 
-        GIT_EBAREREPO       =  -8,
-        GIT_EUNBORNBRANCH   =  -9,
-        GIT_EUNMERGED       = -10,
-        GIT_ENONFASTFORWARD = -11,
-        GIT_EINVALIDSPEC    = -12,
-        GIT_ECONFLICT       = -13,
-        GIT_ELOCKED         = -14,
-        GIT_EMODIFIED       = -15,
-        GIT_EAUTH           = -16,
-        GIT_ECERTIFICATE    = -17,
-        GIT_EAPPLIED        = -18,
-        GIT_EPEEL           = -19,
-        GIT_EEOF            = -20,
-        GIT_EINVALID        = -21,
-        GIT_EUNCOMMITTED    = -22,
-        GIT_EDIRECTORY      = -23,
-        GIT_EMERGECONFLICT  = -24,
+        LGIT_EBAREREPO       =  -8,
+        LGIT_EUNBORNBRANCH   =  -9,
+        LGIT_EUNMERGED       = -10,
+        LGIT_ENONFASTFORWARD = -11,
+        LGIT_EINVALIDSPEC    = -12,
+        LGIT_ECONFLICT       = -13,
+        LGIT_ELOCKED         = -14,
+        LGIT_EMODIFIED       = -15,
+        LGIT_EAUTH           = -16,
+        LGIT_ECERTIFICATE    = -17,
+        LGIT_EAPPLIED        = -18,
+        LGIT_EPEEL           = -19,
+        LGIT_EEOF            = -20,
+        LGIT_EINVALID        = -21,
+        LGIT_EUNCOMMITTED    = -22,
+        LGIT_EDIRECTORY      = -23,
+        LGIT_EMERGECONFLICT  = -24,
 
-        GIT_PASSTHROUGH     = -30,
-        GIT_ITEROVER        = -31,
-} lgit_error_code;
+        LGIT_PASSTHROUGH     = -30,
+        LGIT_ITEROVER        = -31,
+} lLGIT_error_code;
 
 using namespace std;
 std::tuple< QString, QString, int > getRepoFromPath( const QString & path ) {
@@ -253,82 +254,82 @@ QString decode_libgit2_error_code( int errorCode ) {
     QString error_decode;
     switch( errorCode )
     {
-    case GIT_OK:
+    case LGIT_OK:
         error_decode = "No actual error";
         break;
-    case GIT_ERROR:
+    case LGIT_ERROR:
         error_decode = "Generic error";
         break;
-    case GIT_ENOTFOUND:
+    case LGIT_ENOTFOUND:
         error_decode = "Requested object could not be found";
         break;
-    case GIT_EEXISTS:
+    case LGIT_EEXISTS:
         error_decode = "Object already exists preventing operation";
         break;
-    case GIT_EAMBIGUOUS:
+    case LGIT_EAMBIGUOUS:
         error_decode = "More than one object matches";
         break;
-    case GIT_EBUFS:
+    case LGIT_EBUFS:
         error_decode = "Output buffer too short to hold data";
         break;
-    case GIT_EUSER:
+    case LGIT_EUSER:
         error_decode = "No actual error";
         break;
-    case GIT_EBAREREPO:
+    case LGIT_EBAREREPO:
         error_decode = "Operation not allowed on bare repository";
         break;
-    case GIT_EUNBORNBRANCH:
+    case LGIT_EUNBORNBRANCH:
         error_decode = "HEAD refers to branch with no commits";
         break;
-    case GIT_EUNMERGED:
+    case LGIT_EUNMERGED:
         error_decode = "There is a merge in progress, this prevents operation";
         break;
-    case GIT_ENONFASTFORWARD:
+    case LGIT_ENONFASTFORWARD:
         error_decode = "Reference is not fast-forwardable";
         break;
-    case GIT_EINVALIDSPEC:
+    case LGIT_EINVALIDSPEC:
         error_decode = "Name/ref_spec is not in a valid format";
         break;
-    case GIT_ECONFLICT:
+    case LGIT_ECONFLICT:
         error_decode = "Checkout conflicts prevented operation";
         break;
-    case GIT_ELOCKED:
+    case LGIT_ELOCKED:
         error_decode = "Lock file prevented operation";
         break;
-    case GIT_EMODIFIED:
+    case LGIT_EMODIFIED:
         error_decode = "Reference's value does not match expected";
         break;
-    case GIT_EAUTH:
+    case LGIT_EAUTH:
         error_decode = "Authentication error";
         break;
-    case GIT_ECERTIFICATE:
+    case LGIT_ECERTIFICATE:
         error_decode = "Server certificate is invalid";
         break;
-    case GIT_EAPPLIED:
+    case LGIT_EAPPLIED:
         error_decode = "Patch/merge has already been applied";
         break;
-    case GIT_EPEEL:
+    case LGIT_EPEEL:
         error_decode = "The requested peel operation is not possible";
         break;
-    case GIT_EEOF:
+    case LGIT_EEOF:
         error_decode = "Unexpected end of data";
         break;
-    case GIT_EINVALID:
+    case LGIT_EINVALID:
         error_decode = "Invalid operation or input";
         break;
-    case GIT_EUNCOMMITTED:
+    case LGIT_EUNCOMMITTED:
         error_decode = "Uncommitted changes prevented operation";
         break;
-    case GIT_EDIRECTORY:
+    case LGIT_EDIRECTORY:
         error_decode = "The operation is not valid for a directory";
         break;
-    case GIT_EMERGECONFLICT:
+    case LGIT_EMERGECONFLICT:
         error_decode = "A merge conflict exists – cannot continue";
         break;
-    case GIT_PASSTHROUGH:
+    case LGIT_PASSTHROUGH:
         error_decode = "Internal error";
         break;
-    case GIT_ITEROVER:
+    case LGIT_ITEROVER:
         error_decode = "Internal error (iterators) – not an actual error, but should not happen";
         break;
     default:
