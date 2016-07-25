@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     qputenv( "PATH", PATH.toLocal8Bit() );
 
-    zkiresize_ = new ZkIResize();
+    zkiresize_ = new ZkIResize( this );
 
     // Connect ZkIResize to obtain list of zekylls
     QObject::connect(this->zkiresize_,
@@ -77,7 +77,7 @@ MainWindow::MainWindow(QWidget *parent) :
                      this,
                      SLOT(handle_zkiresize_resize(int, QStringList)));
 
-    zkrewrite_ = new ZkRewrite();
+    zkrewrite_ = new ZkRewrite( this );
 
     // Connect ZkRewrite
     QObject::connect(this->zkrewrite_,
@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
                      this,
                      SLOT(handle_zkrewrite(int, QStringList)));
 
-    git_ = new Git();
+    git_ = new Git( this );
 
     QObject::connect(this->git_,
                      SIGNAL(result_git_rm(int, QStringList)),
