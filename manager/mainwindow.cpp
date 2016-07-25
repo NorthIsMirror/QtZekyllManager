@@ -675,7 +675,7 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
 
                 for( IDsVec::const_iterator it3 = ids.begin(); it3 != ids.end(); ++ it3 ) {
                     // Was the element at our current position?
-                    if( *it3 == (row+1) ) {
+                    if( *it3 == int(row+1) ) {
                         if( lzcsde_initial_.findIdxOfId( row+1 /* ID is defined as row number + 1 when LZCSDE is unmodified */ ) != -1 ) {
                             was_removed = true;
                             // The element has been removed, there
@@ -1471,6 +1471,8 @@ int MainWindow::rememberScrollBars()
     vscroll_bar_value_.push_back( ui->tableWidget->verticalScrollBar()->value() );
     vscroll_bar_value_.push_back( ui->tableWidget_2->verticalScrollBar()->value() );
     vscroll_bar_value_.push_back( ui->tableWidget_3->verticalScrollBar()->value() );
+
+    return 0;
 }
 
 bool MainWindow::setCurrentIndexInZcode()
