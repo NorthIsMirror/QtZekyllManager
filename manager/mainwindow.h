@@ -104,6 +104,8 @@ public slots:
     void stopThirdTabMarking();
 
 private slots:
+    void on_actionQuit_triggered();
+
     void browse();
 
     void reloadRepository();

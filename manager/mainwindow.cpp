@@ -633,6 +633,10 @@ std::tuple< std::vector<int>, int > MainWindow::gatherCodeSelectors()
     return std::make_tuple( selectors, retval );
 }
 
+void MainWindow::on_actionQuit_triggered() {
+    QApplication::quit();
+}
+
 void MainWindow::browse()
 {
     QString directory = QFileDialog::getExistingDirectory( this, tr("Select repository"), repos_paths_[0] );
