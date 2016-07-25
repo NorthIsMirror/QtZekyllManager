@@ -1,9 +1,10 @@
+#include <QDebug>
+#include "git2/errors.h"
+
 #include "lgit.h"
 #include "singleton.h"
 #include "messages.h"
 #include "script_functions.h"
-
-#include "git2/errors.h"
 
 #define MessagesI Singleton<Messages>::instance()
 
@@ -31,6 +32,7 @@ int lgit::hardReset()
 
     retval += openRepo();
     if( retval > 0 ) {
+        MessagesI.AppendMessageT( "Could not open repository" + repo_path_ );
         return retval + 1000000 * 17;
     }
 
@@ -78,7 +80,7 @@ int lgit::openRepo()
     int error = git_repository_open_ext( &repo_, repo_path_.toUtf8().constData(), 0, NULL );
     if( error < 0 ) {
         MessagesI.AppendMessageT( QString( "Error: Git backend problem (libgit2) when opening repository – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
-        retval += 89 + (100000 * error * -1);
+        retval += 89 + (10000 * error * -1);
     }
 
     return retval;
