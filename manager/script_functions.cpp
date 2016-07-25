@@ -249,67 +249,6 @@ QString decode_zkrewrite_exit_code( int exitCode ) {
     return error_decode;
 }
 
-QString reverseQString( const QString & str)
-{
-    QString str_rev;
-    for( QString::const_iterator i = str.constEnd(); i != str.constBegin(); )
-    {
-        -- i;
-        str_rev.append( *i );
-    }
-    return str_rev;
-}
-
-char section_letters[26] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-
-int sectionOrderOnLZCSDE( LZCSDE & lzcsde ) {
-    int error = 0;
-    QVector<LZCSDE_Entry> new_entries;
-    const QVector<LZCSDE_Entry> & entries = lzcsde.entries();
-    int size = entries.count();
-
-    for( int a = 0; a < 26; ++ a ) {
-        char selected_section = section_letters[a];
-        for( int i = 0; i < size; ++ i ) {
-            if( QString( selected_section ) != entries[i].section() ) {
-                continue;
-            }
-
-            new_entries.push_back( entries[i] );
-        }
-    }
-
-    if( new_entries.count() != entries.count() ) {
-        error = 1;
-    } else {
-        lzcsde.entries() = new_entries;
-    }
-
-    return error;
-}
-
-bool to_int( const QString & str, int *ret, bool *_ok ) {
-    if( !ret ) {
-        return false;
-    }
-    bool ok = false;
-    *ret = str.toInt( &ok );
-    if( _ok ) {
-        *_ok = ok;
-    }
-
-    return ok;
-}
-
-bool to_int( const QString & str, int *ret, int *ret2, bool *_ok ) {
-    if( to_int( str, ret, _ok ) ) {
-        *ret2 = *ret;
-        return true;
-    }
-
-    return false;
-}
-
 QString decode_libgit2_error_code( int errorCode ) {
     QString error_decode;
     switch( errorCode )
@@ -397,4 +336,65 @@ QString decode_libgit2_error_code( int errorCode ) {
     }
 
     return error_decode;
+}
+
+QString reverseQString( const QString & str)
+{
+    QString str_rev;
+    for( QString::const_iterator i = str.constEnd(); i != str.constBegin(); )
+    {
+        -- i;
+        str_rev.append( *i );
+    }
+    return str_rev;
+}
+
+char section_letters[26] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+
+int sectionOrderOnLZCSDE( LZCSDE & lzcsde ) {
+    int error = 0;
+    QVector<LZCSDE_Entry> new_entries;
+    const QVector<LZCSDE_Entry> & entries = lzcsde.entries();
+    int size = entries.count();
+
+    for( int a = 0; a < 26; ++ a ) {
+        char selected_section = section_letters[a];
+        for( int i = 0; i < size; ++ i ) {
+            if( QString( selected_section ) != entries[i].section() ) {
+                continue;
+            }
+
+            new_entries.push_back( entries[i] );
+        }
+    }
+
+    if( new_entries.count() != entries.count() ) {
+        error = 1;
+    } else {
+        lzcsde.entries() = new_entries;
+    }
+
+    return error;
+}
+
+bool to_int( const QString & str, int *ret, bool *_ok ) {
+    if( !ret ) {
+        return false;
+    }
+    bool ok = false;
+    *ret = str.toInt( &ok );
+    if( _ok ) {
+        *_ok = ok;
+    }
+
+    return ok;
+}
+
+bool to_int( const QString & str, int *ret, int *ret2, bool *_ok ) {
+    if( to_int( str, ret, _ok ) ) {
+        *ret2 = *ret;
+        return true;
+    }
+
+    return false;
 }
