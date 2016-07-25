@@ -15,6 +15,7 @@ public:
 
     void setRepoPath( const QString & repo_path ) { repo_path_ = repo_path; }
     int hardReset();
+    int commit( const QString & message );
 
 signals:
 

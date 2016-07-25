@@ -1671,5 +1671,17 @@ void MainWindow::on_gitReset_clicked()
 void MainWindow::on_gitCommit_clicked()
 {
     CommitDialog *dialog = new CommitDialog(this);
-    dialog->exec();
+    if( dialog->exec() == QDialog::Rejected ) {
+        MessagesI.AppendMessageT( "<font color=green>Commit stopped</font>" );
+        return;
+    }
+
+    int error = lgit_->commit( dialog->commitMessage() );
+
+    if( !error ) {
+        MessagesI.AppendMessageT( QString("Successfully performed git commit on repository") + " <b>" + current_repo_ + "</b>" );
+        reloadRepository();
+    } else {
+        MessagesI.AppendMessageT( QString("Exit code of git commit: %1").arg( error ) );
+    }
 }

@@ -70,7 +70,103 @@ int lgit::hardReset()
     }
 
     git_commit_free( target );
-    closeRepo();
+    retval += closeRepo();
+    return retval;
+}
+
+int lgit::commit( const QString & message )
+{
+    int retval = 0, error = 0;
+
+    git_signature *sig;
+    git_index *index;
+    git_oid tree_id, parent_id, commit_id;
+    git_tree *tree;
+    git_commit *parent;
+
+    retval += openRepo();
+    if( retval > 0 ) {
+        MessagesI.AppendMessageT( "Could not open repository" + repo_path_ );
+        return retval + 1000000 * 19;
+    }
+
+    if ( (error = git_signature_default( &sig, repo_ ) ) < 0 ) {
+        retval += 89 + (100000 * error * -1);
+        if ( error == GIT_ENOTFOUND ) {
+            MessagesI.AppendMessageT( "Cannot commit: 'user.name' and 'user.email' must be set in a .gitconfig file" );
+        }
+        return retval;
+    }
+
+    if ( ( error = git_repository_index( &index, repo_ ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Cannot commit: could not open repository's index" );
+        retval += 97 + (100000 * error * -1);
+        git_signature_free( sig );
+        retval += closeRepo();
+        return retval;
+    }
+
+    if ( ( error = git_index_read( index, 1 ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Cannot commit: could not read already staged files" );
+        retval += 101 + (100000 * error * -1);
+        git_index_free( index );
+        git_signature_free( sig );
+        retval += closeRepo();
+        return retval;
+    }
+
+    if ( ( error = git_index_write_tree( &tree_id, index ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Cannot commit: could not write initial tree from index" );
+        retval += 103 + (100000 * error * -1);
+        git_index_free( index );
+        git_signature_free( sig );
+        retval += closeRepo();
+        return retval;
+    }
+
+    git_index_free( index );
+
+    if ( ( error = git_tree_lookup( &tree, repo_, &tree_id ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Cannot commit: could not look up initial tree" );
+        retval += 107 + (100000 * error * -1);
+        git_signature_free( sig );
+        retval += closeRepo();
+        return retval;
+    }
+
+    if ( ( error = git_reference_name_to_id( &parent_id, repo_, "HEAD" ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Cannot commit: could not resolve what HEAD points to" );
+        retval += 109 + (100000 * error * -1);
+        git_tree_free( tree );
+        git_signature_free( sig );
+        retval += closeRepo();
+        return retval;
+    }
+
+    if ( ( error = git_commit_lookup( &parent, repo_, &parent_id ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Cannot commit: could not resolve what HEAD points to (2)" );
+        retval += 113 + (100000 * error * -1);
+        git_tree_free( tree );
+        git_signature_free( sig );
+        retval += closeRepo();
+        return retval;
+    }
+
+    if ( ( error = git_commit_create_v( &commit_id, repo_, "HEAD", sig, sig,
+                                        NULL, message.toUtf8().constData(), tree, 1, parent ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Cannot commit: could not create the commit" );
+        retval += 127 + (100000 * error * -1);
+        git_commit_free( parent );
+        git_tree_free( tree );
+        git_signature_free( sig );
+        retval += closeRepo();
+        return retval;
+    }
+
+    git_commit_free( parent );
+    git_tree_free( tree );
+    git_signature_free( sig );
+    retval += closeRepo();
     return retval;
 }
 
@@ -90,4 +186,6 @@ int lgit::closeRepo()
 {
     git_repository_free( repo_ );
     repo_ = 0;
+
+    return 0;
 }
