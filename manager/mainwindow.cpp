@@ -86,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
                      SLOT(handle_zkrewrite(int, QStringList)));
 
     git_ = new Git( this );
+    lgit_ = new lgit( this );
 
     QObject::connect(this->git_,
                      SIGNAL(result_git_rm(int, QStringList)),

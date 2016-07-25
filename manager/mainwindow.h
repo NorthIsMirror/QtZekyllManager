@@ -14,6 +14,7 @@
 #include "zkiresize.h"
 #include "zkrewrite.h"
 #include "git.h"
+#include "lgit.h"
 #include "lzcsde.h"
 #include "selectedzekylls.h"
 
@@ -44,6 +45,7 @@ private:
     ZkIResize *zkiresize_;
     ZkRewrite *zkrewrite_;
     Git *git_;
+    lgit *lgit_;
 
     LZCSDE lzcsde_list_;
     LZCSDE lzcsde_section_;
