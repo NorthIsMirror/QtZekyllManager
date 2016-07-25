@@ -29,7 +29,7 @@ int lgit::hardReset()
     git_oid oid;
     git_commit *target;
 
-    retval =+ openRepo();
+    retval += openRepo();
     if( retval > 0 ) {
         return retval + 1000000 * 17;
     }
