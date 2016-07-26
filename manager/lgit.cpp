@@ -39,10 +39,10 @@ int lgit::hardReset()
     int error = git_reference_name_to_id(&oid, repo_, "HEAD");
     if( error == GIT_ENOTFOUND ) {
         MessagesI.AppendMessageT( "Cannot reset an empty repository" );
-        retval += 47;
+        retval += 47 + (10000 * error * -1);
     } else if( error == GIT_EINVALIDSPEC ) {
         MessagesI.AppendMessageT( "Git backend has problems – it says \"HEAD\" isn't a valid spec");
-        retval += 59;
+        retval += 59 + (10000 * error * -1);
     } else if( error < 0 ) {
         MessagesI.AppendMessageT( QString( "Git backend error (1) – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
         retval += 67 + (10000 * error * -1);
