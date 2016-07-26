@@ -15,7 +15,7 @@
 #endif
 
 lgit::lgit(QObject *parent) : QObject(parent), constructor_error_code_(0), backend_status_(NOT_INITIALIZED),
-                              repo_(0)
+                              repo_(0), is_name_set_(false), is_email_set_(false), is_when_set_(false)
 {
     int error, retval = 0;
 

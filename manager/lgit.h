@@ -25,15 +25,18 @@ public:
 
     std::tuple< QString, QString, git_time, int > testDefaultSignature();
 
-    void setRepoPath( const QString & repo_path ) { repo_path_ = repo_path; }
+    void setRepoPath( const QString & repo_path ) { repo_path_ = repo_path; is_name_set_ = is_email_set_ = is_when_set_ = false; }
 
-    void setName( const QString & name ) { name_ = name; }
-    void setEmail( const QString & email ) { email_ = email; }
-    void setWhen( const git_time & when ) { when_ = when; }
+    void setName( const QString & name ) { name_ = name; is_name_set_ = true; }
+    void setEmail( const QString & email ) { email_ = email; is_email_set_ = true; }
+    void setWhen( const git_time & when ) { when_ = when; is_when_set_ = true; }
 
     const QString & name() const { return name_; }
     const QString & email() const { return email_; }
     const git_time & when() const { return when_; }
+
+    bool is_name_and_email_set() const { return is_name_set_ && is_email_set_; }
+    bool is_all_set() const { return is_name_set_ && is_email_set_ && is_when_set_; }
 
     int hardReset();
     int commit( const QString & message );
@@ -53,6 +56,10 @@ private:
     QString name_;
     QString email_;
     git_time when_;
+
+    bool is_name_set_;
+    bool is_email_set_;
+    bool is_when_set_;
 
     QString repo_path_;
     git_repository *repo_;
