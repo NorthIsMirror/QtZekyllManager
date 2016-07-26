@@ -87,7 +87,7 @@ int lgit::commit( const QString & message )
     retval += openRepo();
     if( retval > 0 ) {
         MessagesI.AppendMessageT( "Could not open repository" + repo_path_ );
-        return retval + 10000 * 19;
+        return retval + 1000000 * 19;
     }
 
     if ( (error = git_signature_default( &sig, repo_ ) ) < 0 ) {
