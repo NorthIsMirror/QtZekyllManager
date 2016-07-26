@@ -14,14 +14,57 @@
 # include <unistd.h>
 #endif
 
-lgit::lgit(QObject *parent) : QObject(parent) , repo_(NULL)
+lgit::lgit(QObject *parent) : QObject(parent), constructor_error_code_(0), backend_status_(NOT_INITIALIZED),
+                              repo_(0)
 {
-    git_libgit2_init();
+    int error, retval = 0;
+
+    if ( ( error = git_libgit2_init() ) < 0 ) {
+        retval += 131 + (10000 * error * -1);
+        backend_status_ = NOT_INITIALIZED;
+        constructor_error_code_ = retval;
+        return;
+    }
+
+    backend_status_ = PARTIAL_INIT_NO_DEFAULT_SIG;
 }
 
 lgit::~lgit()
 {
     git_libgit2_shutdown();
+}
+
+std::tuple<QString, QString, git_time, int> lgit::testDefaultSignature()
+{
+    git_signature *sig;
+    int error, retval = 0;
+    QString name, email;
+    git_time when;
+
+    retval += openRepo();
+    if( retval > 0 ) {
+        retval += 1000000 * 23;
+        return std::make_tuple( name, email, when, retval );
+    }
+
+    if ( (error = git_signature_default( &sig, repo_ ) ) < 0 ) {
+        retval += 137 + (10000 * error * -1);
+        return std::make_tuple( name, email, when, retval );
+    }
+
+    name = QString::fromUtf8( sig->name );
+    email = QString::fromUtf8( sig->email );
+    when = sig->when;
+
+    if( backend_status_ == PARTIAL_INIT_NO_DEFAULT_SIG ) {
+        backend_status_ = INITIALIZED;
+    }
+
+    git_signature_free( sig );
+
+    retval += closeRepo();
+
+    return std::make_tuple( name, email, when, retval );
 }
 
 int lgit::hardReset()
@@ -175,7 +218,7 @@ int lgit::openRepo()
     int retval = 0;
     int error = git_repository_open_ext( &repo_, repo_path_.toUtf8().constData(), 0, NULL );
     if( error < 0 ) {
-        MessagesI.AppendMessageT( QString( "Error: Git backend problem when opening repository – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
+        MessagesI.AppendMessageT( QString( "Git backend error when opening repository – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
         retval += 89 + (10000 * error * -1);
     }
 

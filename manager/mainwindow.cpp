@@ -1671,14 +1671,47 @@ void MainWindow::on_gitReset_clicked()
 void MainWindow::on_gitCommit_clicked()
 {
     CommitDialog *dialog = new CommitDialog(this);
+    if(!dialog) {
+        MessagesI.AppendMessageT( "Serious error: new failed (C++)" );
+        return;
+    }
+
+    std::tuple< QString, QString, git_time, int > result = lgit_->testDefaultSignature();
+    int error = std::get<3>( result );
+    if( error > 0 ) {
+        int git_error = ( error % 1000000 ) / 10000 * -1;
+        if( git_error == GIT_ENOTFOUND ) {
+            if( error / 1000000 == 23 ) {
+                MessagesI.AppendMessageT( "Error: path does not point to Git repository" );
+            } else {
+                MessagesI.AppendMessageT( "user.name and user.email are not set in a .gitconfig file, please enter the values in commit window" );
+            }
+        } else {
+            if( error / 1000000 == 23 ) {
+                MessagesI.AppendMessageT( QString( "Error: could not open provided repository, error code: %1" ).arg( git_error * -1 ) );
+            } else {
+                MessagesI.AppendMessageT( QString( "Could not get default signature (for author and commiter), error code: %1" ).arg( git_error * -1 ) );
+            }
+        }
+        return;
+    } else {
+        if( lgit_->backendStatus() == INITIALIZED ) {
+            dialog->setName( std::get<0>( result ) );
+            dialog->setEmail( std::get<1>( result ) );
+        } else {
+            MessagesI.AppendMessageT( "Could not initialize Git backend" );
+            return;
+        }
+    }
+
     if( dialog->exec() == QDialog::Rejected ) {
         MessagesI.AppendMessageT( "<font color=green>Commit stopped</font>" );
         return;
     }
 
-    int error = lgit_->commit( dialog->commitMessage() );
+    error = lgit_->commit( dialog->commitMessage() );
 
-    if( !error ) {
+    if( error == 0 ) {
         MessagesI.AppendMessageT( QString("Successfully performed git commit on repository") + " <b>" + current_repo_ + "</b>" );
         reloadRepository();
     } else {
