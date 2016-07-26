@@ -1691,9 +1691,9 @@ void MainWindow::on_gitCommit_clicked()
             }
         } else {
             if( error / 1000000 == 23 ) {
-                MessagesI.AppendMessageT( QString( "Error: could not open provided repository, error code: %1" ).arg( git_error * -1 ) );
+                MessagesI.AppendMessageT( QString( "Error: could not open provided repository, error code: %1" ).arg( error ) );
             } else {
-                MessagesI.AppendMessageT( QString( "Could not get default signature (for author and commiter), error code: %1" ).arg( git_error * -1 ) );
+                MessagesI.AppendMessageT( QString( "Could not get default signature (author and commiter), error code: %1" ).arg( error ) );
             }
         }
         return;
@@ -1708,9 +1708,12 @@ void MainWindow::on_gitCommit_clicked()
     }
 
     if( dialog->exec() == QDialog::Rejected ) {
-        MessagesI.AppendMessageT( "<font color=green>Commit stopped</font>" );
+        MessagesI.AppendMessageT( "<font color=green>Commit has been stopped</font>" );
         return;
     }
+
+    lgit_->setName( dialog->name() );
+    lgit_->setEmail( dialog->email() );
 
     error = lgit_->commit( dialog->commitMessage() );
 
