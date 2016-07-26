@@ -137,9 +137,9 @@ int lgit::commit( const QString & message )
         if ( ( error = git_signature_default( &sig_default, repo_ ) ) < 0 ) {
             retval += 157 + (10000 * error * -1);
             if ( error == GIT_ENOTFOUND ) {
-                MessagesI.AppendMessageT( "Cannot commit: 'user.name' and 'user.email' must be set in a .gitconfig file, or provided in commit window" );
+                MessagesI.AppendMessageT( "Cannot commit: 'user.name' and 'user.email' must be set in a gitconfig file, or provided in commit window" );
             } else {
-                MessagesI.AppendMessageT( QString( "Could not access 'user.name' and 'user.email' from a .gitconfig file, error code: %1" ).arg( retval ) );
+                MessagesI.AppendMessageT( QString( "Could not access 'user.name' and 'user.email' from a gitconfig file, error code: %1" ).arg( retval ) );
             }
             return retval;
         }
@@ -161,7 +161,7 @@ int lgit::commit( const QString & message )
 
         if( ( error = git_signature_new( &sig, name.toUtf8().constData(), email.toUtf8().constData(), mywhen.time, mywhen.offset ) ) < 0 ) {
             retval += 149 + (10000 * error * -1);
-            MessagesI.AppendMessageT( QString( "Could not create commit's signature, are user.name and user.email correctly set in a .gitconfig file" ) +
+            MessagesI.AppendMessageT( QString( "Could not create commit's signature, are user.name and user.email correctly set in a gitconfig file" ) +
                                       QString( ", or provided in commit window? Error code: %1" ).arg( retval ) );
             return retval;
         }
@@ -169,14 +169,14 @@ int lgit::commit( const QString & message )
         if( is_all_set() ) {
             if( ( error = git_signature_new( &sig, name_.toUtf8().constData(), email_.toUtf8().constData(), when_.time, when_.offset ) ) < 0 ) {
                 retval += 139 + (10000 * error * -1);
-                MessagesI.AppendMessageT( QString( "Could not create commit's signature, are user.name and user.email correctly set in a .gitconfig file" ) +
+                MessagesI.AppendMessageT( QString( "Could not create commit's signature, are user.name and user.email correctly set in a gitconfig file" ) +
                                           QString( ", or provided in commit window? Error code: %1" ).arg( retval ) );
                 return retval;
             }
         } else {
             if( ( error = git_signature_now( &sig, name_.toUtf8().constData(), email_.toUtf8().constData() ) ) < 0 ) {
                 retval += 151 + (10000 * error * -1);
-                MessagesI.AppendMessageT( QString( "Could not create commit's signature, are user.name and user.email correctly set in a .gitconfig file" ) +
+                MessagesI.AppendMessageT( QString( "Could not create commit's signature, are user.name and user.email correctly set in a gitconfig file" ) +
                                           QString( ", or provided in commit window? Error code: %1" ).arg( retval ) );
                 return retval;
             }
