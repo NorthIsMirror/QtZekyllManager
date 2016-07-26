@@ -1686,17 +1686,19 @@ void MainWindow::on_gitCommit_clicked()
         if( git_error == GIT_ENOTFOUND ) {
             if( error / 1000000 == 23 ) {
                 MessagesI.AppendMessageT( "Error: path does not point to Git repository" );
+                return;
             } else {
-                MessagesI.AppendMessageT( "user.name and user.email are not set in a .gitconfig file, please enter the values in commit window" );
+                MessagesI.AppendMessageT( "user.name and user.email are not set in a gitconfig file, please enter the values in commit window" );
             }
         } else {
             if( error / 1000000 == 23 ) {
                 MessagesI.AppendMessageT( QString( "Error: could not open provided repository, error code: %1" ).arg( error ) );
+                return;
             } else {
                 MessagesI.AppendMessageT( QString( "Could not get default signature (author and commiter), error code: %1" ).arg( error ) );
+                MessagesI.AppendMessageT( "Please provide name and email in commit window" );
             }
         }
-        return;
     } else {
         if( lgit_->backendStatus() == INITIALIZED ) {
             dialog->setName( std::get<0>( result ) );
