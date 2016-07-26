@@ -47,11 +47,28 @@ CommitDialog::~CommitDialog()
 void CommitDialog::on_buttonBox_accepted()
 {
     accepted_ = true;
-    commitMessage_ = ui->textEdit->text();
+    commitMessage_ = ui->textEdit->text().trimmed();
+    name_ = ui->name->text().trimmed();
+    email_ = ui->email->text().trimmed();
 }
 
 void CommitDialog::on_buttonBox_rejected()
 {
     accepted_ = false;
     commitMessage_ = "";
+}
+
+void CommitDialog::setCommitMessage( const QString & msg ) {
+    commitMessage_ = msg.trimmed();
+    ui->textEdit->setText( commitMessage_ );
+}
+
+void CommitDialog::setEmail( const QString & email ) {
+    email_ = email.trimmed();
+    ui->email->setText( email_ );
+}
+
+void CommitDialog::setName( const QString & name ) {
+    name_ = name.trimmed();
+    ui->name->setText( name_ );
 }

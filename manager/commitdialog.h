@@ -18,7 +18,13 @@ public:
     ~CommitDialog();
 
     QString & commitMessage() { return commitMessage_; }
+    QString & name() { return name_; }
+    QString & email() { return email_; }
     bool accepted() const { return accepted_; }
+
+    void setCommitMessage( const QString & msg );
+    void setEmail( const QString & email );
+    void setName( const QString & name );
 
 private slots:
     void on_buttonBox_accepted();
@@ -28,6 +34,8 @@ private slots:
 private:
     bool accepted_;
     QString commitMessage_;
+    QString name_;
+    QString email_;
     QsciLexer *lexer_;
     QFont font_;
     Ui::CommitDialog *ui;
