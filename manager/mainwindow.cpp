@@ -1714,8 +1714,12 @@ void MainWindow::on_gitCommit_clicked()
         return;
     }
 
-    lgit_->setName( dialog->name() );
-    lgit_->setEmail( dialog->email() );
+    if ( dialog->name().count() > 0 ) {
+        lgit_->setName( dialog->name() );
+    }
+    if ( dialog->email().count() > 0 ) {
+        lgit_->setEmail( dialog->email() );
+    }
 
     error = lgit_->commit( dialog->commitMessage() );
 
