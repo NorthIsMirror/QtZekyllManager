@@ -129,8 +129,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    delete lgit_;
+    delete git_;
+    delete zkrewrite_;
     delete zkiresize_;
+    delete ui;
 }
 
 void MainWindow::handle_zkiresize_list(int exitCode, QStringList entries) {
