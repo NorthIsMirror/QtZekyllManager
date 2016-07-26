@@ -41,10 +41,10 @@ int lgit::hardReset()
         MessagesI.AppendMessageT( "Cannot reset an empty repository" );
         retval += 47;
     } else if( error == GIT_EINVALIDSPEC ) {
-        MessagesI.AppendMessageT( "Git backend (libgit2) has problems – it says \"HEAD\" isn't a valid spec");
+        MessagesI.AppendMessageT( "Git backend has problems – it says \"HEAD\" isn't a valid spec");
         retval += 59;
     } else if( error < 0 ) {
-        MessagesI.AppendMessageT( QString( "Git backend (libgit2) error (1) – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
+        MessagesI.AppendMessageT( QString( "Git backend error (1) – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
         retval += 67 + (100000 * error * -1);
     }
     if( error < 0 ) {
@@ -54,7 +54,7 @@ int lgit::hardReset()
 
     error = git_commit_lookup(&target, repo_, &oid);
     if( error < 0 ) {
-        MessagesI.AppendMessageT( QString( "Git backend (libgit2) error (2) – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
+        MessagesI.AppendMessageT( QString( "Git backend error (2) – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
         retval += 73 + (100000 * error * -1);
         closeRepo();
         return retval;
@@ -62,7 +62,7 @@ int lgit::hardReset()
 
     error = git_reset( repo_, (git_object *) target, GIT_RESET_HARD, NULL );
     if( error < 0 ) {
-        MessagesI.AppendMessageT( QString( "Git backend (libgit2) error (3) – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
+        MessagesI.AppendMessageT( QString( "Git backend error (3) – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
         retval += 83 + (100000 * error * -1);
         git_commit_free( target );
         closeRepo();
@@ -175,7 +175,7 @@ int lgit::openRepo()
     int retval = 0;
     int error = git_repository_open_ext( &repo_, repo_path_.toUtf8().constData(), 0, NULL );
     if( error < 0 ) {
-        MessagesI.AppendMessageT( QString( "Error: Git backend problem (libgit2) when opening repository – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
+        MessagesI.AppendMessageT( QString( "Error: Git backend problem when opening repository – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
         retval += 89 + (10000 * error * -1);
     }
 
