@@ -141,6 +141,7 @@ int lgit::commit( const QString & message )
             } else {
                 MessagesI.AppendMessageT( QString( "Could not access 'user.name' and 'user.email' from a gitconfig file, error code: %1" ).arg( retval ) );
             }
+            retval += closeRepo();
             return retval;
         }
 
@@ -163,6 +164,7 @@ int lgit::commit( const QString & message )
             retval += 149 + (10000 * error * -1);
             MessagesI.AppendMessageT( QString( "Could not create commit's signature, are user.name and user.email correctly set in a gitconfig file" ) +
                                       QString( ", or provided in commit window? Error code: %1" ).arg( retval ) );
+            retval += closeRepo();
             return retval;
         }
     } else {
@@ -171,6 +173,7 @@ int lgit::commit( const QString & message )
                 retval += 139 + (10000 * error * -1);
                 MessagesI.AppendMessageT( QString( "Could not create commit's signature, are user.name and user.email correctly set in a gitconfig file" ) +
                                           QString( ", or provided in commit window? Error code: %1" ).arg( retval ) );
+                retval += closeRepo();
                 return retval;
             }
         } else {
@@ -178,6 +181,7 @@ int lgit::commit( const QString & message )
                 retval += 151 + (10000 * error * -1);
                 MessagesI.AppendMessageT( QString( "Could not create commit's signature, are user.name and user.email correctly set in a gitconfig file" ) +
                                           QString( ", or provided in commit window? Error code: %1" ).arg( retval ) );
+                retval += closeRepo();
                 return retval;
             }
         }
