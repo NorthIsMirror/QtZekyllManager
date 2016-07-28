@@ -1,13 +1,13 @@
 #include "script_functions.h"
 
-#include <sstream>
-#include <algorithm>
 #include <cstring>
+#include <algorithm>
+#include <sstream>
 
 #include <QStringList>
 #include <QRegExp>
-#include <QDir>
 #include <QFileInfo>
+#include <QDir>
 #include <QDebug>
 
 // Own copy of enum from git2/errors.h
