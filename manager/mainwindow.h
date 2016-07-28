@@ -175,6 +175,7 @@ public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();
     bool recomputeZcode();
+    static MainWindow* ptr();
 };
 
 #endif // MAINWINDOW_H

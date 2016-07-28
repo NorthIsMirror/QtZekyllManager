@@ -1390,6 +1390,27 @@ bool MainWindow::recomputeZcode()
     }
 }
 
+MainWindow* MainWindow::ptr()
+{
+    MainWindow *mainWindow;
+    bool found = false;
+    foreach(QWidget *widget, QApplication::topLevelWidgets()) {
+      if( widget->objectName() == "MainWindow" ) {
+          mainWindow = qobject_cast< MainWindow * >( widget );
+          if( mainWindow ) {
+              found = true;
+              break;
+          }
+      }
+    }
+
+    if( found ) {
+        return mainWindow;
+    } else {
+        return 0;
+    }
+}
+
 // Sets current_repo_ and current_path_ from repo string or path.
 // Returns: repo string or path. Repo string when input was repo
 // or if given path pointed to well formated directory name. Path
