@@ -1,10 +1,12 @@
-#include <QDebug>
-#include "git2/errors.h"
-
 #include "lgit.h"
+
 #include "singleton.h"
 #include "messages.h"
 #include "script_functions.h"
+#include "mainwindow.h"
+
+#include <QWidget>
+#include <QDebug>
 
 #define MessagesI Singleton<Messages>::instance()
 
@@ -14,8 +16,10 @@
 # include <unistd.h>
 #endif
 
-lgit::lgit(QObject *parent) : QObject(parent), constructor_error_code_(0), backend_status_(NOT_INITIALIZED),
-                              is_name_set_(false), is_email_set_(false), is_when_set_(false), repo_(0)
+static int fetch_transfer_progress_cb( const git_transfer_progress *stats, void *payload );
+
+lgit::lgit( QObject *parent ) : QObject( parent ), constructor_error_code_( 0 ), backend_status_( NOT_INITIALIZED ),
+                              is_name_set_( false ), is_email_set_( false ), is_when_set_( false ), repo_( 0 )
 {
     int error, retval = 0;
 
@@ -259,6 +263,74 @@ int lgit::commit( const QString & message )
     return retval;
 }
 
+int lgit::fetchBranch( const QString & branch , const QString & from ) {
+    int error, retval = 0;
+
+    git_remote *remote = 0;
+    git_fetch_options fetch_opts;
+    bool is_anonymous = false;
+
+    if ( ( error = git_fetch_init_options( &fetch_opts, GIT_FETCH_OPTIONS_VERSION ) ) < 0 ) {
+        retval += 167 + ( 10000 * error * -1 );
+        MessagesI.AppendMessageT( QString( "Git backend error (4) – could not initialize fetch (%1)" ).arg( decode_libgit2_error_code(error) ) );
+        return retval + 1000000 * 31;
+    }
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository" + repo_path_ );
+        return retval + 1000000 * 29;
+    }
+
+    if ( ( error = git_remote_lookup( &remote, repo_, from.toUtf8().constData() ) ) < 0) {
+        if ( ( error = git_remote_create_anonymous( &remote, repo_, from.toUtf8().constData() ) ) < 0) {
+            retval += 163 + ( 100000000 * error * -1 );
+            MessagesI.AppendMessageT( "Incorrect repo name or URL given" );
+            retval += closeRepo();
+            return retval;
+        } else {
+            is_anonymous = true;
+        }
+    }
+
+    MainWindow *mainWindow = MainWindow::ptr();
+    if( mainWindow == 0 ) {
+        retval += 179;
+        MessagesI.AppendMessageT( "Internal error during fetch" );
+        retval += closeRepo();
+        return retval;
+    }
+
+    fetch_opts.callbacks.transfer_progress = fetch_transfer_progress_cb;
+    fetch_opts.callbacks.payload = mainWindow;
+
+    QString refspec;
+    if( is_anonymous ) {
+        // Only FETCH_HEAD will be updated/set up
+        refspec = branch;
+    } else {
+        refspec = QString( "refs/heads/%1:refs/remotes/%2/%1" ) . arg( branch ) . arg( from );
+    }
+
+    char *refspec_cstr = create_cstring( refspec.toUtf8().constData() );
+
+    git_strarray refspecs;
+    refspecs.count = 1;
+    refspecs.strings = &refspec_cstr;
+    if ( ( error = git_remote_fetch( remote, &refspecs, &fetch_opts, NULL ) ) < 0 ) {
+        retval += 181 + ( 10000 * error * -1 );
+        MessagesI.AppendMessageT( QString( "Git backend error (5) – could not perform fetch (%1)" ).arg( decode_libgit2_error_code( error ) ) );
+        delete [] refspec_cstr;
+        return retval;
+    }
+
+    delete [] refspec_cstr;
+
+    retval += closeRepo();
+    return retval;
+}
+
 int lgit::openRepo()
 {
     int retval = 0;
@@ -275,6 +347,31 @@ int lgit::closeRepo()
 {
     git_repository_free( repo_ );
     repo_ = 0;
+
+    return 0;
+}
+
+static int fetch_transfer_progress_cb( const git_transfer_progress *stats, void *payload )
+{
+    double progress = 0.0;
+
+    if ( stats->received_objects == stats->total_objects ) {
+        if( stats->total_deltas == 0 ) {
+            progress = 0.5;
+        } else {
+            progress = 0.5 + 0.5 * stats->indexed_deltas / stats->total_deltas;
+        }
+    }
+    else if ( stats->total_objects > 0 ) {
+        progress = 0.5 * stats->received_objects / stats->total_objects;
+    }
+
+    if ( payload ) {
+        MainWindow *mainWindow = qobject_cast< MainWindow * >( static_cast< QObject * >( payload ) );
+        if ( mainWindow ) {
+            mainWindow->updateFetchProgress( progress );
+        }
+    }
 
     return 0;
 }

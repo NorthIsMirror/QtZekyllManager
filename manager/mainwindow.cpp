@@ -1392,6 +1392,11 @@ bool MainWindow::recomputeZcode()
     }
 }
 
+int MainWindow::updateFetchProgress( double progress )
+{
+    return 0;
+}
+
 MainWindow* MainWindow::ptr()
 {
     MainWindow *mainWindow;
@@ -1752,4 +1757,9 @@ void MainWindow::on_gitCommit_clicked()
     } else {
         MessagesI.AppendMessageT( QString("Exit code of git commit: %1").arg( error ) );
     }
+}
+
+void MainWindow::on_gitPull_clicked()
+{
+    int error = lgit_->fetchBranch( "master", "https://github.com/psprint/zkl" );
 }

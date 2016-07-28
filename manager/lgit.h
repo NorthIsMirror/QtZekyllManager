@@ -2,8 +2,9 @@
 #define LGIT_H
 
 #include <tuple>
-#include <QString>
+
 #include <QObject>
+#include <QString>
 
 #include "git2.h"
 
@@ -40,6 +41,7 @@ public:
 
     int hardReset();
     int commit( const QString & message );
+    int fetchBranch( const QString & branch, const QString & from );
 
 signals:
 

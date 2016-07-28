@@ -173,10 +173,13 @@ private slots:
 
     void on_gitCommit_clicked();
 
+    void on_gitPull_clicked();
+
 public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();
     bool recomputeZcode();
+    int updateFetchProgress( double progress );
     static MainWindow* ptr();
 };
 
