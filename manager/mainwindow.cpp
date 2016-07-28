@@ -1,21 +1,23 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "zmeditor.h"
-#include "commitdialog.h"
-#include "math_functions.h"
-#include "coding_functions.h"
-#include "script_functions.h"
+
 #include "singleton.h"
 #include "messages.h"
-#include <QDebug>
+#include "math_functions.h"
+#include "script_functions.h"
+#include "coding_functions.h"
+#include "commitdialog.h"
+#include "zmeditor.h"
+
 #include <QMap>
-#include <QRegExp>
-#include <QCheckBox>
 #include <QDir>
-#include <QFileDialog>
-#include <QTableWidget>
-#include <QScrollBar>
+#include <QRegExp>
 #include <QSettings>
+#include <QFileDialog>
+#include <QCheckBox>
+#include <QScrollBar>
+#include <QTableWidget>
+#include <QDebug>
 
 #define MessagesI Singleton<Messages>::instance()
 

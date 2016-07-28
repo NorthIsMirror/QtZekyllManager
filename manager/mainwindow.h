@@ -1,22 +1,24 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QTableWidget>
-#include <QTimer>
-#include <QVector>
-#include <QString>
-#include <QStringList>
-#include <QByteArray>
-#include <vector>
-#include <string>
-#include <tuple>
+#include "selectedzekylls.h"
+#include "lzcsde.h"
 #include "zkiresize.h"
 #include "zkrewrite.h"
 #include "git.h"
 #include "lgit.h"
-#include "lzcsde.h"
-#include "selectedzekylls.h"
+
+#include <tuple>
+#include <vector>
+#include <string>
+
+#include <QByteArray>
+#include <QVector>
+#include <QString>
+#include <QStringList>
+#include <QTimer>
+#include <QTableWidget>
+#include <QMainWindow>
 
 namespace Ui {
 class MainWindow;
