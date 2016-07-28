@@ -1,6 +1,9 @@
 #include "script_functions.h"
+
 #include <sstream>
 #include <algorithm>
+#include <cstring>
+
 #include <QStringList>
 #include <QRegExp>
 #include <QDir>
@@ -409,4 +412,12 @@ QString joinStdIntVector( const std::vector<int> & bits, const char *sep ) {
     std::stringstream ss;
     std::copy( bits.begin(), bits.end(), std::ostream_iterator<int>( ss, sep ) );
     return QString::fromStdString( ss.str() );
+}
+
+char * create_cstring( const char *in ) {
+    int len = std::strlen( in );
+    char *out = new char[ len + 1 ];
+    std::strcpy( out, in );
+
+    return out;
 }
