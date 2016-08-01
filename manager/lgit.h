@@ -1,6 +1,8 @@
 #ifndef LGIT_H
 #define LGIT_H
 
+#include "lgit_branches.h"
+
 #include <tuple>
 
 #include <QObject>
@@ -41,7 +43,11 @@ public:
 
     int hardReset();
     int commit( const QString & message );
-    int fetchBranch( const QString & branch, const QString & from );
+    int fetchBranch( const QString & mybranch, const QString & from );
+    int mergeBranch( const QString & mybranch );
+
+    const lgit_branches & branches() const { return branches_; }
+    const std::vector< mybranch > & raw_branches() const { return branches_.raw_branches(); }
 
 signals:
 
@@ -65,6 +71,8 @@ private:
 
     QString repo_path_;
     git_repository *repo_;
+
+    lgit_branches branches_;
 };
 
 #endif // LGIT_H

@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     git.cpp \
     lgit.cpp \
     myqlineedit.cpp \
-    commitdialog.cpp
+    commitdialog.cpp \
+    lgit_branches.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -50,7 +51,8 @@ HEADERS  += mainwindow.h \
     lgit.h \
     myqlineedit.h \
     selectedzekylls.h \
-    commitdialog.h
+    commitdialog.h \
+    lgit_branches.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \

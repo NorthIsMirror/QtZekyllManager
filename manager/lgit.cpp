@@ -327,6 +327,9 @@ int lgit::fetchBranch( const QString & branch , const QString & from ) {
 
     delete [] refspec_cstr;
 
+    // List all branches, also with FETCH_HEAD information
+    branches_.list( repo_, BRANCH_ALL );
+
     retval += closeRepo();
     return retval;
 }
