@@ -88,46 +88,58 @@ int lgit_current::discover( git_repository *repo )
         }
 
         if ( state_ == CURRENT_OID ) {
-            git_reflog *reflog;
-            const git_reflog_entry *reflog_entry;
+            // Does the reference have any name?
+            const char* refname_cstring = git_reference_name( ref );
+            if( !refname_cstring ) {
+                refname_cstring = "";
+            }
+            QString refname = QString::fromUtf8( refname_cstring ).trimmed();
 
-            if ( ( error = git_reflog_read( &reflog, repo, "HEAD" ) ) < 0 ) {
-                MessagesI.AppendMessageT( QString( "Could not read reflog, current HEAD will be established as SHA-only" ) +
-                                          QString( " (no tag name resolution, error code: %1)" ) . arg( error ) );
-            } else {
-                int count = git_reflog_entrycount( reflog );
-                int limit_count = 0;
+            if( refname.isEmpty() || refname == "HEAD" ) {
+                git_reflog *reflog;
+                const git_reflog_entry *reflog_entry;
 
-                for ( int i = 0; i < count; i ++ ) {
-                    reflog_entry = git_reflog_entry_byindex( reflog, i );
-                    if( !reflog_entry ) {
-                        MessagesI.AppendMessageT( "Problems when reading reflog" );
-                        continue;
-                    }
+                if ( ( error = git_reflog_read( &reflog, repo, "HEAD" ) ) < 0 ) {
+                    MessagesI.AppendMessageT( QString( "Could not read reflog, current HEAD will be established as SHA-only" ) +
+                                              QString( " (no tag name resolution, error code: %1)" ) . arg( error ) );
+                } else {
+                    int count = git_reflog_entrycount( reflog );
+                    int limit_count = 0;
 
-                    oidp = git_reflog_entry_id_new( reflog_entry );
-                    if( 0 == git_oid_cmp( oidp, &oid ) ) {
-                        const char* message_cstring = git_reflog_entry_message( reflog_entry );
-                        if( !message_cstring ) {
-                            MessagesI.AppendMessageT( "Problems when reading reflog (2)" );
+                    for ( int i = 0; i < count; i ++ ) {
+                        reflog_entry = git_reflog_entry_byindex( reflog, i );
+                        if( !reflog_entry ) {
+                            MessagesI.AppendMessageT( "Problems when reading reflog" );
                             continue;
                         }
 
-                        QString message = QString( message_cstring );
-                        QRegExp rx("checkout: moving from.*to (.*)$");
-                        if( rx.indexIn( message ) != -1 ) {
-                            current_tag_ = rx.cap( 1 ).toStdString();
-                            break;
-                        }
+                        oidp = git_reflog_entry_id_new( reflog_entry );
+                        if( 0 == git_oid_cmp( oidp, &oid ) ) {
+                            const char* message_cstring = git_reflog_entry_message( reflog_entry );
+                            if( !message_cstring ) {
+                                MessagesI.AppendMessageT( "Problems when reading reflog (2)" );
+                                continue;
+                            }
 
-                        // Search only 5 OID-matching entries
-                        if( ++ limit_count >= 5 ) {
-                            break;
+                            QString message = QString( message_cstring );
+                            QRegExp rx("checkout: moving from.*to (.*)$");
+                            if( rx.indexIn( message ) != -1 ) {
+                                current_tag_ = rx.cap( 1 ).toStdString();
+                                break;
+                            }
+
+                            // Search only 5 OID-matching entries
+                            if( ++ limit_count >= 5 ) {
+                                break;
+                            }
                         }
                     }
-                }
 
-                git_reflog_free( reflog );
+                    git_reflog_free( reflog );
+                }
+            } else {
+                QStringList parts = refname.split( "/", QString::SkipEmptyParts );
+                current_branch_ = parts.last().toStdString();
             }
         } else if ( state_ == CURRENT_SYM ) {
             current_branch_ = symbolic_name;
