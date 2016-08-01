@@ -16,6 +16,12 @@
 # include <unistd.h>
 #endif
 
+QDebug operator<<(QDebug out, const std::string & str)
+{
+    out << QString::fromStdString(str);
+    return out;
+}
+
 static int fetch_transfer_progress_cb( const git_transfer_progress *stats, void *payload );
 
 lgit::lgit( QObject *parent ) : QObject( parent ), constructor_error_code_( 0 ), backend_status_( NOT_INITIALIZED ),
@@ -328,7 +334,9 @@ int lgit::fetchBranch( const QString & branch , const QString & from ) {
     delete [] refspec_cstr;
 
     // List all branches, also with FETCH_HEAD information
-    branches_.list( repo_, BRANCH_ALL );
+    git_branches_.list( repo_, BRANCH_ALL );
+
+    git_current_.discover( repo_ );
 
     retval += closeRepo();
     return retval;

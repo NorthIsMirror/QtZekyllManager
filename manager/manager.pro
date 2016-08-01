@@ -30,7 +30,9 @@ SOURCES += main.cpp \
     lgit.cpp \
     myqlineedit.cpp \
     commitdialog.cpp \
-    lgit_branches.cpp
+    lgit_branches.cpp \
+    pulldialog.cpp \
+    lgit_current.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -52,12 +54,15 @@ HEADERS  += mainwindow.h \
     myqlineedit.h \
     selectedzekylls.h \
     commitdialog.h \
-    lgit_branches.h
+    lgit_branches.h \
+    pulldialog.h \
+    lgit_current.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \
     closewithoutsavingdialog.ui \
-    commitdialog.ui
+    commitdialog.ui \
+    pulldialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libgit2/release/ -lgit2
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libgit2/debug/ -lgit2
