@@ -12,7 +12,7 @@
 
 #define MessagesI Singleton<Messages>::instance()
 
-lgit_current::lgit_current() : cur_repo_(0), state_( CURRENT_INVALID_EMPTY )
+lgit_current::lgit_current() : cur_repo_(0), state_( CURRENT_INVALID_EMPTY ), type_( CURRENT_TYPE_UNSET )
 {
 
 }
@@ -85,6 +85,7 @@ int lgit_current::discover( git_repository *repo )
             git_oid_fmt( sha, &oid );
             sha[ GIT_OID_HEXSZ ] = '\0';
             current_oid_ = std::string( sha );
+            type_ = CURRENT_TYPE_OID;
         }
 
         if ( state_ == CURRENT_OID ) {
@@ -125,6 +126,7 @@ int lgit_current::discover( git_repository *repo )
                             QRegExp rx("checkout: moving from.*to (.*)$");
                             if( rx.indexIn( message ) != -1 ) {
                                 current_tag_ = rx.cap( 1 ).toStdString();
+                                type_ = CURRENT_TYPE_TAG;
                                 break;
                             }
 
@@ -140,6 +142,7 @@ int lgit_current::discover( git_repository *repo )
             } else {
                 QStringList parts = refname.split( "/", QString::SkipEmptyParts );
                 current_branch_ = parts.last().toStdString();
+                type_ = CURRENT_TYPE_BRANCH;
             }
         } else if ( state_ == CURRENT_SYM ) {
             current_branch_ = symbolic_name;
@@ -149,4 +152,6 @@ int lgit_current::discover( git_repository *repo )
 
         git_reference_free( ref );
     }
+
+    return retval;
 }
