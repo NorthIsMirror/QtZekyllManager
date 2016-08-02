@@ -52,6 +52,8 @@ public:
     const lgit_branches & branches() const { return git_branches_; }
     const std::vector< mybranch > & raw_branches() const { return git_branches_.raw_branches(); }
 
+    const lgit_current & current() const { return git_current_; }
+
 signals:
 
 public slots:
