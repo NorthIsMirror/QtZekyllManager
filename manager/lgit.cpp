@@ -16,7 +16,7 @@
 # include <unistd.h>
 #endif
 
-QDebug operator<<(QDebug out, const std::string & str)
+static QDebug operator<<(QDebug out, const std::string & str)
 {
     out << QString::fromStdString(str);
     return out;
