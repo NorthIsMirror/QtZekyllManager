@@ -35,4 +35,17 @@ int PullDialog::prepare()
     } else if ( lgit_->current().type() == CURRENT_TYPE_OID ) {
         ui->checkoutLabel->setText( tr("Detached HEAD points to: ") + QString::fromStdString( lgit_->current().oid() ) );
     }
+    ui->branchCombo->clear();
+    int count = lgit_->branches().count();
+    int remember_idx = 0;
+    for( int i = 0; i < count; i ++ ) {
+        const mybranch & b = lgit_->branches()[i];
+        ui->branchCombo->addItem( QString::fromStdString( b.name ) );
+
+        if( b.tip_sha == lgit_->current().oid() ) {
+            remember_idx = i;
+        }
+    }
+
+    ui->branchCombo->setCurrentIndex( remember_idx );
 }
