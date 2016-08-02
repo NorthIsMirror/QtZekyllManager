@@ -15,6 +15,13 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="QLabel" name="checkoutLabel">
+     <property name="text">
+      <string>Currently checked out: </string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="1" column="5">
       <widget class="QPushButton" name="fetchURL">
@@ -187,6 +194,7 @@
   <zorder>fetchBranch</zorder>
   <zorder>fetchAll</zorder>
   <zorder>horizontalSpacer_3</zorder>
+  <zorder>checkoutLabel</zorder>
  </widget>
  <resources/>
  <connections/>
