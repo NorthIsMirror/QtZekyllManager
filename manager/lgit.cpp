@@ -342,6 +342,40 @@ int lgit::fetchBranch( const QString & branch , const QString & from ) {
     return retval;
 }
 
+int lgit::loadBranches(int type)
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (2)" );
+        return retval + 1000000 * 37;
+    }
+
+    git_branches_.list( repo_, type );
+
+    retval += closeRepo();
+    return retval;
+}
+
+int lgit::establishCurrent()
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (2)" );
+        return retval + 1000000 * 41;
+    }
+
+    git_current_.discover( repo_ );
+
+    retval += closeRepo();
+    return retval;
+}
+
 int lgit::openRepo()
 {
     int retval = 0;

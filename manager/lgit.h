@@ -46,6 +46,8 @@ public:
     int commit( const QString & message );
     int fetchBranch( const QString & mybranch, const QString & from );
     int mergeBranch( const QString & mybranch );
+    int loadBranches( int type );
+    int establishCurrent();
 
     const lgit_branches & branches() const { return git_branches_; }
     const std::vector< mybranch > & raw_branches() const { return git_branches_.raw_branches(); }
