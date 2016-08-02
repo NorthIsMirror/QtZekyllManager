@@ -19,11 +19,11 @@ public:
     int discover( git_repository *repo );
 
     void clear() { current_oid_.clear(); current_branch_.clear(); current_tag_.clear(); state_ = CURRENT_INVALID_EMPTY; type_ = CURRENT_TYPE_UNSET; }
-    std::string & oid() { return current_oid_; }
-    std::string & branch() { return current_branch_; }
-    std::string & tag() { return current_tag_; }
-    int state() { return state_; }
-    int type() { return type_; }
+    const std::string & oid() const { return current_oid_; }
+    const std::string & branch() const { return current_branch_; }
+    const std::string & tag() const { return current_tag_; }
+    int state() const { return state_; }
+    int type() const { return type_; }
 
 private:
     git_repository *cur_repo_;
