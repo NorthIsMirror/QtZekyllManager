@@ -1,6 +1,14 @@
 #include "pulldialog.h"
 #include "ui_pulldialog.h"
 
+#include <QDebug>
+
+static QDebug operator<<(QDebug out, const std::string & str)
+{
+    out << QString::fromStdString(str);
+    return out;
+}
+
 PullDialog::PullDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PullDialog)
