@@ -12,3 +12,11 @@ PullDialog::~PullDialog()
 {
     delete ui;
 }
+
+int PullDialog::prepare()
+{
+    int error, retval = 0;
+
+    error = lgit_->loadBranches( BRANCH_LOCAL );
+    error = lgit_->establishCurrent();
+}

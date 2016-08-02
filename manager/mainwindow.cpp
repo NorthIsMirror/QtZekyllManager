@@ -8,6 +8,7 @@
 #include "coding_functions.h"
 #include "commitdialog.h"
 #include "zmeditor.h"
+#include "pulldialog.h"
 
 #include <QMap>
 #include <QDir>
@@ -1761,5 +1762,10 @@ void MainWindow::on_gitCommit_clicked()
 
 void MainWindow::on_gitPull_clicked()
 {
-    int error = lgit_->fetchBranch( "master", "https://github.com/psprint/zkl" );
+    int error;
+
+    PullDialog *pullDialog = new PullDialog();
+    pullDialog->setLGit( lgit_ );
+    error = pullDialog->prepare();
+    pullDialog->exec();
 }
