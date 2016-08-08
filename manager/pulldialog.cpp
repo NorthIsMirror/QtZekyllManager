@@ -52,6 +52,20 @@ int PullDialog::prepare()
             }
         }
     }
-
     ui->branchCombo->setCurrentIndex( remember_idx );
+
+    // List of FETCH_HEAD revisions
+    for ( int i = 0; i < count; i ++ ) {
+        const mybranch & b = lgit_->branches()[i];
+        if ( b.is_in_fetch_head ) {
+            QString name = QString::fromStdString( b.name );
+            QString remoteUrl = QString::fromStdString( b.fetch_head_remote_url );
+
+            remote myremote = lgit_->remotes().findRemoteByUrl( remoteUrl );
+            if( myremote.push_url != "-" ) {
+                name = name + " [" + QString::fromStdString( myremote.name ) + "]";
+            }
+            ui->fetchHeadCombo->addItem( name );
+        }
+    }
 }
