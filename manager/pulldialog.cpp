@@ -43,13 +43,13 @@ int PullDialog::prepare()
     ui->branchCombo->clear();
     int count = lgit_->branches().count();
     int remember_idx = 0;
-    for ( int i = 0; i < count; i ++ ) {
-        const mybranch & b = lgit_->branches()[i];
+    for ( int idx = 0; idx < count; idx ++ ) {
+        const mybranch & b = lgit_->branches()[idx];
         if ( !b.is_in_fetch_head ) {
-            ui->branchCombo->addItem( QString::fromStdString( b.name ) );
+            ui->branchCombo->addItem( QString::fromStdString( b.name ), QVariant( idx ) );
 
             if( b.tip_sha == lgit_->current().oid() ) {
-                remember_idx = i;
+                remember_idx = idx;
             }
         }
     }
