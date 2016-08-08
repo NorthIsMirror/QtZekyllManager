@@ -29,22 +29,27 @@ int PullDialog::prepare()
     error = lgit_->establishCurrent();
     error = lgit_->listRemotes();
 
-    if( lgit_->current().type() == CURRENT_TYPE_BRANCH ) {
+    // What's currently checked out
+    if ( lgit_->current().type() == CURRENT_TYPE_BRANCH ) {
         ui->checkoutLabel->setText( tr("Currently checked out: ") + QString::fromStdString( lgit_->current().branch() ) + tr(" (branch)") );
     } else if ( lgit_->current().type() == CURRENT_TYPE_TAG ) {
         ui->checkoutLabel->setText( tr("Currently checked out: ") + QString::fromStdString( lgit_->current().tag() ) + tr(" (tag)") );
     } else if ( lgit_->current().type() == CURRENT_TYPE_OID ) {
         ui->checkoutLabel->setText( tr("Detached HEAD points to: ") + QString::fromStdString( lgit_->current().oid() ) );
     }
+
+    // List of branches that can be fetched
     ui->branchCombo->clear();
     int count = lgit_->branches().count();
     int remember_idx = 0;
-    for( int i = 0; i < count; i ++ ) {
+    for ( int i = 0; i < count; i ++ ) {
         const mybranch & b = lgit_->branches()[i];
-        ui->branchCombo->addItem( QString::fromStdString( b.name ) );
+        if ( !b.is_in_fetch_head ) {
+            ui->branchCombo->addItem( QString::fromStdString( b.name ) );
 
-        if( b.tip_sha == lgit_->current().oid() ) {
-            remember_idx = i;
+            if( b.tip_sha == lgit_->current().oid() ) {
+                remember_idx = i;
+            }
         }
     }
 
