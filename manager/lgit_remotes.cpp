@@ -63,9 +63,9 @@ void lgit_remotes::list( git_repository *repo )
     git_strarray_free( &remotes );
 }
 
-const remote & lgit_remotes::findRemoteByUrl( const std::string & url )
+const remote & lgit_remotes::findRemoteByUrl( const std::string & url ) const
 {
-    for( std::vector< remote >::iterator it = remotes_.begin(); it != remotes_.end(); it ++ ) {
+    for( std::vector< remote >::const_iterator it = remotes_.begin(); it != remotes_.end(); it ++ ) {
         if( it->url == url ) {
             return *it;
         }
@@ -74,7 +74,7 @@ const remote & lgit_remotes::findRemoteByUrl( const std::string & url )
     return dummy_entry_;
 }
 
-const remote & lgit_remotes::findRemoteByUrl( const QString & url )
+const remote & lgit_remotes::findRemoteByUrl( const QString & url ) const
 {
     return findRemoteByUrl( url.toStdString() );
 }
