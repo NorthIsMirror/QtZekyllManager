@@ -1,6 +1,8 @@
 #include "pulldialog.h"
 #include "ui_pulldialog.h"
 
+#include <QTableWidgetItem>
+#include <QTableWidget>
 #include <QVariant>
 #include <QDebug>
 
@@ -83,5 +85,26 @@ int PullDialog::prepare()
 int PullDialog::logOfTip( QString sha, QString hide )
 {
     lgit_->readLog( sha, hide );
+    int count = lgit_->log().count();
+
+    ui->tableWidget->setRowCount( 0 );
+    for( int idx = 0; idx < count; idx ++ ) {
+        log_entry entry = lgit_->log().entry( idx );
+        QTableWidgetItem *item1 = new QTableWidgetItem( QString::fromStdString( entry.sha ) );
+        QTableWidgetItem *item2 = new QTableWidgetItem( QString::fromStdString( entry.author ) );
+        QTableWidgetItem *item3 = new QTableWidgetItem( QString::fromStdString( entry.message ) );
+
+        item1->setTextAlignment( Qt::AlignLeft | Qt::AlignVCenter );
+        item2->setTextAlignment( Qt::AlignLeft | Qt::AlignVCenter );
+        item3->setTextAlignment( Qt::AlignLeft | Qt::AlignVCenter );
+
+        int row = ui->tableWidget->rowCount();
+        ui->tableWidget->insertRow(row);
+
+        ui->tableWidget->setItem( row, 0, item1 );
+        ui->tableWidget->setItem( row, 1, item2 );
+        ui->tableWidget->setItem( row, 2, item3 );
+    }
+
     return 0;
 }
