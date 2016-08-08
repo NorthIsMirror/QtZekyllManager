@@ -17,7 +17,9 @@ static QDebug operator<<(QDebug out, const std::string & str)
 
 lgit_remotes::lgit_remotes()
 {
-
+    dummy_entry_.name = "-";
+    dummy_entry_.url = "-";
+    dummy_entry_.push_url = "-";
 }
 
 void lgit_remotes::list( git_repository *repo )
@@ -59,4 +61,20 @@ void lgit_remotes::list( git_repository *repo )
     }
 
     git_strarray_free( &remotes );
+}
+
+const remote & lgit_remotes::findRemoteByUrl( const std::string & url )
+{
+    for( std::vector< remote >::iterator it = remotes_.begin(); it != remotes_.end(); it ++ ) {
+        if( it->url == url ) {
+            return *it;
+        }
+    }
+
+    return dummy_entry_;
+}
+
+const remote & lgit_remotes::findRemoteByUrl( const QString & url )
+{
+    return findRemoteByUrl( url.toStdString() );
 }

@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include <QString>
+
 #include "git2.h"
 
 struct remote {
@@ -21,8 +23,12 @@ public:
     void list( git_repository * repo );
     const std::vector< remote > & raw_remotes() const { return remotes_; }
 
+    const remote & findRemoteByUrl( const std::string & url );
+    const remote & findRemoteByUrl( const QString & url );
+
 private:
     std::vector< remote > remotes_;
+    remote dummy_entry_;
 };
 
 #endif // LGIT_REMOTES_H
