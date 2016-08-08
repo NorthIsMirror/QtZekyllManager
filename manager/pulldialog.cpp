@@ -1,6 +1,7 @@
 #include "pulldialog.h"
 #include "ui_pulldialog.h"
 
+#include <QVariant>
 #include <QDebug>
 
 static QDebug operator<<(QDebug out, const std::string & str)
@@ -55,8 +56,8 @@ int PullDialog::prepare()
     ui->branchCombo->setCurrentIndex( remember_idx );
 
     // List of FETCH_HEAD revisions
-    for ( int i = 0; i < count; i ++ ) {
-        const mybranch & b = lgit_->branches()[i];
+    for ( int idx = 0; idx < count; idx ++ ) {
+        const mybranch & b = lgit_->branches()[ idx ];
         if ( b.is_in_fetch_head ) {
             QString name = QString::fromStdString( b.name );
             QString remoteUrl = QString::fromStdString( b.fetch_head_remote_url );
@@ -65,7 +66,22 @@ int PullDialog::prepare()
             if( myremote.push_url != "-" ) {
                 name = name + " [" + QString::fromStdString( myremote.name ) + "]";
             }
-            ui->fetchHeadCombo->addItem( name );
+            ui->fetchHeadCombo->addItem( name, QVariant( idx ) );
         }
     }
+
+    // List log of selected FETCH_HEAD tip
+    if( ui->fetchHeadCombo->count() > 0 ) {
+        int idx = ui->fetchHeadCombo->currentData().toInt();
+        const mybranch & b = lgit_->branches()[ idx ];
+        logOfTip( QString::fromStdString( b.tip_sha ), QString::fromStdString( b.name ) );
+    }
+
+    return 0;
+}
+
+int PullDialog::logOfTip( QString sha, QString hide )
+{
+    lgit_->readLog( sha, hide );
+    return 0;
 }
