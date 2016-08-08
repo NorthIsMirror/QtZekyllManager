@@ -27,6 +27,7 @@ int PullDialog::prepare()
 
     error = lgit_->loadBranches( BRANCH_LOCAL );
     error = lgit_->establishCurrent();
+    error = lgit_->listRemotes();
 
     if( lgit_->current().type() == CURRENT_TYPE_BRANCH ) {
         ui->checkoutLabel->setText( tr("Currently checked out: ") + QString::fromStdString( lgit_->current().branch() ) + tr(" (branch)") );

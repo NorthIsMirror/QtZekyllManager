@@ -376,6 +376,23 @@ int lgit::establishCurrent()
     return retval;
 }
 
+int lgit::listRemotes()
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (3)" );
+        return retval + 1000000 * 71;
+    }
+
+    git_remotes_.list( repo_ );
+
+    retval += closeRepo();
+    return retval;
+}
+
 int lgit::openRepo()
 {
     int retval = 0;

@@ -32,7 +32,8 @@ SOURCES += main.cpp \
     commitdialog.cpp \
     lgit_branches.cpp \
     pulldialog.cpp \
-    lgit_current.cpp
+    lgit_current.cpp \
+    lgit_remotes.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -56,7 +57,8 @@ HEADERS  += mainwindow.h \
     commitdialog.h \
     lgit_branches.h \
     pulldialog.h \
-    lgit_current.h
+    lgit_current.h \
+    lgit_remotes.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \
