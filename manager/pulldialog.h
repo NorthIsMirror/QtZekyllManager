@@ -23,6 +23,9 @@ public:
     int prepare();
     int logOfTip( QString sha, QString branch );
 
+private slots:
+    void on_fetchHeadCombo_activated(int index);
+
 private:
     lgit *lgit_;
     lgit_branches *lgit_branches_;

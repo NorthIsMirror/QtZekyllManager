@@ -108,3 +108,13 @@ int PullDialog::logOfTip( QString sha, QString hide )
 
     return 0;
 }
+
+void PullDialog::on_fetchHeadCombo_activated( int index )
+{
+    // List log of selected FETCH_HEAD tip
+    if( ui->fetchHeadCombo->count() > 0 ) {
+        int idx = ui->fetchHeadCombo->currentData().toInt();
+        const mybranch & b = lgit_->branches()[ idx ];
+        logOfTip( QString::fromStdString( b.tip_sha ), QString::fromStdString( b.name ) );
+    }
+}
