@@ -4,6 +4,7 @@
 #include "lgit_branches.h"
 #include "lgit_current.h"
 #include "lgit_remotes.h"
+#include "lgit_log.h"
 
 #include <tuple>
 
@@ -50,6 +51,7 @@ public:
     int loadBranches( int type );
     int establishCurrent();
     int listRemotes();
+    int readLog( const QString & tip_sha, const QString & hide );
 
     const lgit_branches & branches() const { return git_branches_; }
     const std::vector< mybranch > & raw_branches() const { return git_branches_.raw_branches(); }
@@ -58,6 +60,9 @@ public:
 
     const lgit_remotes & remotes() const { return git_remotes_; }
     const std::vector< remote > & raw_remotes() const { return git_remotes_.raw_remotes(); }
+
+    const lgit_log & log() const { return git_log_; }
+    const std::vector< log_entry > & raw_log() const { return git_log_.raw_log(); }
 
 signals:
 
@@ -85,6 +90,7 @@ private:
     lgit_branches git_branches_;
     lgit_current git_current_;
     lgit_remotes git_remotes_;
+    lgit_log git_log_;
 };
 
 #endif // LGIT_H

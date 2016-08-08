@@ -393,6 +393,24 @@ int lgit::listRemotes()
     return retval;
 }
 
+int lgit::readLog( const QString & tip_sha, const QString & hide )
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (3)" );
+        return retval + 1000000 * 73;
+    }
+
+    git_log_.clear();
+    git_log_.log_of_tip( repo_, tip_sha.toStdString(), hide.toStdString() );
+
+    retval += closeRepo();
+    return retval;
+}
+
 int lgit::openRepo()
 {
     int retval = 0;
