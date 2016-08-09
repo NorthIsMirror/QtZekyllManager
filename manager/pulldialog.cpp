@@ -57,6 +57,22 @@ int PullDialog::prepare()
     }
     ui->branchCombo->setCurrentIndex( remember_idx );
 
+    listFetchHead();
+
+    // List log of selected FETCH_HEAD tip
+    if( ui->fetchHeadCombo->count() > 0 ) {
+        int idx = ui->fetchHeadCombo->currentData().toInt();
+        const mybranch & b = lgit_->branches()[ idx ];
+        logOfTip( QString::fromStdString( b.tip_sha ), QString::fromStdString( b.name ) );
+    }
+
+    return retval;
+}
+
+int PullDialog::listFetchHead()
+{
+    int count = lgit_->branches().count();
+
     // List of FETCH_HEAD revisions
     for ( int idx = 0; idx < count; idx ++ ) {
         const mybranch & b = lgit_->branches()[ idx ];
@@ -70,13 +86,6 @@ int PullDialog::prepare()
             }
             ui->fetchHeadCombo->addItem( name, QVariant( idx ) );
         }
-    }
-
-    // List log of selected FETCH_HEAD tip
-    if( ui->fetchHeadCombo->count() > 0 ) {
-        int idx = ui->fetchHeadCombo->currentData().toInt();
-        const mybranch & b = lgit_->branches()[ idx ];
-        logOfTip( QString::fromStdString( b.tip_sha ), QString::fromStdString( b.name ) );
     }
 
     return 0;

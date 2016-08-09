@@ -21,6 +21,7 @@ public:
 
     void setLGit( lgit *_lgit ) { lgit_ = _lgit; }
     int prepare();
+    int listFetchHead();
     int logOfTip( QString sha, QString branch );
 
 private slots:
