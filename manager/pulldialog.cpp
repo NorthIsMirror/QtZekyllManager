@@ -22,6 +22,20 @@ PullDialog::PullDialog(QWidget *parent) :
     ui(new Ui::PullDialog)
 {
     ui->setupUi(this);
+    ui->gridLayout->setSpacing( 10 );
+    ui->gridLayout->setAlignment( Qt::AlignTop );
+    ui->gridLayout_2->setSpacing( 10 );
+    ui->gridLayout_2->setAlignment( Qt::AlignTop );
+    ui->horizontalLayout_4->setSpacing( 10 );
+    ui->horizontalLayout_4->setAlignment( Qt::AlignTop );
+    ui->horizontalLayout_4->setContentsMargins( -1, -1, -1, 8 );
+    ui->horizontalLayout_5->setSpacing( 10 );
+    ui->horizontalLayout_5->setAlignment( Qt::AlignTop );
+
+    ui->checkoutLabel->setContentsMargins( -1, -1, -1, 3 );
+
+    ui->verticalLayout->setAlignment( Qt::AlignTop );
+    ui->verticalLayout->setSpacing( 0 );
 }
 
 PullDialog::~PullDialog()
