@@ -32,6 +32,8 @@ void lgit_remotes::list( git_repository *repo )
         return;
     }
 
+    clear();
+
     for ( unsigned int i = 0; i < remotes.count; i ++ ) {
         myremote newremote;
         newremote.name = std::string( remotes.strings[i] );
