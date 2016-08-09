@@ -220,6 +220,25 @@ mybranch &lgit_branches::findSha(const char *_sha)
     return dummy_;
 }
 
+const mybranch &lgit_branches::findNameLocal( const char *_name ) const
+{
+    std::string name = std::string( _name );
+
+    for( std::vector< mybranch >::const_iterator it = raw_branches_.begin(); it != raw_branches_.end(); it ++ ) {
+        if( it->is_in_fetch_head ) {
+            continue;
+        }
+        if( it->type != BRANCH_LOCAL ) {
+            continue;
+        }
+        if( it->name == name ) {
+            return *it;
+        }
+    }
+
+    return dummy_;
+}
+
 static int fetchhead_foreach_cb( const char *ref_name, const char *remote_url, const git_oid *oidp,
                                  unsigned int is_merge, void *payload )
 {

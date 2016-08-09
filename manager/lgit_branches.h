@@ -62,6 +62,8 @@ public:
 
     mybranch & findSha( const char *sha );
 
+    const mybranch & findNameLocal( const char *_name ) const;
+
 private:
     std::vector< mybranch > raw_branches_;
     git_repository *cur_repo_;
