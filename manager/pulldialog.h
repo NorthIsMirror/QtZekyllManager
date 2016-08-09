@@ -27,6 +27,8 @@ public:
 private slots:
     void on_fetchHeadCombo_activated(int index);
 
+    void on_fetchBranch_clicked();
+
 private:
     lgit *lgit_;
     lgit_branches *lgit_branches_;

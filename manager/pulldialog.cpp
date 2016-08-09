@@ -57,6 +57,13 @@ int PullDialog::prepare()
     }
     ui->branchCombo->setCurrentIndex( remember_idx );
 
+    // List available remotes
+    int count2 = lgit_->remotes().count();
+    for ( int idx = 0; idx < count2; idx ++ ) {
+        std::string remote = lgit_->remotes().entry(idx).name;
+        ui->remotesCombo->addItem( QString::fromStdString( remote ), QVariant( idx ) );
+    }
+
     listFetchHead();
 
     // List log of selected FETCH_HEAD tip
@@ -126,4 +133,22 @@ void PullDialog::on_fetchHeadCombo_activated( int index )
         const mybranch & b = lgit_->branches()[ idx ];
         logOfTip( QString::fromStdString( b.tip_sha ), QString::fromStdString( b.name ) );
     }
+}
+
+void PullDialog::on_fetchBranch_clicked()
+{
+    if ( ui->branchCombo->count() <= 0 ) {
+        return;
+    }
+
+    int idx = ui->branchCombo->currentData().toInt();
+    const mybranch & b = lgit_->branches()[ idx ];
+
+    int idx2 = ui->remotesCombo->currentData().toInt();
+    const remote & r = lgit_->remotes().entry( idx2 );
+
+    QString branchArg = QString::fromStdString( b.name );
+    QString remoteArg = QString::fromStdString( r.name );
+
+    int error = lgit_->fetchBranch( branchArg, remoteArg );
 }
