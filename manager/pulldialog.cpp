@@ -245,3 +245,22 @@ void PullDialog::on_fetchAll_clicked()
 
     reset();
 }
+
+void PullDialog::on_fetchURL_clicked()
+{
+    QString url = ui->url->text().trimmed();
+    QString branch = ui->branch->text().trimmed();
+    if( url.isEmpty() ) {
+        MessagesI.AppendMessageT( "No URL provided, cannot fetch" );
+        return;
+    }
+
+    if( branch.isEmpty() ) {
+        MessagesI.AppendMessageT( "No branch provided, assuming 'master'");
+        branch = "master";
+    }
+
+    int error = lgit_->fetchBranch( branch, url );
+
+    reset();
+}

@@ -31,6 +31,8 @@ private slots:
 
     void on_fetchAll_clicked();
 
+    void on_fetchURL_clicked();
+
 private:
     lgit *lgit_;
     lgit_branches *lgit_branches_;
