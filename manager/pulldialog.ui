@@ -26,7 +26,7 @@
      <item row="0" column="5">
       <widget class="QPushButton" name="fetchAll">
        <property name="text">
-        <string>Fetch all (follow config)</string>
+        <string>Fetch all (follow config) from &lt;-</string>
        </property>
       </widget>
      </item>
@@ -90,13 +90,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item row="0" column="4">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>

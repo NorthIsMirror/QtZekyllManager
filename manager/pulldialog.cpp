@@ -1,10 +1,15 @@
 #include "pulldialog.h"
 #include "ui_pulldialog.h"
 
+#include "singleton.h"
+#include "messages.h"
+
 #include <QTableWidgetItem>
 #include <QTableWidget>
 #include <QVariant>
 #include <QDebug>
+
+#define MessagesI Singleton<Messages>::instance()
 
 static QDebug operator<<(QDebug out, const std::string & str)
 {
@@ -202,6 +207,27 @@ void PullDialog::on_fetchBranch_clicked()
     QString remoteArg = QString::fromStdString( r.name );
 
     int error = lgit_->fetchBranch( branchArg, remoteArg );
+
+    reset();
+}
+
+void PullDialog::on_fetchAll_clicked()
+{
+    // Empty branch means follow config, fetch multiple branches
+    if( ui->remotesCombo->count() <= 0 ) {
+        MessagesI.AppendMessageT( "No configured remotes (in git config)" );
+        return;
+    }
+
+    int idx = ui->remotesCombo->currentData().toInt();
+    const myremote & remote = lgit_->remotes().entry( idx );
+
+    if( remote.name != "-" ) {
+        int error = lgit_->fetchBranch( "", QString::fromStdString( remote.name ) );
+    } else {
+        MessagesI.AppendMessageT( "Could not find selected remote, cannot fetch" );
+        return;
+    }
 
     reset();
 }
