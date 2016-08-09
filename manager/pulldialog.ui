@@ -26,7 +26,7 @@
      <item row="0" column="5">
       <widget class="QPushButton" name="fetchAll">
        <property name="text">
-        <string>Fetch all (follow config) from &lt;-</string>
+        <string>⬅ Fetch all (follow config) from</string>
        </property>
       </widget>
      </item>
@@ -74,7 +74,7 @@
      <item row="0" column="1" colspan="2">
       <widget class="QPushButton" name="fetchBranch">
        <property name="text">
-        <string>Fetch branch &lt;- from -&gt;</string>
+        <string>⬅ fetch branch from ➡</string>
        </property>
       </widget>
      </item>
