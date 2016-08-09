@@ -154,5 +154,5 @@ void PullDialog::on_fetchBranch_clicked()
 
     int error = lgit_->fetchBranch( branchArg, remoteArg );
 
-
+    reset();
 }
