@@ -1766,6 +1766,6 @@ void MainWindow::on_gitPull_clicked()
 
     PullDialog *pullDialog = new PullDialog();
     pullDialog->setLGit( lgit_ );
-    error = pullDialog->prepare();
+    error = pullDialog->reset();
     pullDialog->exec();
 }

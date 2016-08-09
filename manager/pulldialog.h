@@ -20,8 +20,8 @@ public:
     ~PullDialog();
 
     void setLGit( lgit *_lgit ) { lgit_ = _lgit; }
-    int prepare();
-    int listFetchHead();
+    int reset();
+    int populateFetchHead();
     int logOfTip( QString sha, QString branch );
 
 private slots:

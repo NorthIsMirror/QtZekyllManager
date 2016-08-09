@@ -24,7 +24,7 @@ PullDialog::~PullDialog()
     delete ui;
 }
 
-int PullDialog::prepare()
+int PullDialog::reset()
 {
     int error, retval = 0;
 
@@ -58,13 +58,14 @@ int PullDialog::prepare()
     ui->branchCombo->setCurrentIndex( remember_idx );
 
     // List available remotes
+    ui->remotesCombo->clear();
     int count2 = lgit_->remotes().count();
     for ( int idx = 0; idx < count2; idx ++ ) {
         std::string remote = lgit_->remotes().entry(idx).name;
         ui->remotesCombo->addItem( QString::fromStdString( remote ), QVariant( idx ) );
     }
 
-    listFetchHead();
+    populateFetchHead();
 
     // List log of selected FETCH_HEAD tip
     if( ui->fetchHeadCombo->count() > 0 ) {
@@ -76,8 +77,9 @@ int PullDialog::prepare()
     return retval;
 }
 
-int PullDialog::listFetchHead()
+int PullDialog::populateFetchHead()
 {
+    ui->fetchHeadCombo->clear();
     int count = lgit_->branches().count();
 
     // List of FETCH_HEAD revisions
@@ -151,4 +153,6 @@ void PullDialog::on_fetchBranch_clicked()
     QString remoteArg = QString::fromStdString( r.name );
 
     int error = lgit_->fetchBranch( branchArg, remoteArg );
+
+
 }
