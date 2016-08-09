@@ -41,7 +41,15 @@ int PullDialog::reset()
         ui->checkoutLabel->setText( tr("Detached HEAD points to: ") + QString::fromStdString( lgit_->current().oid() ) );
     }
 
+    //
     // List of branches that can be fetched
+    //
+
+    QString selectedBranch;
+    if( ui->branchCombo->count() > 0 ) {
+        selectedBranch = ui->branchCombo->currentText();
+    }
+
     ui->branchCombo->clear();
     int count = lgit_->branches().count();
     int remember_idx = 0;
@@ -56,6 +64,13 @@ int PullDialog::reset()
         }
     }
     ui->branchCombo->setCurrentIndex( remember_idx );
+
+    if( !selectedBranch.isEmpty() ) {
+        int idx = ui->branchCombo->findText( selectedBranch );
+        if( idx != -1 ) {
+            ui->branchCombo->setCurrentIndex( idx );
+        }
+    }
 
     // List available remotes
     ui->remotesCombo->clear();
