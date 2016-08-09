@@ -23,6 +23,8 @@ public:
     void list( git_repository * repo );
     const std::vector< remote > & raw_remotes() const { return remotes_; }
 
+    const remote & entry( int idx ) const { return remotes_[idx]; }
+    int count() const { return remotes_.size(); }
     const remote & findRemoteByUrl( const std::string & url ) const;
     const remote & findRemoteByUrl( const QString & url ) const;
 
