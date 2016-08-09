@@ -312,26 +312,42 @@ int lgit::fetchBranch( const QString & branch , const QString & from ) {
     fetch_opts.callbacks.payload = mainWindow;
 
     QString refspec;
+    git_strarray refspecs;
+    char *refspec_cstr = 0;
+
     if( is_anonymous ) {
         // Only FETCH_HEAD will be updated/set up
-        refspec = branch;
+        refspec = branch.trimmed();
     } else {
-        refspec = QString( "refs/heads/%1:refs/remotes/%2/%1" ) . arg( branch ) . arg( from );
+        if( ! branch.trimmed().isEmpty() ) {
+            refspec = QString( "refs/heads/%1:refs/remotes/%2/%1" ) . arg( branch.trimmed() ) . arg( from.trimmed() );
+        }
     }
 
-    char *refspec_cstr = create_cstring( refspec.toUtf8().constData() );
+    // Setup the "follow-config" fetch
+    refspecs.count = 0;
+    refspecs.strings = 0;
 
-    git_strarray refspecs;
-    refspecs.count = 1;
-    refspecs.strings = &refspec_cstr;
+    // Is there specific branch selected? I.e. no "follow-config" fetch?
+    if( ! refspec.trimmed().isEmpty() ) {
+        refspec_cstr = create_cstring( refspec.trimmed().toUtf8().constData() );
+        refspecs.count = 1;
+        refspecs.strings = &refspec_cstr;
+    }
+
     if ( ( error = git_remote_fetch( remote, &refspecs, &fetch_opts, NULL ) ) < 0 ) {
         retval += 181 + ( 10000 * error * -1 );
         MessagesI.AppendMessageT( QString( "Git backend error (5) – could not perform fetch (%1)" ).arg( decode_libgit2_error_code( error ) ) );
-        delete [] refspec_cstr;
+        if ( refspec_cstr ) {
+            delete [] refspec_cstr;
+        }
         return retval;
     }
 
-    delete [] refspec_cstr;
+    if( refspec_cstr ) {
+        delete [] refspec_cstr;
+        refspec_cstr = 0;
+    }
 
     // List all branches, also with FETCH_HEAD information
     git_branches_.list( repo_, BRANCH_ALL );
