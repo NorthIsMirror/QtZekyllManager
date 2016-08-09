@@ -95,9 +95,28 @@ int PullDialog::reset()
         }
     }
 
+    //
+    // List available FETCH_HEAD tips
+    //
+
+    QString selectedFetchHeadTip;
+    if( ui->fetchHeadCombo->count() > 0 ) {
+        selectedFetchHeadTip = ui->fetchHeadCombo->currentText();
+    }
+
     populateFetchHead();
 
+    if( !selectedFetchHeadTip.isEmpty() ) {
+        int idx = ui->fetchHeadCombo->findText( selectedFetchHeadTip );
+        if( idx != -1 ) {
+            ui->fetchHeadCombo->setCurrentIndex( idx );
+        }
+    }
+
+    //
     // List log of selected FETCH_HEAD tip
+    //
+
     if( ui->fetchHeadCombo->count() > 0 ) {
         int idx = ui->fetchHeadCombo->currentData().toInt();
         const mybranch & b = lgit_->branches()[ idx ];
