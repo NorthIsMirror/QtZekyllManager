@@ -8,7 +8,7 @@
 
 #include "git2.h"
 
-struct remote {
+struct myremote {
     std::string name;
     std::string url;
     std::string push_url;
@@ -21,16 +21,16 @@ public:
 
     void clear() { remotes_.clear(); }
     void list( git_repository * repo );
-    const std::vector< remote > & raw_remotes() const { return remotes_; }
+    const std::vector< myremote > & raw_remotes() const { return remotes_; }
 
-    const remote & entry( int idx ) const { return remotes_[idx]; }
+    const myremote & entry( int idx ) const { return remotes_[idx]; }
     int count() const { return remotes_.size(); }
-    const remote & findRemoteByUrl( const std::string & url ) const;
-    const remote & findRemoteByUrl( const QString & url ) const;
+    const myremote & findRemoteByUrl( const std::string & url ) const;
+    const myremote & findRemoteByUrl( const QString & url ) const;
 
 private:
-    std::vector< remote > remotes_;
-    remote dummy_entry_;
+    std::vector< myremote > remotes_;
+    myremote dummy_entry_;
 };
 
 #endif // LGIT_REMOTES_H

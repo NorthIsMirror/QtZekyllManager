@@ -87,7 +87,7 @@ int PullDialog::listFetchHead()
             QString name = QString::fromStdString( b.name );
             QString remoteUrl = QString::fromStdString( b.fetch_head_remote_url );
 
-            remote myremote = lgit_->remotes().findRemoteByUrl( remoteUrl );
+            myremote myremote = lgit_->remotes().findRemoteByUrl( remoteUrl );
             if( myremote.push_url != "-" ) {
                 name = name + " [" + QString::fromStdString( myremote.name ) + "]";
             }
@@ -145,7 +145,7 @@ void PullDialog::on_fetchBranch_clicked()
     const mybranch & b = lgit_->branches()[ idx ];
 
     int idx2 = ui->remotesCombo->currentData().toInt();
-    const remote & r = lgit_->remotes().entry( idx2 );
+    const myremote & r = lgit_->remotes().entry( idx2 );
 
     QString branchArg = QString::fromStdString( b.name );
     QString remoteArg = QString::fromStdString( r.name );

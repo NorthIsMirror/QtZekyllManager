@@ -59,7 +59,7 @@ public:
     const lgit_current & current() const { return git_current_; }
 
     const lgit_remotes & remotes() const { return git_remotes_; }
-    const std::vector< remote > & raw_remotes() const { return git_remotes_.raw_remotes(); }
+    const std::vector< myremote > & raw_remotes() const { return git_remotes_.raw_remotes(); }
 
     const lgit_log & log() const { return git_log_; }
     const std::vector< log_entry > & raw_log() const { return git_log_.raw_log(); }
