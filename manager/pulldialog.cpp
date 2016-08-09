@@ -72,12 +72,27 @@ int PullDialog::reset()
         }
     }
 
+    //
     // List available remotes
+    //
+
+    QString selectedRemote;
+    if( ui->remotesCombo->count() > 0 ) {
+        selectedRemote = ui->remotesCombo->currentText();
+    }
+
     ui->remotesCombo->clear();
     int count2 = lgit_->remotes().count();
     for ( int idx = 0; idx < count2; idx ++ ) {
         std::string remote = lgit_->remotes().entry(idx).name;
         ui->remotesCombo->addItem( QString::fromStdString( remote ), QVariant( idx ) );
+    }
+
+    if( !selectedRemote.isEmpty() ) {
+        int idx = ui->remotesCombo->findText( selectedRemote );
+        if( idx != -1 ) {
+            ui->remotesCombo->setCurrentIndex( idx );
+        }
     }
 
     populateFetchHead();
