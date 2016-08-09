@@ -38,9 +38,11 @@ int lgit_log::log_of_tip( git_repository *repo, const std::string & sha, const s
         return 211 + ( 10000 * error * -1 );
     }
 
-    if ( ( error = git_revparse_single(&obj, repo, hide.c_str() ) ) < 0 ) {
-        MessagesI.AppendMessageT( "Invalid revision specification given (for hide)" );
-        return 223 + ( 10000 * error * -1 );
+    if( hide != "" ) {
+        if ( ( error = git_revparse_single(&obj, repo, hide.c_str() ) ) < 0 ) {
+            MessagesI.AppendMessageT( "Invalid revision specification given (for hide)" );
+            return 223 + ( 10000 * error * -1 );
+        }
     }
 
     if ( ( error = git_revwalk_new( &walk, repo ) ) < 0 ) {
@@ -49,7 +51,10 @@ int lgit_log::log_of_tip( git_repository *repo, const std::string & sha, const s
     }
 
     git_revwalk_push( walk, &oid );
-    git_revwalk_hide( walk, git_object_id( obj ) );
+
+    if( hide != "" ) {
+        git_revwalk_hide( walk, git_object_id( obj ) );
+    }
 
     int error2 = 0;
     while ( ( error2 = git_revwalk_next( &outid, walk ) ) == 0 ) {

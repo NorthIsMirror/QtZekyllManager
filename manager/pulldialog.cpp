@@ -170,7 +170,13 @@ int PullDialog::populateFetchHead()
 
 int PullDialog::logOfTip( QString sha, QString hide )
 {
-    lgit_->readLog( sha, hide );
+    const mybranch & b = lgit_->branches().findNameLocal( hide.trimmed().toUtf8().constData() );
+
+    if( b.invalid == INVALID_DUMMY ) {
+        lgit_->readLog( sha, "" );
+    } else {
+        lgit_->readLog( sha, hide );
+    }
     int count = lgit_->log().count();
 
     ui->tableWidget->setRowCount( 0 );
