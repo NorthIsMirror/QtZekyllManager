@@ -65,6 +65,7 @@ public:
 private:
     std::vector< mybranch > raw_branches_;
     git_repository *cur_repo_;
+    mybranch dummy_;
 };
 
 #endif // LGIT_BRANCHES_H

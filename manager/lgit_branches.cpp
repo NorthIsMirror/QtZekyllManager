@@ -14,7 +14,9 @@ static int fetchhead_foreach_cb( const char *ref_name, const char *remote_url, c
 
 lgit_branches::lgit_branches()
 {
-
+    dummy_.invalid = INVALID_DUMMY;
+    dummy_.name = std::string( "-" );
+    dummy_.tip_sha = std::string( "-" );
 }
 
 int lgit_branches::list( git_repository *repo, int type )
@@ -207,9 +209,6 @@ int lgit_branches::fill_oid_parents(mybranch & newbranch, const git_oid *oid)
 
 mybranch &lgit_branches::findSha(const char *_sha)
 {
-    static mybranch dummy;
-    dummy.invalid = INVALID_DUMMY;
-
     std::string sha = std::string( _sha );
 
     for( std::vector< mybranch >::iterator it = raw_branches_.begin(); it != raw_branches_.end(); it ++ ) {
@@ -218,7 +217,7 @@ mybranch &lgit_branches::findSha(const char *_sha)
         }
     }
 
-    return dummy;
+    return dummy_;
 }
 
 static int fetchhead_foreach_cb( const char *ref_name, const char *remote_url, const git_oid *oidp,
