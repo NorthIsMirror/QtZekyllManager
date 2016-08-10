@@ -142,6 +142,12 @@ int PullDialog::reset()
         logOfTip( QString::fromStdString( b.tip_sha ), QString::fromStdString( b.name ) );
     }
 
+    //
+    // Update merge analysis message
+    //
+
+    updateMergeAnalysis();
+
     return retval;
 }
 
@@ -166,6 +172,42 @@ int PullDialog::populateFetchHead()
     }
 
     return 0;
+}
+
+int PullDialog::updateMergeAnalysis()
+{
+    // Merge analysis, of currently checked out branch,
+    // and corresponding branch from FETCH_HEAD
+    if ( lgit_->current().type() == CURRENT_TYPE_TAG ) {
+        ui->mergeTypeLabel->setText( tr("No merge possible – HEAD is detached at a tag (") + QString::fromStdString( lgit_->current().tag() ) + ")" );
+    } else if ( lgit_->current().type() == CURRENT_TYPE_OID ){
+        ui->mergeTypeLabel->setText( tr("No merge possible – HEAD is detached") );
+    } else if ( lgit_->current().type() == CURRENT_TYPE_BRANCH ) {
+        std::string branch_name = lgit_->current().branch();
+        std::string head_oid = lgit_->current().oid();
+
+        const mybranch & b1 = lgit_->branches().findNameWithType( branch_name.c_str(), FIND_BRANCH_FETCH_HEAD );
+        if ( ui->fetchHeadCombo->count() > 0 ) {
+            int idx = ui->fetchHeadCombo->currentData().toInt();
+            const mybranch & b2 = lgit_->branches()[ idx ];
+
+            if( b1.name != b2.name || b1.tip_sha != b2.tip_sha ) {
+                MessagesI.AppendMessageT( tr( "Slight internal problem: branch name or SHA mismatch detected (%1/%2/%3/%4)" )
+                                          .arg( QString::fromStdString(b1.name) ).arg( QString::fromStdString(b2.name) )
+                                          .arg( QString::fromStdString(b1.tip_sha) ).arg( QString::fromStdString(b2.tip_sha) ) );
+            }
+
+            if( b2.name != branch_name ) {
+                ui->mergeTypeLabel->setText( tr("Selected fetched commits are for branch %1, to merge checkout it first")
+                                             .arg( QString::fromStdString(b2.name) ) );
+            } else {
+                lgit_->analyzeMerge( branch_name, b2.tip_sha );
+            }
+
+        } else {
+            ui->mergeTypeLabel->setText( tr("No fetched commits") );
+        }
+    }
 }
 
 int PullDialog::logOfTip( QString sha, QString hide )
@@ -208,6 +250,7 @@ void PullDialog::on_fetchHeadCombo_activated( int index )
         int idx = ui->fetchHeadCombo->currentData().toInt();
         const mybranch & b = lgit_->branches()[ idx ];
         logOfTip( QString::fromStdString( b.tip_sha ), QString::fromStdString( b.name ) );
+        updateMergeAnalysis();
     }
 }
 

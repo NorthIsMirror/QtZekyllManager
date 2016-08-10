@@ -358,6 +358,13 @@ int lgit::fetchBranch( const QString & branch , const QString & from ) {
     return retval;
 }
 
+int lgit::analyzeMerge(const std::string & target_branch, const std::string & tip_sha)
+{
+    int retval = 0;
+
+    return retval;
+}
+
 int lgit::loadBranches(int type)
 {
     int error, retval = 0;

@@ -47,6 +47,7 @@ public:
     int hardReset();
     int commit( const QString & message );
     int fetchBranch( const QString & mybranch, const QString & from );
+    int analyzeMerge( const std::string & target_branch, const std::string & tip_sha );
     int mergeBranch( const QString & mybranch );
     int loadBranches( int type );
     int establishCurrent();
