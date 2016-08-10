@@ -10,6 +10,12 @@
 
 #define MessagesI Singleton<Messages>::instance()
 
+static QDebug operator<<(QDebug out, const std::string & str)
+{
+    out << QString::fromStdString(str);
+    return out;
+}
+
 static int fetchhead_foreach_cb( const char *ref_name, const char *remote_url, const git_oid *oid,
                                  unsigned int is_merge, void *payload );
 
