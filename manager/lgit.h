@@ -19,6 +19,17 @@ enum BackendStatus {
     PARTIAL_INIT_NO_DEFAULT_SIG = 2
 };
 
+enum AnalysisResult {
+    ANALYSIS_EMPTY=0,
+    ANALYSIS_UP_TO_DATE=1,
+    ANALYSIS_FASTFORWARD=2,
+    ANALYSIS_UNBORN=4,
+    ANALYSIS_NONE=8,
+    ANALYSIS_NORMAL=16,
+    ANALYSIS_ERROR=32,
+    ANALYSIS_UNSET=64
+};
+
 class lgit : public QObject
 {
     Q_OBJECT
@@ -54,6 +65,8 @@ public:
     int listRemotes();
     int readLog( const QString & tip_sha, const QString & hide );
 
+    AnalysisResult analysisResult() const { return analysisResult_; }
+
     const lgit_branches & branches() const { return git_branches_; }
     const std::vector< mybranch > & raw_branches() const { return git_branches_.raw_branches(); }
 
@@ -84,6 +97,8 @@ private:
     bool is_name_set_;
     bool is_email_set_;
     bool is_when_set_;
+
+    AnalysisResult analysisResult_;
 
     QString repo_path_;
     git_repository *repo_;

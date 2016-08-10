@@ -176,6 +176,8 @@ int PullDialog::populateFetchHead()
 
 int PullDialog::updateMergeAnalysis()
 {
+    int error;
+
     // Merge analysis, of currently checked out branch,
     // and corresponding branch from FETCH_HEAD
     if ( lgit_->current().type() == CURRENT_TYPE_TAG ) {
@@ -186,22 +188,45 @@ int PullDialog::updateMergeAnalysis()
         std::string branch_name = lgit_->current().branch();
         std::string head_oid = lgit_->current().oid();
 
-        const mybranch & b1 = lgit_->branches().findNameWithType( branch_name.c_str(), FIND_BRANCH_FETCH_HEAD );
         if ( ui->fetchHeadCombo->count() > 0 ) {
             int idx = ui->fetchHeadCombo->currentData().toInt();
             const mybranch & b2 = lgit_->branches()[ idx ];
 
-            if( b1.name != b2.name || b1.tip_sha != b2.tip_sha ) {
-                MessagesI.AppendMessageT( tr( "Slight internal problem: branch name or SHA mismatch detected (%1/%2/%3/%4)" )
-                                          .arg( QString::fromStdString(b1.name) ).arg( QString::fromStdString(b2.name) )
-                                          .arg( QString::fromStdString(b1.tip_sha) ).arg( QString::fromStdString(b2.tip_sha) ) );
-            }
-
             if( b2.name != branch_name ) {
-                ui->mergeTypeLabel->setText( tr("Selected fetched commits are for branch %1, to merge checkout it first")
+                ui->mergeTypeLabel->setText( tr( "Selected commits are for branch `%1', to merge checkout it first" )
                                              .arg( QString::fromStdString(b2.name) ) );
             } else {
-                lgit_->analyzeMerge( branch_name, b2.tip_sha );
+                // Additional consistency check
+                const mybranch & b1 = lgit_->branches().findNameWithType( branch_name.c_str(), FIND_BRANCH_FETCH_HEAD );
+                if( b1.tip_sha != b2.tip_sha ) {
+                    MessagesI.AppendMessageT( tr( "Slight internal problem: SHA mismatch detected (%1/%2)" )
+                                              .arg( QString::fromStdString(head_oid) ).arg( QString::fromStdString(b2.tip_sha) ) );
+                }
+
+                if( ( error = lgit_->analyzeMerge( branch_name, b2.tip_sha ) ) > 0 ) {
+                    ui->mergeTypeLabel->setText( tr( "Error during merge analysis, cannot merge" ) );
+                    return 241 + error;
+                }
+
+                if ( lgit_->analysisResult() == ANALYSIS_UNSET || lgit_->analysisResult() == ANALYSIS_ERROR ) {
+                    ui->mergeTypeLabel->setText( tr( "Error during merge analysis, cannot merge" ) );
+                }
+
+                if ( lgit_->analysisResult() == ANALYSIS_NONE ) {
+                    ui->mergeTypeLabel->setText( tr( "libgit2: no merge is possible" ) );
+                }
+
+                if ( lgit_->analysisResult() & ANALYSIS_FASTFORWARD ) {
+                    ui->mergeTypeLabel->setText( tr( "Merge type available: fast-forward" ) );
+                } else if ( lgit_->analysisResult() & ANALYSIS_NORMAL ) {
+                    ui->mergeTypeLabel->setText( tr( "Merge type available: normal, possibly with conflicts" ) );
+                } else if ( lgit_->analysisResult() & ANALYSIS_UNBORN ) {
+                    ui->mergeTypeLabel->setText( tr( "Merge type available: fast-forward" ) );
+                } else if ( lgit_->analysisResult() & ANALYSIS_UP_TO_DATE ) {
+                    ui->mergeTypeLabel->setText( tr( "No merge is needed" ) );
+                } else {
+                    ui->mergeTypeLabel->setText( tr( "internal error") );
+                }
             }
 
         } else {

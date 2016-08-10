@@ -25,7 +25,8 @@ static QDebug operator<<(QDebug out, const std::string & str)
 static int fetch_transfer_progress_cb( const git_transfer_progress *stats, void *payload );
 
 lgit::lgit( QObject *parent ) : QObject( parent ), constructor_error_code_( 0 ), backend_status_( NOT_INITIALIZED ),
-                              is_name_set_( false ), is_email_set_( false ), is_when_set_( false ), repo_( 0 )
+                              is_name_set_( false ), is_email_set_( false ), is_when_set_( false ), analysisResult_( ANALYSIS_UNSET ),
+                              repo_( 0 )
 {
     int error, retval = 0;
 
@@ -360,8 +361,61 @@ int lgit::fetchBranch( const QString & branch , const QString & from ) {
 
 int lgit::analyzeMerge(const std::string & target_branch, const std::string & tip_sha)
 {
-    int retval = 0;
+    int error, retval = 0;
 
+    analysisResult_ = ANALYSIS_UNSET;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (4)" );
+        return retval + 1000000 * 37;
+    }
+
+    git_oid their_oids[1];
+    git_annotated_commit *their_heads[1];
+
+    if ( ( error = git_oid_fromstr( &their_oids[0], tip_sha.c_str() ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "FETCH_HEAD contained improper SHA, cannot merge" ) );
+        analysisResult_ = ANALYSIS_ERROR;
+        return 229 + ( 10000 * error * -1 );
+    }
+
+    if ( ( error = git_annotated_commit_lookup( &their_heads[0], repo_, &their_oids[0] ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "FETCH_HEAD contained improper OID, cannot merge" ) );
+        analysisResult_ = ANALYSIS_ERROR;
+        return 233 + ( 10000 * error * -1 );
+    }
+
+    git_merge_analysis_t manalysis;
+    git_merge_preference_t mpreference;
+
+    if ( ( error = git_merge_analysis( &manalysis, &mpreference, repo_, (const git_annotated_commit **) their_heads, 1 ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Could not analyze merge, error code: %1" ).arg( error * -1 ) );
+        analysisResult_ = ANALYSIS_ERROR;
+        return 239 + ( 10000 * error * -1 );
+    }
+
+    unsigned int result = ANALYSIS_EMPTY;
+    if ( manalysis == GIT_MERGE_ANALYSIS_NONE ) {
+        result = ANALYSIS_NONE;
+    }
+    if ( manalysis & GIT_MERGE_ANALYSIS_NORMAL ) {
+        result = result | ANALYSIS_NORMAL;
+    }
+    if ( manalysis & GIT_MERGE_ANALYSIS_UP_TO_DATE ) {
+        result = result | ANALYSIS_UP_TO_DATE;
+    }
+    if ( manalysis & GIT_MERGE_ANALYSIS_FASTFORWARD ) {
+        result = result | ANALYSIS_FASTFORWARD;
+    }
+    if ( manalysis & GIT_MERGE_ANALYSIS_UNBORN ) {
+        result = result | ANALYSIS_UNBORN;
+    }
+
+    analysisResult_ = static_cast< AnalysisResult > ( result );
+
+    retval += closeRepo();
     return retval;
 }
 
