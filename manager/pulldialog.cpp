@@ -170,7 +170,7 @@ int PullDialog::populateFetchHead()
 
 int PullDialog::logOfTip( QString sha, QString hide )
 {
-    const mybranch & b = lgit_->branches().findNameLocal( hide.trimmed().toUtf8().constData() );
+    const mybranch & b = lgit_->branches().findNameWithType( hide.trimmed().toUtf8().constData(), FIND_BRANCH_LOCAL );
 
     if( b.invalid == INVALID_DUMMY ) {
         lgit_->readLog( sha, "" );

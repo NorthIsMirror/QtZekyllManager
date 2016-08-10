@@ -15,6 +15,8 @@ enum { INVALID_CORRECT=1, INVALID_TYPE=2 /* fatal */, INVALID_TYPE2=4 /* fatal *
                           INVALID_BRANCH=1024 /* fatal */, INVALID_DUMMY=2048 /* fatal */
      };
 
+enum { FIND_BRANCH_LOCAL=1, FIND_BRANCH_FETCH_HEAD=2, FIND_BRANCH_REMOTE=3 };
+
 struct mybranch {
     std::string tip_sha;
     std::vector< std::string > parents_shas;
@@ -62,7 +64,7 @@ public:
 
     mybranch & findSha( const char *sha );
 
-    const mybranch & findNameLocal( const char *_name ) const;
+    const mybranch & findNameWithType( const char *_name, int type ) const;
 
 private:
     std::vector< mybranch > raw_branches_;

@@ -220,15 +220,18 @@ mybranch &lgit_branches::findSha(const char *_sha)
     return dummy_;
 }
 
-const mybranch &lgit_branches::findNameLocal( const char *_name ) const
+const mybranch &lgit_branches::findNameWithType( const char *_name, int type ) const
 {
     std::string name = std::string( _name );
 
     for( std::vector< mybranch >::const_iterator it = raw_branches_.begin(); it != raw_branches_.end(); it ++ ) {
-        if( it->is_in_fetch_head ) {
+        if( type == FIND_BRANCH_FETCH_HEAD && !it->is_in_fetch_head ) {
             continue;
         }
-        if( it->type != BRANCH_LOCAL ) {
+        if( type == FIND_BRANCH_LOCAL && it->type != BRANCH_LOCAL ) {
+            continue;
+        }
+        if( type == FIND_BRANCH_REMOTE && it->type != BRANCH_REMOTE ) {
             continue;
         }
         if( it->name == name ) {
