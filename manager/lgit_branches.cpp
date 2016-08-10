@@ -3,6 +3,7 @@
 #include "singleton.h"
 #include "messages.h"
 
+#include <QString>
 #include <QDebug>
 
 #include "git2/branch.h"
@@ -151,7 +152,19 @@ int lgit_branches::list( git_repository *repo, int type )
             if ( ( error = git_branch_name( &name, ref ) ) < 0 ) {
                 newbranch.invalid |= INVALID_BRANCH;
             } else {
-                newbranch.name = std::string( name );
+                QStringList parts = QString::fromUtf8( name ).split( "/", QString::SkipEmptyParts );
+                if ( parts.count() > 1 ) {
+                    if ( newbranch.type == BRANCH_REMOTE ) {
+                        newbranch.remote_name = parts.first().toStdString();
+                        parts.removeFirst();
+                        newbranch.name = parts.join("/").toStdString();
+                    } else {
+                        newbranch.name = std::string( name );
+                    }
+                } else {
+                    newbranch.name = std::string( name );
+                }
+
             }
         }
 

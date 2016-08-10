@@ -34,6 +34,8 @@ struct mybranch {
     bool symbolic;
     std::string symbolic_ref;
 
+    std::string remote_name;
+
     int invalid;
 
     mybranch() : tip_sha( "" ), parents_shas( std::vector<std::string>() ), name( "" ), type( BRANCH_UNKNOWN ),
