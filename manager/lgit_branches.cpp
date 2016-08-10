@@ -231,7 +231,7 @@ const mybranch &lgit_branches::findNameWithType( const char *_name, int type ) c
         if( type == FIND_BRANCH_LOCAL && it->type != BRANCH_LOCAL ) {
             continue;
         }
-        if( type == FIND_BRANCH_REMOTE && it->type != BRANCH_REMOTE ) {
+        if( type == FIND_BRANCH_REMOTE && ( it->type != BRANCH_REMOTE || it->is_in_fetch_head ) ) {
             continue;
         }
         if( it->name == name ) {
