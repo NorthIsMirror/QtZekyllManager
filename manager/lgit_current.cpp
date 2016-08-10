@@ -125,8 +125,11 @@ int lgit_current::discover( git_repository *repo )
                             QString message = QString( message_cstring );
                             QRegExp rx("checkout: moving from.*to (.*)$");
                             if( rx.indexIn( message ) != -1 ) {
-                                current_tag_ = rx.cap( 1 ).toStdString();
-                                type_ = CURRENT_TYPE_TAG;
+                                // The target of the catched move message must not be current HEAD's OID prefix
+                                if( ! QString::fromStdString( current_oid_ ).startsWith( rx.cap( 1 ) ) ) {
+                                    current_tag_ = rx.cap( 1 ).toStdString();
+                                    type_ = CURRENT_TYPE_TAG;
+                                }
                                 break;
                             }
 
