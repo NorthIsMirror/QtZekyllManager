@@ -47,7 +47,7 @@ int PullDialog::reset()
 {
     int error, retval = 0;
 
-    error = lgit_->loadBranches( BRANCH_LOCAL );
+    error = lgit_->loadBranches( BRANCH_ALL );
     error = lgit_->establishCurrent();
     error = lgit_->listRemotes();
 
@@ -74,7 +74,7 @@ int PullDialog::reset()
     int remember_idx = 0;
     for ( int idx = 0; idx < count; idx ++ ) {
         const mybranch & b = lgit_->branches()[idx];
-        if ( !b.is_in_fetch_head ) {
+        if ( !b.is_in_fetch_head && b.type == BRANCH_LOCAL ) {
             ui->branchCombo->addItem( QString::fromStdString( b.name ), QVariant( idx ) );
 
             if( b.tip_sha == lgit_->current().oid() ) {
