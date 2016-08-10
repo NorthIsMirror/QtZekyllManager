@@ -19,6 +19,9 @@
      <property name="text">
       <string>Currently checked out: </string>
      </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
     </widget>
    </item>
    <item>
