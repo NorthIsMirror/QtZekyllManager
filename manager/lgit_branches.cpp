@@ -260,35 +260,27 @@ static int fetchhead_foreach_cb( const char *ref_name, const char *remote_url, c
     sha[ GIT_OID_HEXSZ ] = '\0';
 
     mybranch & branch = branches.findSha( sha );
-    if( branch.invalid == INVALID_DUMMY ) {
-        // It's a pure URL fetch, – no (remote tracking) branch is having the same tip SHA
-        mybranch newbranch;
-        QStringList parts = QString::fromUtf8( ref_name ).split( "/", QString::SkipEmptyParts );
-        if( parts.count() < 1 ) {
-            MessagesI.AppendMessageT( "FETCH_HEAD-related internal error (2)" );
-            return 2;
-        }
-
-        newbranch.name = parts.last().toStdString();
-        newbranch.is_in_fetch_head = true;
-        newbranch.is_pure_fetch_head = true;
-        newbranch.fetch_head_is_merge = (is_merge != 0);
-        newbranch.fetch_head_remote_url = std::string( remote_url );
-        newbranch.tip_sha = std::string( sha );
-        if( ( error = branches.fill_oid_parents( newbranch, oidp ) ) > 0 ) {
-            MessagesI.AppendMessageT( QString( "FETCH_HEAD-related internal error (3/%1)" ).arg( error ) );
-        }
-        // A FETCH_HEAD-only branch is considered remote, with tip
-        // being stored not in refs/remotes/<name>, but in FETCH_HEAD
-        newbranch.type = BRANCH_REMOTE;
-
-        branches.add( newbranch );
-    } else {
-        branch.is_in_fetch_head = true;
-        branch.is_pure_fetch_head = false;
-        branch.fetch_head_is_merge = (is_merge != 0);
-        branch.fetch_head_remote_url = std::string( remote_url );
+    mybranch newbranch;
+    QStringList parts = QString::fromUtf8( ref_name ).split( "/", QString::SkipEmptyParts );
+    if( parts.count() < 1 ) {
+        MessagesI.AppendMessageT( "FETCH_HEAD-related internal error (2)" );
+        return 2;
     }
+
+    newbranch.name = parts.last().toStdString();
+    newbranch.is_in_fetch_head = true;
+    newbranch.is_pure_fetch_head = ( branch.invalid == INVALID_DUMMY ? true : false );
+    newbranch.fetch_head_is_merge = (is_merge != 0);
+    newbranch.fetch_head_remote_url = std::string( remote_url );
+    newbranch.tip_sha = std::string( sha );
+    if( ( error = branches.fill_oid_parents( newbranch, oidp ) ) > 0 ) {
+        MessagesI.AppendMessageT( QString( "FETCH_HEAD-related internal error (3/%1)" ).arg( error ) );
+    }
+    // A FETCH_HEAD-only branch is considered remote, with tip
+    // being stored not in refs/remotes/<name>, but in FETCH_HEAD
+    newbranch.type = BRANCH_REMOTE;
+
+    branches.add( newbranch );
 
     qDebug() << "CB" << QString::fromStdString( branch.name ) << ref_name << remote_url << sha << is_merge;
 
