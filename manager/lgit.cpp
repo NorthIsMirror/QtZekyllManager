@@ -85,7 +85,7 @@ int lgit::hardReset()
 
     retval += openRepo();
     if( retval > 0 ) {
-        MessagesI.AppendMessageT( "Could not open repository" + repo_path_ );
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (1)" );
         return retval + 1000000 * 17;
     }
 
@@ -139,7 +139,7 @@ int lgit::commit( const QString & message )
 
     retval += openRepo();
     if( retval > 0 ) {
-        MessagesI.AppendMessageT( "Could not open repository" + repo_path_ );
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (2)" );
         return retval + 1000000 * 19;
     }
 
@@ -285,7 +285,7 @@ int lgit::fetchBranch( const QString & branch , const QString & from ) {
     error = openRepo();
     if ( error > 0 ) {
         retval += error;
-        MessagesI.AppendMessageT( "Could not open repository" + repo_path_ );
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (3)" );
         return retval + 1000000 * 29;
     }
 
@@ -372,7 +372,7 @@ int lgit::loadBranches(int type)
     error = openRepo();
     if ( error > 0 ) {
         retval += error;
-        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (2)" );
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (5)" );
         return retval + 1000000 * 37;
     }
 
@@ -389,7 +389,7 @@ int lgit::establishCurrent()
     error = openRepo();
     if ( error > 0 ) {
         retval += error;
-        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (2)" );
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (6)" );
         return retval + 1000000 * 41;
     }
 
@@ -406,7 +406,7 @@ int lgit::listRemotes()
     error = openRepo();
     if ( error > 0 ) {
         retval += error;
-        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (3)" );
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (7)" );
         return retval + 1000000 * 71;
     }
 
@@ -423,7 +423,7 @@ int lgit::readLog( const QString & tip_sha, const QString & hide )
     error = openRepo();
     if ( error > 0 ) {
         retval += error;
-        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (3)" );
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (8)" );
         return retval + 1000000 * 73;
     }
 
