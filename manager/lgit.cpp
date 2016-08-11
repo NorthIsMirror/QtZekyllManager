@@ -369,6 +369,7 @@ int lgit::analyzeMerge(const std::string & target_branch, const std::string & ti
     if ( error > 0 ) {
         retval += error;
         MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (4)" );
+        analysisResult_ = ANALYSIS_ERROR;
         return retval + 1000000 * 37;
     }
 
