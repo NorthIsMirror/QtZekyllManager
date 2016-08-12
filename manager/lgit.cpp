@@ -23,6 +23,9 @@ static QDebug operator<<(QDebug out, const std::string & str)
 }
 
 static int fetch_transfer_progress_cb( const git_transfer_progress *stats, void *payload );
+static int checkout_notify_cb( git_checkout_notify_t why, const char *path,
+                               const git_diff_file *baseline, const git_diff_file *target, const git_diff_file *workdir,
+                               void *payload );
 
 lgit::lgit( QObject *parent ) : QObject( parent ), constructor_error_code_( 0 ), backend_status_( NOT_INITIALIZED ),
                               is_name_set_( false ), is_email_set_( false ), is_when_set_( false ), analysisResult_( ANALYSIS_UNSET ),
@@ -359,7 +362,7 @@ int lgit::fetchBranch( const QString & branch , const QString & from ) {
     return retval;
 }
 
-int lgit::analyzeMerge(const std::string & target_branch, const std::string & tip_sha)
+int lgit::analyzeMerge( const std::string &, const std::string & tip_sha )
 {
     int error, retval = 0;
 
@@ -417,6 +420,97 @@ int lgit::analyzeMerge(const std::string & target_branch, const std::string & ti
     analysisResult_ = static_cast< AnalysisResult > ( result );
 
     retval += closeRepo();
+    return retval;
+}
+
+int lgit::fastForwardSha( const std::string & target_branch, const std::string &tip_sha, CheckoutType type )
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (9)" );
+        return retval + 1000000 * 43;
+    }
+
+    git_oid oid;
+    git_commit *new_tip_commit;
+
+    if ( ( error = git_oid_fromstr( &oid, tip_sha.c_str() ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "FETCH_HEAD contained improper SHA, cannot fast-forward" ) );
+        return 251 + ( 10000 * error * -1 );
+    }
+
+    // Find new tip commit, to be used as tree pointer in checkout
+    if ( ( error = git_commit_lookup( &new_tip_commit, repo_, &oid ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "FETCH_HEAD contained improper OID, cannot fast-forward" ) );
+        return 257 + ( 10000 * error * -1 );
+    }
+
+    git_checkout_options checkout_options;
+
+    if ( ( error = git_checkout_init_options( &checkout_options, GIT_CHECKOUT_OPTIONS_VERSION ) ) < 0 ) {
+        git_commit_free( new_tip_commit );
+        MessagesI.AppendMessageT( tr( "Could not initialize checkout, cannot fast-forward" ) );
+        analysisResult_ = ANALYSIS_ERROR;
+        return 263 + ( 10000 * error * -1 );
+    }
+
+    checkout_options.notify_flags = GIT_CHECKOUT_NOTIFY_CONFLICT | GIT_CHECKOUT_NOTIFY_DIRTY |
+                                    GIT_CHECKOUT_NOTIFY_UPDATED | GIT_CHECKOUT_NOTIFY_UNTRACKED |
+                                    GIT_CHECKOUT_NOTIFY_IGNORED;
+    checkout_options.notify_payload = static_cast< void * >( this );
+    checkout_options.notify_cb = checkout_notify_cb;
+
+    switch( type ) {
+    case CHECKOUT_DRY_RUN:
+        checkout_options.checkout_strategy = GIT_CHECKOUT_NONE;
+        break;
+    case CHECKOUT_MERGE:
+        checkout_options.checkout_strategy = GIT_CHECKOUT_SAFE | GIT_CHECKOUT_ALLOW_CONFLICTS | GIT_CHECKOUT_CONFLICT_STYLE_MERGE;
+        break;
+    case CHECKOUT_FORCE:
+        checkout_options.checkout_strategy = GIT_CHECKOUT_FORCE;
+        break;
+    default:
+        MessagesI.AppendMessageT( "Internal error on checkout, could not determine checkout type" );
+        return 269 + ( 10000 * error * -1 );
+    }
+
+    if ( ( error = git_checkout_tree( repo_, (git_object *) new_tip_commit, &checkout_options ) ) < 0 ) {
+        git_commit_free( new_tip_commit );
+        const char *spec_error = giterr_last()->message;
+        MessagesI.AppendMessageT( "Checkout failed with git error: " + QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error*-1 ) );
+        return 271 + ( 10000 * error * -1 );
+    }
+
+    // Commit is never used from now on
+    git_commit_free( new_tip_commit );
+
+    if( type == CHECKOUT_DRY_RUN ) {
+        return retval;
+    }
+
+    git_reference *branch_reference, *new_branch_reference;
+    QString branch_spec = QString( "refs/heads/%1" ).arg( QString::fromStdString( target_branch ) );
+    if ( ( error = git_reference_lookup( &branch_reference, repo_, branch_spec.toUtf8().constData() ) ) < 0 ) {
+        const char *spec_error = giterr_last()->message;
+        MessagesI.AppendMessageT( "Fast-forward failed with git error: " + QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error*-1 ) +
+                                  "Working tree has the new expected state, however libgit2 didn't update meta-data (i.e. the branch reference)" );
+        return 277 + ( 10000 * error * -1 );
+    }
+
+    if ( ( error = git_reference_set_target( &new_branch_reference, branch_reference, &oid, "merge: Fast-forward" ) ) < 0 ) {
+        git_reference_free( branch_reference );
+        const char *spec_error = giterr_last()->message;
+        MessagesI.AppendMessageT( "Fast-forward failed with git error (2): " + QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error*-1 ) +
+                                  "Working tree has the new expected state, however libgit2 didn't update meta-data (i.e. the branch reference)" );
+        return 281 + ( 10000 * error * -1 );
+    }
+
+    git_reference_free( branch_reference );
+    git_reference_free( new_branch_reference );
     return retval;
 }
 
@@ -489,6 +583,20 @@ int lgit::readLog( const QString & tip_sha, const QString & hide )
     return retval;
 }
 
+std::vector<std::string> lgit::gatherCheckoutOpDataForType( CheckoutOperationEvent type )
+{
+    std::vector< std::string > accum;
+    for ( std::vector< checkout_operation_event >::const_iterator it = checkout_operation_data_.begin();
+          it != checkout_operation_data_.end() ; ++ it )
+    {
+        if( it->type == type ) {
+            accum.push_back( it->path );
+        }
+    }
+
+    return accum;
+}
+
 int lgit::openRepo()
 {
     int retval = 0;
@@ -529,6 +637,30 @@ static int fetch_transfer_progress_cb( const git_transfer_progress *stats, void 
         if ( mainWindow ) {
             mainWindow->updateFetchProgress( progress );
         }
+    }
+
+    return 0;
+}
+
+static int checkout_notify_cb( git_checkout_notify_t why, const char *path,
+                               const git_diff_file *baseline, const git_diff_file *target, const git_diff_file *workdir,
+                               void *payload )
+{
+    switch( why ) {
+    case GIT_CHECKOUT_NOTIFY_NONE:
+        break;
+    case GIT_CHECKOUT_NOTIFY_CONFLICT:
+        break;
+    case GIT_CHECKOUT_NOTIFY_DIRTY:
+        break;
+    case GIT_CHECKOUT_NOTIFY_UPDATED:
+        break;
+    case GIT_CHECKOUT_NOTIFY_UNTRACKED:
+        break;
+    case GIT_CHECKOUT_NOTIFY_IGNORED:
+        break;
+    default:
+        break;
     }
 
     return 0;

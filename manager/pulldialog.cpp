@@ -4,9 +4,10 @@
 #include "singleton.h"
 #include "messages.h"
 
+#include <QVariant>
+#include <QMessageBox>
 #include <QTableWidgetItem>
 #include <QTableWidget>
-#include <QVariant>
 #include <QDebug>
 
 #define MessagesI Singleton<Messages>::instance()
@@ -331,4 +332,32 @@ void PullDialog::on_fetchURL_clicked()
     int error = lgit_->fetchBranch( branch, url );
 
     reset();
+}
+
+void PullDialog::on_merge_clicked()
+{
+    int error;
+
+    if ( ui->fetchHeadCombo->count() <= 0 ) {
+        return;
+    }
+
+    int idx = ui->fetchHeadCombo->currentData().toInt();
+    const mybranch & selected_branch = lgit_->branches()[ idx ];
+
+    if ( selected_branch.name != lgit_->current().branch() ) {
+        QMessageBox::warning( this, tr( "Cannot merge" ), tr( "Selected commits are for branch `%1', while currently checked out branch is `%2'. Please checkout the branch you want to merge." )
+                              .arg( QString::fromStdString( selected_branch.name ) )
+                              .arg( QString::fromStdString( lgit_->current().branch() ) ) );
+    }
+
+    if ( lgit_->analysisResult() & ANALYSIS_FASTFORWARD || lgit_->analysisResult() & ANALYSIS_UNBORN ) {
+        error = lgit_->fastForwardSha( selected_branch.name, selected_branch.tip_sha, CHECKOUT_MERGE );
+        if( error == 0 ) {
+            updateMergeAnalysis();
+            ui->mergeTypeLabel->setText( tr( "Fast-forward successfull" ) );
+        }
+    } else if( lgit_->analysisResult() & ANALYSIS_UP_TO_DATE ) {
+        QMessageBox::information( this, "Information", "No merge is needed" );
+    }
 }

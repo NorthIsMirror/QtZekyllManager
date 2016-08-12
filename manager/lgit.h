@@ -30,6 +30,25 @@ enum AnalysisResult {
     ANALYSIS_UNSET=64
 };
 
+enum CheckoutType {
+    CHECKOUT_DRY_RUN=1,
+    CHECKOUT_MERGE=2,
+    CHECKOUT_FORCE=3
+};
+
+enum CheckoutOperationEvent {
+    CHECKOUT_OP_CONFLICT=1,
+    CHECKOUT_OP_DIRTY=2,
+    CHECKOUT_OP_UPDATED=4,
+    CHECKOUT_OP_UNTRACKED=8,
+    CHECKOUT_OP_IGNORED=16
+};
+
+struct checkout_operation_event {
+    CheckoutOperationEvent type;
+    std::string path;
+};
+
 class lgit : public QObject
 {
     Q_OBJECT
@@ -59,6 +78,7 @@ public:
     int commit( const QString & message );
     int fetchBranch( const QString & mybranch, const QString & from );
     int analyzeMerge( const std::string & target_branch, const std::string & tip_sha );
+    int fastForwardSha( const std::string & target_branch, const std::string & tip_sha, CheckoutType type );
     int mergeBranch( const QString & mybranch );
     int loadBranches( int type );
     int establishCurrent();
@@ -66,6 +86,15 @@ public:
     int readLog( const QString & tip_sha, const QString & hide );
 
     AnalysisResult analysisResult() const { return analysisResult_; }
+
+    std::vector< checkout_operation_event > & checkoutOperationData() { return checkout_operation_data_; }
+    std::vector< std::string > checkoutConflicts() { return gatherCheckoutOpDataForType( CHECKOUT_OP_CONFLICT ); }
+    std::vector< std::string > checkoutDirty() { return gatherCheckoutOpDataForType( CHECKOUT_OP_DIRTY ); }
+    std::vector< std::string > checkoutUpdated() { return gatherCheckoutOpDataForType( CHECKOUT_OP_UPDATED ); }
+    std::vector< std::string > checkoutUntracked() { return gatherCheckoutOpDataForType( CHECKOUT_OP_UNTRACKED ); }
+    std::vector< std::string > checkoutIgnored() { return gatherCheckoutOpDataForType( CHECKOUT_OP_IGNORED ); }
+
+    std::vector< std::string > gatherCheckoutOpDataForType( CheckoutOperationEvent type );
 
     const lgit_branches & branches() const { return git_branches_; }
     const std::vector< mybranch > & raw_branches() const { return git_branches_.raw_branches(); }
@@ -102,6 +131,8 @@ private:
 
     QString repo_path_;
     git_repository *repo_;
+
+    std::vector< checkout_operation_event > checkout_operation_data_;
 
     lgit_branches git_branches_;
     lgit_current git_current_;
