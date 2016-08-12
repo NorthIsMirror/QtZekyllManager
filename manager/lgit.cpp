@@ -439,13 +439,15 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
 
     if ( ( error = git_oid_fromstr( &oid, tip_sha.c_str() ) ) < 0 ) {
         MessagesI.AppendMessageT( tr( "FETCH_HEAD contained improper SHA, cannot fast-forward" ) );
-        return 251 + ( 10000 * error * -1 );
+        retval += closeRepo();
+        return retval + 251 + ( 10000 * error * -1 );
     }
 
     // Find new tip commit, to be used as tree pointer in checkout
     if ( ( error = git_commit_lookup( &new_tip_commit, repo_, &oid ) ) < 0 ) {
         MessagesI.AppendMessageT( tr( "FETCH_HEAD contained improper OID, cannot fast-forward" ) );
-        return 257 + ( 10000 * error * -1 );
+        retval += closeRepo();
+        return retval + 257 + ( 10000 * error * -1 );
     }
 
     git_checkout_options checkout_options;
@@ -454,7 +456,8 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
         git_commit_free( new_tip_commit );
         MessagesI.AppendMessageT( tr( "Could not initialize checkout, cannot fast-forward" ) );
         analysisResult_ = ANALYSIS_ERROR;
-        return 263 + ( 10000 * error * -1 );
+        retval += closeRepo();
+        return retval + 263 + ( 10000 * error * -1 );
     }
 
     checkout_options.notify_flags = GIT_CHECKOUT_NOTIFY_CONFLICT | GIT_CHECKOUT_NOTIFY_DIRTY |
@@ -475,14 +478,16 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
         break;
     default:
         MessagesI.AppendMessageT( "Internal error on checkout, could not determine checkout type" );
-        return 269 + ( 10000 * error * -1 );
+        retval += closeRepo();
+        return retval + 269 + ( 10000 * error * -1 );
     }
 
     if ( ( error = git_checkout_tree( repo_, (git_object *) new_tip_commit, &checkout_options ) ) < 0 ) {
         git_commit_free( new_tip_commit );
         const char *spec_error = giterr_last()->message;
         MessagesI.AppendMessageT( "Checkout failed with git error: " + QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error*-1 ) );
-        return 271 + ( 10000 * error * -1 );
+        retval += closeRepo();
+        return retval + 271 + ( 10000 * error * -1 );
     }
 
     // Commit is never used from now on
@@ -498,7 +503,8 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
         const char *spec_error = giterr_last()->message;
         MessagesI.AppendMessageT( "Fast-forward failed with git error: " + QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error*-1 ) +
                                   "Working tree has the new expected state, however libgit2 didn't update meta-data (i.e. the branch reference)" );
-        return 277 + ( 10000 * error * -1 );
+        retval += closeRepo();
+        return retval + 277 + ( 10000 * error * -1 );
     }
 
     if ( ( error = git_reference_set_target( &new_branch_reference, branch_reference, &oid, "merge: Fast-forward" ) ) < 0 ) {
@@ -506,11 +512,13 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
         const char *spec_error = giterr_last()->message;
         MessagesI.AppendMessageT( "Fast-forward failed with git error (2): " + QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error*-1 ) +
                                   "Working tree has the new expected state, however libgit2 didn't update meta-data (i.e. the branch reference)" );
-        return 281 + ( 10000 * error * -1 );
+        retval += closeRepo();
+        return retval + 281 + ( 10000 * error * -1 );
     }
 
     git_reference_free( branch_reference );
     git_reference_free( new_branch_reference );
+    retval += closeRepo();
     return retval;
 }
 
