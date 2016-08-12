@@ -234,6 +234,8 @@ int PullDialog::updateMergeAnalysis()
             ui->mergeTypeLabel->setText( tr("No fetched commits") );
         }
     }
+
+    return 0;
 }
 
 int PullDialog::logOfTip( QString sha, QString hide )
