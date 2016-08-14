@@ -287,6 +287,7 @@ void PullDialog::runCommitDialog( const std::string & parent1, bool use1, const 
         if( git_error == GIT_ENOTFOUND ) {
             if( error / 1000000 == 23 ) {
                 MessagesI.AppendMessageT( "Error: path does not point to Git repository" );
+                delete dialog;
                 return;
             } else {
                 MessagesI.AppendMessageT( "user.name and user.email are not set in a gitconfig file, please enter the values in commit window" );
@@ -294,6 +295,7 @@ void PullDialog::runCommitDialog( const std::string & parent1, bool use1, const 
         } else {
             if( error / 1000000 == 23 ) {
                 MessagesI.AppendMessageT( QString( "Error: could not open provided repository, error code: %1" ).arg( error ) );
+                delete dialog;
                 return;
             } else {
                 MessagesI.AppendMessageT( QString( "Could not get default signature (author and commiter), error code: %1" ).arg( error ) );
@@ -306,6 +308,7 @@ void PullDialog::runCommitDialog( const std::string & parent1, bool use1, const 
             dialog->setEmail( std::get<1>( result ) );
         } else {
             MessagesI.AppendMessageT( "Could not initialize Git backend" );
+            delete dialog;
             return;
         }
     }
@@ -324,6 +327,7 @@ void PullDialog::runCommitDialog( const std::string & parent1, bool use1, const 
 
     if( dialog->exec() == QDialog::Rejected ) {
         MessagesI.AppendMessageT( "<font color=green>Commit has been stopped</font>" );
+        delete dialog;
         return;
     }
 
@@ -335,6 +339,8 @@ void PullDialog::runCommitDialog( const std::string & parent1, bool use1, const 
     }
 
     error = lgit_->commit( dialog->commitMessage(), dialog->parents() );
+
+    delete dialog;
 
     if( error == 0 ) {
         MessagesI.AppendMessageT( QString("Successfully performed merge commit") );
