@@ -5,6 +5,8 @@
 #include "script_functions.h"
 #include "mainwindow.h"
 
+#include <QVector>
+#include <QString>
 #include <QWidget>
 #include <QDebug>
 
@@ -131,15 +133,14 @@ int lgit::hardReset()
     return retval;
 }
 
-int lgit::commit( const QString & message )
+int lgit::commit( const QString & message, const QVector< QString > & _parents )
 {
     int retval = 0, error = 0;
 
     git_signature *sig, *sig_default;
     git_index *index;
-    git_oid tree_id, parent_id, commit_id;
+    git_oid tree_id, commit_id;
     git_tree *tree;
-    git_commit *parent;
 
     retval += openRepo();
     if( retval > 0 ) {
@@ -237,38 +238,90 @@ int lgit::commit( const QString & message )
         return retval;
     }
 
-    if ( ( error = git_reference_name_to_id( &parent_id, repo_, "HEAD" ) ) < 0 ) {
-        MessagesI.AppendMessageT( "Cannot commit: could not resolve what HEAD points to" );
-        retval += 109 + (10000 * error * -1);
-        git_tree_free( tree );
-        git_signature_free( sig );
-        retval += closeRepo();
-        return retval;
+    // Prepare parents
+    std::vector< git_oid > my_parent_oids;
+
+    if( _parents.count() == 0 ) {
+        git_oid my_parent_oid;
+
+        if ( ( error = git_reference_name_to_id( &my_parent_oid, repo_, "HEAD" ) ) < 0 ) {
+            MessagesI.AppendMessageT( "Cannot commit: could not resolve what HEAD points to" );
+            retval += 109 + (10000 * error * -1);
+            git_tree_free( tree );
+            git_signature_free( sig );
+            retval += closeRepo();
+            return retval;
+        }
+
+        my_parent_oids.push_back( my_parent_oid );
+    } else {
+        git_oid my_parent_oid;
+        unsigned int in_parents_count = _parents.count();
+
+        for ( int i = 0; i < in_parents_count; ++ i ) {
+            if ( ( error = git_oid_fromstr( &my_parent_oid, _parents[i].toUtf8().constData() ) ) < 0 ) {
+                MessagesI.AppendMessageT( QString( "Cannot commit: could not parse parent's SHA (%1)" ).arg( _parents[i]) );
+                retval += 347 + ( 10000 * error * -1 );
+                git_tree_free( tree );
+                git_signature_free( sig );
+                retval += closeRepo();
+                return retval;
+            }
+
+            my_parent_oids.push_back( my_parent_oid );
+        }
     }
 
-    if ( ( error = git_commit_lookup( &parent, repo_, &parent_id ) ) < 0 ) {
-        MessagesI.AppendMessageT( "Cannot commit: could not resolve what HEAD points to (2)" );
-        retval += 113 + (10000 * error * -1);
-        git_tree_free( tree );
-        git_signature_free( sig );
-        retval += closeRepo();
-        return retval;
+    // Harvest parent commits
+    git_commit **gparents = new git_commit * [ my_parent_oids.size() ];
+    int gparents_count = 0;
+
+    for ( std::vector< git_oid >::iterator it = my_parent_oids.begin(); it != my_parent_oids.end(); ++ it ) {
+        git_commit *gparent;
+        if ( ( error = git_commit_lookup( &gparent, repo_, &(*it) ) ) < 0 ) {
+            MessagesI.AppendMessageT( "Cannot commit: could not find a parent commit" );
+            retval += 113 + (10000 * error * -1);
+            git_tree_free( tree );
+            git_signature_free( sig );
+
+            for( int i = 0; i < gparents_count; ++ i ) {
+                git_commit_free( gparents[i] );
+            }
+            delete [] gparents;
+
+            retval += closeRepo();
+            return retval;
+        }
+
+        ++ gparents_count;
+        gparents[ gparents_count - 1 ] = gparent;
     }
 
-    if ( ( error = git_commit_create_v( &commit_id, repo_, "HEAD", sig, sig,
-                                        NULL, message.toUtf8().constData(), tree, 1, parent ) ) < 0 ) {
+    if ( ( error = git_commit_create( &commit_id, repo_, "HEAD", sig, sig,
+                                        NULL, message.toUtf8().constData(), tree, gparents_count,
+                                        const_cast< const git_commit **> ( gparents ) ) ) < 0 ) {
         MessagesI.AppendMessageT( "Cannot commit: could not create the commit" );
         retval += 127 + (10000 * error * -1);
-        git_commit_free( parent );
         git_tree_free( tree );
         git_signature_free( sig );
+
+        for( int i = 0; i < gparents_count; ++ i ) {
+            git_commit_free( gparents[i] );
+        }
+        delete [] gparents;
+
         retval += closeRepo();
         return retval;
     }
 
-    git_commit_free( parent );
     git_tree_free( tree );
     git_signature_free( sig );
+
+    for( int i = 0; i < gparents_count; ++ i ) {
+        git_commit_free( gparents[i] );
+    }
+    delete [] gparents;
+
     retval += closeRepo();
     return retval;
 }

@@ -9,6 +9,7 @@
 #include <tuple>
 
 #include <QObject>
+#include <QVector>
 #include <QString>
 
 #include "git2.h"
@@ -75,7 +76,7 @@ public:
     bool is_all_set() const { return is_name_set_ && is_email_set_ && is_when_set_; }
 
     int hardReset();
-    int commit( const QString & message );
+    int commit( const QString & message, const QVector< QString > & parents = QVector< QString > () );
     int fetchBranch( const QString & mybranch, const QString & from );
     int analyzeMerge( const std::string & target_branch, const std::string & tip_sha );
     int fastForwardSha( const std::string & target_branch, const std::string & tip_sha, CheckoutType type );
