@@ -72,3 +72,19 @@ void CommitDialog::setName( const QString & name ) {
     name_ = name.trimmed();
     ui->name->setText( name_ );
 }
+
+bool CommitDialog::addParent( const std::string & parent )
+{
+    return addParent( QString::fromStdString( parent ) );
+}
+
+bool CommitDialog::addParent( const QString & parent )
+{
+    if( parents_.indexOf( parent ) != -1 ) {
+        return false;
+    }
+
+    parents_.append( parent );
+
+    return true;
+}
