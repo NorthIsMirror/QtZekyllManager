@@ -357,7 +357,7 @@ void PullDialog::on_merge_clicked()
         error = lgit_->fastForwardSha( selected_branch.name, selected_branch.tip_sha, CHECKOUT_MERGE );
         if( error == 0 ) {
             updateMergeAnalysis();
-            ui->mergeTypeLabel->setText( tr( "Fast-forward successfull" ) );
+            ui->mergeTypeLabel->setText( tr( "Fast-forward successful" ) );
         }
     } else if( lgit_->analysisResult() & ANALYSIS_UP_TO_DATE ) {
         QMessageBox::information( this, "Information", "No merge is needed" );
