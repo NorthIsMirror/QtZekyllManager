@@ -24,6 +24,7 @@ public:
     int populateFetchHead();
     int updateMergeAnalysis();
     int logOfTip( QString sha, QString branch );
+    void runCommitDialog( const std::string & parent1, bool use1, const std::string & parent2 , bool use2 );
 
 private slots:
     void on_fetchHeadCombo_activated(int index);

@@ -3,6 +3,7 @@
 
 #include "singleton.h"
 #include "messages.h"
+#include "commitdialog.h"
 
 #include <QVariant>
 #include <QMessageBox>
@@ -271,6 +272,77 @@ int PullDialog::logOfTip( QString sha, QString hide )
     return 0;
 }
 
+void PullDialog::runCommitDialog( const std::string & parent1, bool use1, const std::string & parent2, bool use2 )
+{
+    CommitDialog *dialog = new CommitDialog(this);
+    if(!dialog) {
+        MessagesI.AppendMessageT( "Serious error: new failed (C++)" );
+        return;
+    }
+
+    std::tuple< QString, QString, git_time, int > result = lgit_->testDefaultSignature();
+    int error = std::get<3>( result );
+    if( error > 0 ) {
+        int git_error = ( error % 1000000 ) / 10000 * -1;
+        if( git_error == GIT_ENOTFOUND ) {
+            if( error / 1000000 == 23 ) {
+                MessagesI.AppendMessageT( "Error: path does not point to Git repository" );
+                return;
+            } else {
+                MessagesI.AppendMessageT( "user.name and user.email are not set in a gitconfig file, please enter the values in commit window" );
+            }
+        } else {
+            if( error / 1000000 == 23 ) {
+                MessagesI.AppendMessageT( QString( "Error: could not open provided repository, error code: %1" ).arg( error ) );
+                return;
+            } else {
+                MessagesI.AppendMessageT( QString( "Could not get default signature (author and commiter), error code: %1" ).arg( error ) );
+                MessagesI.AppendMessageT( "Please provide name and email in commit window" );
+            }
+        }
+    } else {
+        if( lgit_->backendStatus() == INITIALIZED ) {
+            dialog->setName( std::get<0>( result ) );
+            dialog->setEmail( std::get<1>( result ) );
+        } else {
+            MessagesI.AppendMessageT( "Could not initialize Git backend" );
+            return;
+        }
+    }
+
+    if( use1 ) {
+        if( ! dialog->addParent( parent1 ) ) {
+            MessagesI.AppendMessageT( "Warning: Duplicate commit parent (1)" );
+        }
+    }
+
+    if( use2 ) {
+        if( ! dialog->addParent( parent2 ) ) {
+            MessagesI.AppendMessageT( "Warning: Duplicate commit parent (2)" );
+        }
+    }
+
+    if( dialog->exec() == QDialog::Rejected ) {
+        MessagesI.AppendMessageT( "<font color=green>Commit has been stopped</font>" );
+        return;
+    }
+
+    if ( dialog->name().count() > 0 ) {
+        lgit_->setName( dialog->name() );
+    }
+    if ( dialog->email().count() > 0 ) {
+        lgit_->setEmail( dialog->email() );
+    }
+
+    error = lgit_->commit( dialog->commitMessage(), dialog->parents() );
+
+    if( error == 0 ) {
+        MessagesI.AppendMessageT( QString("Successfully performed merge commit") );
+    } else {
+        MessagesI.AppendMessageT( QString("Exit code of git commit: %1").arg( error ) );
+    }
+}
+
 void PullDialog::on_fetchHeadCombo_activated( int index )
 {
     reset();
@@ -359,7 +431,12 @@ void PullDialog::on_merge_clicked()
             updateMergeAnalysis();
             ui->mergeTypeLabel->setText( tr( "Fast-forward successful" ) );
         }
-    } else if( lgit_->analysisResult() & ANALYSIS_UP_TO_DATE ) {
+    } else if ( lgit_->analysisResult() & ANALYSIS_UP_TO_DATE ) {
         QMessageBox::information( this, "Information", "No merge is needed" );
+    } else if ( lgit_->analysisResult() & ANALYSIS_NORMAL ) {
+        error = lgit_->mergeBranch( lgit_->current().branch(), lgit_->current().oid(), selected_branch );
+        if( error == 0 ) {
+            runCommitDialog( lgit_->current().oid(), true, selected_branch.tip_sha, true );
+        }
     }
 }

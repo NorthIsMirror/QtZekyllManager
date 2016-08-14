@@ -10,13 +10,19 @@
 #include <QWidget>
 #include <QDebug>
 
-#define MessagesI Singleton<Messages>::instance()
-
 #ifdef _WIN32
 # include <Windows.h>
 #else
 # include <unistd.h>
 #endif
+
+#include "git2/annotated_commit.h"
+#include "git2/repository.h"
+#include "git2/checkout.h"
+#include "git2/merge.h"
+#include "git2/remote.h"
+
+#define MessagesI Singleton<Messages>::instance()
 
 static QDebug operator<<(QDebug out, const std::string & str)
 {
@@ -572,6 +578,86 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
     git_reference_free( branch_reference );
     git_reference_free( new_branch_reference );
     retval += closeRepo();
+    return retval;
+}
+
+int lgit::mergeBranch( const std::string & branch, const std::string & our_tip, const mybranch & their_fh_entry )
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (9)" );
+        return retval + 1000000 * 47;
+    }
+
+    git_merge_options merge_options;
+    git_checkout_options checkout_options;
+
+    if ( ( error = git_merge_init_options( &merge_options, GIT_CHECKOUT_OPTIONS_VERSION ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Could not initialize merge" ) );
+        retval += closeRepo();
+        return retval + 331 + ( 10000 * error * -1 );
+    }
+
+    if ( ( error = git_checkout_init_options( &checkout_options, GIT_CHECKOUT_OPTIONS_VERSION ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Could not initialize checkout, cannot merge" ) );
+        retval += closeRepo();
+        return retval + 337 + ( 10000 * error * -1 );
+    }
+
+    git_oid our_oid, their_oid;
+    git_commit *our_tip_commit, *their_tip_commit;
+    git_annotated_commit *their_tip_commit_fh;
+
+    if ( ( error = git_oid_fromstr( &our_oid, our_tip.c_str() ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Improper SHA tip of current branch" ) );
+        retval += closeRepo();
+        return retval + 283 + ( 10000 * error * -1 );
+    }
+
+    if ( ( error = git_oid_fromstr( &their_oid, their_fh_entry.tip_sha.c_str() ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Improper SHA tip of fetched branch (i.e. of a remote branch)" ) );
+        retval += closeRepo();
+        return retval + 293 + ( 10000 * error * -1 );
+    }
+
+    if ( ( error = git_commit_lookup( &our_tip_commit, repo_, &our_oid ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Cannot find current HEAD commit" ) );
+        retval += closeRepo();
+        return retval + 307 + ( 10000 * error * -1 );
+    }
+
+    if ( ( error = git_commit_lookup( &their_tip_commit, repo_, &their_oid ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Cannot find tip commit of fetched branch (i.e. of a remote branch)" ) );
+        git_commit_free( our_tip_commit );
+        retval += closeRepo();
+        return retval + 311 + ( 10000 * error * -1 );
+    }
+
+    if ( ( error = git_annotated_commit_from_fetchhead( &their_tip_commit_fh, repo_,
+                                                        their_fh_entry.name.c_str(), their_fh_entry.fetch_head_remote_url.c_str(),
+                                                        &their_oid ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Cannot prepare for merge from FETCH_HEAD" ) );
+        git_commit_free( our_tip_commit );
+        git_commit_free( their_tip_commit );
+        retval += closeRepo();
+        return retval + 313 + ( 10000 * error * -1 );
+    }
+
+    if ( ( error = git_merge( repo_, const_cast< const git_annotated_commit ** > ( &their_tip_commit_fh ), 1, &merge_options, &checkout_options) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Merge failed: " ) );
+        git_commit_free( our_tip_commit );
+        git_commit_free( their_tip_commit );
+        git_annotated_commit_free( their_tip_commit_fh );
+        retval += closeRepo();
+        return retval + 317 + ( 10000 * error * -1 );
+    }
+
+    git_commit_free( our_tip_commit );
+    git_commit_free( their_tip_commit );
+    git_annotated_commit_free( their_tip_commit_fh );
     return retval;
 }
 
