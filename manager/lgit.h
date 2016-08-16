@@ -1,6 +1,7 @@
 #ifndef LGIT_H
 #define LGIT_H
 
+#include "gitoperationtracker.h"
 #include "lgit_branches.h"
 #include "lgit_current.h"
 #include "lgit_remotes.h"
@@ -109,6 +110,9 @@ public:
     const lgit_log & log() const { return git_log_; }
     const std::vector< log_entry > & raw_log() const { return git_log_.raw_log(); }
 
+    GitOperationTracker *opTracker() { return op_tracker_; }
+    void setOpTracker( GitOperationTracker *op_tracker ) { op_tracker_ = op_tracker; }
+
 signals:
 
 public slots:
@@ -135,6 +139,8 @@ private:
     git_repository *repo_;
 
     std::vector< checkout_operation_event > checkout_operation_data_;
+
+    GitOperationTracker *op_tracker_;
 
     lgit_branches git_branches_;
     lgit_current git_current_;

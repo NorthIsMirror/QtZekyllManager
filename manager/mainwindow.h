@@ -7,6 +7,7 @@
 #include "zkrewrite.h"
 #include "git.h"
 #include "lgit.h"
+#include "gitoperationtracker.h"
 
 #include <tuple>
 #include <vector>
@@ -72,6 +73,8 @@ private:
     QString ZEKYLL_DEFAULT_REPO_;
 
     QVector<int> vscroll_bar_value_;
+
+    GitOperationTracker op_tracker_;
 
     Ui::MainWindow *ui;
 
@@ -179,7 +182,6 @@ public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();
     bool recomputeZcode();
-    int updateFetchProgress( double progress );
     static MainWindow* ptr();
 };
 

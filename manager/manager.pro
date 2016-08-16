@@ -34,7 +34,8 @@ SOURCES += main.cpp \
     pulldialog.cpp \
     lgit_current.cpp \
     lgit_remotes.cpp \
-    lgit_log.cpp
+    lgit_log.cpp \
+    gitoperationtracker.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -60,7 +61,8 @@ HEADERS  += mainwindow.h \
     pulldialog.h \
     lgit_current.h \
     lgit_remotes.h \
-    lgit_log.h
+    lgit_log.h \
+    gitoperationtracker.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \

@@ -3,7 +3,6 @@
 #include "singleton.h"
 #include "messages.h"
 #include "script_functions.h"
-#include "mainwindow.h"
 
 #include <QVector>
 #include <QString>
@@ -363,16 +362,8 @@ int lgit::fetchBranch( const QString & branch , const QString & from ) {
         }
     }
 
-    MainWindow *mainWindow = MainWindow::ptr();
-    if( mainWindow == 0 ) {
-        retval += 179;
-        MessagesI.AppendMessageT( "Internal error during fetch" );
-        retval += closeRepo();
-        return retval;
-    }
-
     fetch_opts.callbacks.transfer_progress = fetch_transfer_progress_cb;
-    fetch_opts.callbacks.payload = mainWindow;
+    fetch_opts.callbacks.payload = op_tracker_;
 
     QString refspec;
     git_strarray refspecs;
@@ -822,9 +813,9 @@ static int fetch_transfer_progress_cb( const git_transfer_progress *stats, void 
     }
 
     if ( payload ) {
-        MainWindow *mainWindow = qobject_cast< MainWindow * >( static_cast< QObject * >( payload ) );
-        if ( mainWindow ) {
-            mainWindow->updateFetchProgress( progress );
+        GitOperationTracker *tracker = static_cast< GitOperationTracker * >( payload );
+        if ( tracker ) {
+            tracker->updateFetchProgress( progress );
         }
     }
 

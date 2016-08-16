@@ -128,6 +128,8 @@ MainWindow::MainWindow(QWidget *parent) :
         ZEKYLL_DEFAULT_REPO_ = QString::fromLocal8Bit( default_repo );
         loadDefaultRepository();
     }
+
+    lgit_->setOpTracker( &op_tracker_ );
 }
 
 MainWindow::~MainWindow()
@@ -1393,11 +1395,6 @@ bool MainWindow::recomputeZcode()
     }
 }
 
-int MainWindow::updateFetchProgress( double progress )
-{
-    return 0;
-}
-
 MainWindow* MainWindow::ptr()
 {
     MainWindow *mainWindow;
@@ -1772,6 +1769,7 @@ void MainWindow::on_gitPull_clicked()
 
     PullDialog *pullDialog = new PullDialog();
     pullDialog->setLGit( lgit_ );
+    op_tracker_.setPullDialog( pullDialog );
     error = pullDialog->reset();
     pullDialog->exec();
 }
