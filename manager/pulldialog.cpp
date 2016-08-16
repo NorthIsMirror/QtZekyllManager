@@ -456,6 +456,8 @@ void PullDialog::on_merge_clicked()
         } else if( error / 10000 == ( GIT_ECONFLICT * -1 ) ) {
             QMessageBox::warning( this, "Error", "There are uncommited changes that conflict with the fetched commits. "
                                                  "Please clean the work dir before doing the merge." );
+        } else {
+            MessagesI.AppendMessageT( tr( "Merge stopped because of general errors (exit code: %1)" ).arg( error ) );
         }
     }
 }
