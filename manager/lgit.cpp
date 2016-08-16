@@ -607,6 +607,13 @@ int lgit::mergeBranch( const std::string & branch, const std::string & our_tip, 
         return retval + 337 + ( 10000 * error * -1 );
     }
 
+    checkout_options.checkout_strategy = GIT_CHECKOUT_FORCE;
+    checkout_options.notify_flags = GIT_CHECKOUT_NOTIFY_CONFLICT | GIT_CHECKOUT_NOTIFY_DIRTY |
+                                    GIT_CHECKOUT_NOTIFY_UPDATED | GIT_CHECKOUT_NOTIFY_UNTRACKED |
+                                    GIT_CHECKOUT_NOTIFY_IGNORED;
+    checkout_options.notify_payload = static_cast< void * >( this );
+    checkout_options.notify_cb = checkout_notify_cb;
+
     git_oid our_oid, their_oid;
     git_commit *our_tip_commit, *their_tip_commit;
     git_annotated_commit *their_tip_commit_fh;
