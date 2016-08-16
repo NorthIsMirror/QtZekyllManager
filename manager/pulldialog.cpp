@@ -401,18 +401,22 @@ void PullDialog::addNotification( git_checkout_notify_t why, const QString &path
     switch( why ) {
     case GIT_CHECKOUT_NOTIFY_CONFLICT:
         item1 = new QTableWidgetItem( "Conflict" );
+        item1->setBackground( Qt::yellow );
         break;
     case GIT_CHECKOUT_NOTIFY_DIRTY:
         item1 = new QTableWidgetItem( "Dirty" );
+        item1->setBackground( Qt::red );
         break;
     case GIT_CHECKOUT_NOTIFY_UPDATED:
         item1 = new QTableWidgetItem( "Updated" );
+        item1->setBackground( Qt::green );
         break;
     case GIT_CHECKOUT_NOTIFY_UNTRACKED:
         item1 = new QTableWidgetItem( "Untracked" );
         break;
     case GIT_CHECKOUT_NOTIFY_IGNORED:
         item1 = new QTableWidgetItem( "Ignored" );
+        item1->setForeground( Qt::blue );
         break;
     default:
         item1 = new QTableWidgetItem( "" );
