@@ -301,7 +301,7 @@ static int fetchhead_foreach_cb( const char *ref_name, const char *remote_url, c
 
     branches.add( newbranch );
 
-    qDebug() << "CB" << QString::fromStdString( branch.name ) << ref_name << remote_url << sha << is_merge;
+    // qDebug() << "CB" << QString::fromStdString( branch.name ) << ref_name << remote_url << sha << is_merge;
 
     return 0;
 }
