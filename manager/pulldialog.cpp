@@ -13,15 +13,15 @@
 
 #define MessagesI Singleton<Messages>::instance()
 
-static QDebug operator<<(QDebug out, const std::string & str)
+static QDebug operator<< ( QDebug out, const std::string & str )
 {
-    out << QString::fromStdString(str);
+    out << QString::fromStdString( str );
     return out;
 }
 
-PullDialog::PullDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::PullDialog)
+PullDialog::PullDialog( QWidget *parent ) :
+    QDialog( parent ),
+    ui( new Ui::PullDialog )
 {
     ui->setupUi(this);
     ui->gridLayout->setSpacing( 10 );
