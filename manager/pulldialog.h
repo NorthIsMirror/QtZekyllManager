@@ -23,8 +23,11 @@ public:
     int reset();
     int populateFetchHead();
     int updateMergeAnalysis();
+    int switchTableToLog();
+    int switchTableToNotifications();
     int logOfTip( QString sha, QString branch );
     void runCommitDialog( const std::string & msg, bool usem, const std::string & parent1, bool use1, const std::string & parent2 , bool use2 );
+    void addNotification( git_checkout_notify_t why, const QString & path );
 
 private slots:
     void on_fetchHeadCombo_activated(int index);
@@ -41,6 +44,8 @@ private:
     lgit *lgit_;
     lgit_branches *lgit_branches_;
     lgit_current *lgit_current_;
+
+    bool table_has_notifications_;
 
     Ui::PullDialog *ui;
 };

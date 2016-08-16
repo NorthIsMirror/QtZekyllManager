@@ -21,6 +21,7 @@ static QDebug operator<< ( QDebug out, const std::string & str )
 
 PullDialog::PullDialog( QWidget *parent ) :
     QDialog( parent ),
+    table_has_notifications_( false ),
     ui( new Ui::PullDialog )
 {
     ui->setupUi(this);
@@ -239,8 +240,40 @@ int PullDialog::updateMergeAnalysis()
     return 0;
 }
 
+int PullDialog::switchTableToLog()
+{
+    // Already switched?
+    if( !table_has_notifications_ ) {
+        return 1;
+    }
+
+    table_has_notifications_ = false;
+
+    ui->tableWidget->setRowCount( 0 );
+    ui->tableWidget->setColumnCount( 3 );
+
+    return 0;
+}
+
+int PullDialog::switchTableToNotifications()
+{
+    // Already switched?
+    if( table_has_notifications_ ) {
+        return 1;
+    }
+
+    table_has_notifications_ = true;
+
+    ui->tableWidget->setRowCount( 0 );
+    ui->tableWidget->setColumnCount( 2 );
+
+    return 0;
+}
+
 int PullDialog::logOfTip( QString sha, QString hide )
 {
+    switchTableToLog();
+
     const mybranch & b = lgit_->branches().findNameWithType( hide.trimmed().toUtf8().constData(), FIND_BRANCH_LOCAL );
 
     if( b.invalid == INVALID_DUMMY ) {
@@ -351,6 +384,46 @@ void PullDialog::runCommitDialog( const std::string & msg, bool usem, const std:
     } else {
         MessagesI.AppendMessageT( QString("Exit code of git commit: %1").arg( error ) );
     }
+}
+
+void PullDialog::addNotification( git_checkout_notify_t why, const QString &path )
+{
+    switchTableToNotifications();
+
+    QTableWidgetItem *item1;
+
+    if ( why == GIT_CHECKOUT_NOTIFY_NONE ) {
+            return;
+    }
+
+    switch( why ) {
+    case GIT_CHECKOUT_NOTIFY_CONFLICT:
+        item1 = new QTableWidgetItem( "Conflict" );
+        break;
+    case GIT_CHECKOUT_NOTIFY_DIRTY:
+        item1 = new QTableWidgetItem( "Dirty" );
+        break;
+    case GIT_CHECKOUT_NOTIFY_UPDATED:
+        item1 = new QTableWidgetItem( "Updated" );
+        break;
+    case GIT_CHECKOUT_NOTIFY_UNTRACKED:
+        item1 = new QTableWidgetItem( "Untracked" );
+        break;
+    case GIT_CHECKOUT_NOTIFY_IGNORED:
+        item1 = new QTableWidgetItem( "Ignored" );
+        break;
+    default:
+        item1 = new QTableWidgetItem( "" );
+        break;
+    }
+
+    QTableWidgetItem *item2 = new QTableWidgetItem( path );
+
+    int row = ui->tableWidget->rowCount();
+    ui->tableWidget->insertRow(row);
+
+    ui->tableWidget->setItem( row, 0, item1 );
+    ui->tableWidget->setItem( row, 1, item2 );
 }
 
 void PullDialog::on_fetchHeadCombo_activated( int index )

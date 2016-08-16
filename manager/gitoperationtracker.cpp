@@ -13,29 +13,21 @@ GitOperationTracker::GitOperationTracker()
 int GitOperationTracker::updateFetchProgress( double progress )
 {
     PullDialog *pdialog = static_cast< PullDialog * > ( pulldialog_ );
+    if( !pdialog ) {
+        return 1;
+    }
+
     return 0;
 }
 
 int GitOperationTracker::checkoutNotify(git_checkout_notify_t why, const char *path)
 {
-    switch( why ) {
-    case GIT_CHECKOUT_NOTIFY_NONE:
-        break;
-    case GIT_CHECKOUT_NOTIFY_CONFLICT:
-        break;
-    case GIT_CHECKOUT_NOTIFY_DIRTY:
-        break;
-    case GIT_CHECKOUT_NOTIFY_UPDATED:
-        break;
-    case GIT_CHECKOUT_NOTIFY_UNTRACKED:
-        break;
-    case GIT_CHECKOUT_NOTIFY_IGNORED:
-        break;
-    default:
-        break;
+    PullDialog *pdialog = static_cast< PullDialog * > ( pulldialog_ );
+    if( !pdialog ) {
+        return 1;
     }
 
-    qDebug() << why << path;
+    pdialog->addNotification( why, path );
 
     return 0;
 }
