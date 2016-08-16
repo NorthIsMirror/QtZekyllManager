@@ -513,7 +513,7 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
     checkout_options.notify_flags = GIT_CHECKOUT_NOTIFY_CONFLICT | GIT_CHECKOUT_NOTIFY_DIRTY |
                                     GIT_CHECKOUT_NOTIFY_UPDATED | GIT_CHECKOUT_NOTIFY_UNTRACKED |
                                     GIT_CHECKOUT_NOTIFY_IGNORED;
-    checkout_options.notify_payload = static_cast< void * >( this );
+    checkout_options.notify_payload = static_cast< void * >( op_tracker_ );
     checkout_options.notify_cb = checkout_notify_cb;
 
     switch( type ) {
@@ -602,7 +602,7 @@ int lgit::mergeBranch( const std::string & branch, const std::string & our_tip, 
     checkout_options.notify_flags = GIT_CHECKOUT_NOTIFY_CONFLICT | GIT_CHECKOUT_NOTIFY_DIRTY |
                                     GIT_CHECKOUT_NOTIFY_UPDATED | GIT_CHECKOUT_NOTIFY_UNTRACKED |
                                     GIT_CHECKOUT_NOTIFY_IGNORED;
-    checkout_options.notify_payload = static_cast< void * >( this );
+    checkout_options.notify_payload = static_cast< void * >( op_tracker_ );
     checkout_options.notify_cb = checkout_notify_cb;
 
     git_oid our_oid, their_oid;
@@ -826,21 +826,9 @@ static int checkout_notify_cb( git_checkout_notify_t why, const char *path,
                                const git_diff_file *baseline, const git_diff_file *target, const git_diff_file *workdir,
                                void *payload )
 {
-    switch( why ) {
-    case GIT_CHECKOUT_NOTIFY_NONE:
-        break;
-    case GIT_CHECKOUT_NOTIFY_CONFLICT:
-        break;
-    case GIT_CHECKOUT_NOTIFY_DIRTY:
-        break;
-    case GIT_CHECKOUT_NOTIFY_UPDATED:
-        break;
-    case GIT_CHECKOUT_NOTIFY_UNTRACKED:
-        break;
-    case GIT_CHECKOUT_NOTIFY_IGNORED:
-        break;
-    default:
-        break;
+    GitOperationTracker *op_tracker = static_cast< GitOperationTracker * > ( payload );
+    if( op_tracker ) {
+        op_tracker->checkoutNotify( why, path );
     }
 
     return 0;
