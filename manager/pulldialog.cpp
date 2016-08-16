@@ -272,7 +272,7 @@ int PullDialog::logOfTip( QString sha, QString hide )
     return 0;
 }
 
-void PullDialog::runCommitDialog( const std::string & parent1, bool use1, const std::string & parent2, bool use2 )
+void PullDialog::runCommitDialog( const std::string & msg, bool usem, const std::string & parent1, bool use1, const std::string & parent2, bool use2 )
 {
     CommitDialog *dialog = new CommitDialog(this);
     if(!dialog) {
@@ -311,6 +311,10 @@ void PullDialog::runCommitDialog( const std::string & parent1, bool use1, const 
             delete dialog;
             return;
         }
+    }
+
+    if( usem ) {
+        dialog->setCommitMessage( QString::fromStdString( msg ) );
     }
 
     if( use1 ) {
@@ -447,7 +451,10 @@ void PullDialog::on_merge_clicked()
                 MessagesI.AppendMessageT( tr( "Merge appeared a success, however could not check if index has conflicts (error: %1)" ).arg( error ) );
             } else {
                 if( !result ) {
-                    runCommitDialog( lgit_->current().oid(), true, selected_branch.tip_sha, true );
+                    QString msg = "Merge branch '";
+                    msg += QString::fromStdString( selected_branch.name ) + "' of ";
+                    msg += QString::fromStdString( selected_branch.fetch_head_remote_url );
+                    runCommitDialog( msg.toStdString(), true, lgit_->current().oid(), true, selected_branch.tip_sha, true );
                 } else {
                     QMessageBox::warning( this, "Conflicts", "There are merge conflicts. You can commit and conclude"
                                                              " the merge after resolving them." );
