@@ -32,10 +32,10 @@ CommitDialog::CommitDialog(QWidget *parent) :
     ui->textEdit->setEdgeColumn( 72 );
     ui->textEdit->setEdgeMode( QsciScintilla::EdgeBackground );
 
-    lexer_ = new QsciLexerMakefile;
-    lexer_->setDefaultFont( font_ );
+    // lexer_ = new QsciLexerMakefile;
+    // lexer_->setDefaultFont( font_ );
 
-    this->ui->textEdit->setLexer( lexer_ );
+    // this->ui->textEdit->setLexer( lexer_ );
     this->ui->textEdit->SendScintilla( QsciScintilla::SCI_STYLESETFONT, 1, "Courier" );
 }
 
