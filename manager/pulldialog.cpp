@@ -251,6 +251,7 @@ int PullDialog::switchTableToLog()
 
     ui->tableWidget->setRowCount( 0 );
     ui->tableWidget->setColumnCount( 3 );
+    ui->tableWidget->verticalHeader()->setDefaultSectionSize( 50 );
 
     return 0;
 }
@@ -266,6 +267,7 @@ int PullDialog::switchTableToNotifications()
 
     ui->tableWidget->setRowCount( 0 );
     ui->tableWidget->setColumnCount( 2 );
+    ui->tableWidget->verticalHeader()->setDefaultSectionSize( 32 );
 
     return 0;
 }
