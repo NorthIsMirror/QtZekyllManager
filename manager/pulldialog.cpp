@@ -442,7 +442,20 @@ void PullDialog::on_merge_clicked()
     } else if ( lgit_->analysisResult() & ANALYSIS_NORMAL ) {
         error = lgit_->mergeBranch( lgit_->current().branch(), lgit_->current().oid(), selected_branch );
         if( error == 0 ) {
-            runCommitDialog( lgit_->current().oid(), true, selected_branch.tip_sha, true );
+            bool result = false;
+            if( ( error = lgit_->indexHasConflicts( &result ) ) < 0 ) {
+                MessagesI.AppendMessageT( tr( "Merge appeared a success, however could not check if index has conflicts (error: %1)" ).arg( error ) );
+            } else {
+                if( !result ) {
+                    runCommitDialog( lgit_->current().oid(), true, selected_branch.tip_sha, true );
+                } else {
+                    QMessageBox::warning( this, "Conflicts", "There are merge conflicts. You can commit and conclude"
+                                                             " the merge after resolving them." );
+                }
+            }
+        } else if( error / 10000 == ( GIT_ECONFLICT * -1 ) ) {
+            QMessageBox::warning( this, "Error", "There are uncommited changes that conflict with the fetched commits. "
+                                                 "Please clean the work dir before doing the merge." );
         }
     }
 }
