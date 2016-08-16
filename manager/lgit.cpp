@@ -711,7 +711,7 @@ int lgit::loadBranches(int type)
     if ( error > 0 ) {
         retval += error;
         MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (5)" );
-        return retval + 1000000 * 47;
+        return retval + 1000000 * 59;
     }
 
     git_branches_.list( repo_, type );
