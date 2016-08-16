@@ -669,6 +669,40 @@ int lgit::mergeBranch( const std::string & branch, const std::string & our_tip, 
     return retval;
 }
 
+int lgit::indexHasConflicts( bool *result )
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (9)" );
+        return retval + 1000000 * 53;
+    }
+
+    git_index *index;
+    if ( ( error = git_repository_index( &index, repo_ ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Cannot commit: could not open repository's index (2)" );
+        retval += 353 + ( 10000 * error * -1 );
+        retval += closeRepo();
+        return retval;
+    }
+
+    if ( ( error = git_index_read( index, 1 ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Cannot commit: could not read already staged files (2)" );
+        retval += 359 + ( 10000 * error * -1 );
+        git_index_free( index );
+        retval += closeRepo();
+        return retval;
+    }
+
+    *result = git_index_has_conflicts( index ) == 1;
+
+    git_index_free( index );
+    retval += closeRepo();
+    return retval;
+}
+
 int lgit::loadBranches(int type)
 {
     int error, retval = 0;

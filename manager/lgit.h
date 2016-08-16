@@ -81,6 +81,7 @@ public:
     int analyzeMerge( const std::string & target_branch, const std::string & tip_sha );
     int fastForwardSha( const std::string & target_branch, const std::string & tip_sha, CheckoutType type );
     int mergeBranch( const std::string & branch, const std::string & our_tip, const mybranch & their_fh_entry );
+    int indexHasConflicts( bool *result );
     int loadBranches( int type );
     int establishCurrent();
     int listRemotes();
