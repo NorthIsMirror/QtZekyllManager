@@ -647,7 +647,8 @@ int lgit::mergeBranch( const std::string & branch, const std::string & our_tip, 
     }
 
     if ( ( error = git_merge( repo_, const_cast< const git_annotated_commit ** > ( &their_tip_commit_fh ), 1, &merge_options, &checkout_options) ) < 0 ) {
-        MessagesI.AppendMessageT( tr( "Merge failed: " ) );
+        const char *spec_error = giterr_last()->message;
+        MessagesI.AppendMessageT( tr( "Merge failed: %1" ).arg( QString::fromUtf8( spec_error ) ) );
         git_commit_free( our_tip_commit );
         git_commit_free( their_tip_commit );
         git_annotated_commit_free( their_tip_commit_fh );
