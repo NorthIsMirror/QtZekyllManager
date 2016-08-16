@@ -263,7 +263,7 @@ int lgit::commit( const QString & message, const QVector< QString > & _parents )
         git_oid my_parent_oid;
         unsigned int in_parents_count = _parents.count();
 
-        for ( int i = 0; i < in_parents_count; ++ i ) {
+        for ( unsigned int i = 0; i < in_parents_count; ++ i ) {
             if ( ( error = git_oid_fromstr( &my_parent_oid, _parents[i].toUtf8().constData() ) ) < 0 ) {
                 MessagesI.AppendMessageT( QString( "Cannot commit: could not parse parent's SHA (%1)" ).arg( _parents[i]) );
                 retval += 347 + ( 10000 * error * -1 );
