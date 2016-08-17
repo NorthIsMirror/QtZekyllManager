@@ -512,6 +512,7 @@ void PullDialog::on_merge_clicked()
         QMessageBox::warning( this, tr( "Cannot merge" ), tr( "Selected commits are for branch `%1', while currently checked out branch is `%2'. Please checkout the branch you want to merge." )
                               .arg( QString::fromStdString( selected_branch.name ) )
                               .arg( QString::fromStdString( lgit_->current().branch() ) ) );
+        return;
     }
 
     if ( lgit_->analysisResult() & ANALYSIS_FASTFORWARD || lgit_->analysisResult() & ANALYSIS_UNBORN ) {
