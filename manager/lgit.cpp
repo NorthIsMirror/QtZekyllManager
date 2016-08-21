@@ -745,7 +745,7 @@ int lgit::listRemotes()
     return retval;
 }
 
-int lgit::readLog( const QString & tip_sha, const QString & hide )
+int lgit::readLog( const QString & tip_sha, const QString & hide, bool equip )
 {
     int error, retval = 0;
 
@@ -758,6 +758,10 @@ int lgit::readLog( const QString & tip_sha, const QString & hide )
 
     git_log_.clear();
     git_log_.log_of_tip( repo_, tip_sha.toStdString(), hide.toStdString() );
+
+    if( equip ) {
+        git_log_.equip_with_diff_data( repo_ );
+    }
 
     retval += closeRepo();
     return retval;

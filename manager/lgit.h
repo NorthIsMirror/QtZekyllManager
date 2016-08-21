@@ -86,7 +86,7 @@ public:
     int loadBranches( int type );
     int establishCurrent();
     int listRemotes();
-    int readLog( const QString & tip_sha, const QString & hide );
+    int readLog( const QString & tip_sha, const QString & hide, bool equip = true );
 
     AnalysisResult analysisResult() const { return analysisResult_; }
 
