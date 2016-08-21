@@ -25,7 +25,7 @@ public:
 
     const log_entry & entry( int idx ) const { return entries_[ idx ]; }
 
-    int count() const { return entries_.size(); }
+    unsigned int count() const { return entries_.size(); }
 
 private:
     std::vector< log_entry > entries_;
