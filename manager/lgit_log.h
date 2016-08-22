@@ -21,7 +21,7 @@ struct my_diff_file {
     my_diff_file( const char *_old_path, const char *_new_path ) : old_path( _old_path ), new_path( _new_path )
     {
         is_addition = is_deletion = is_modification = is_rename = false;
-        is_copy = is_conflicted = is_other = false;
+        is_copy = is_conflict = is_other = false;
     }
 
     bool is_addition;
@@ -29,7 +29,7 @@ struct my_diff_file {
     bool is_modification;
     bool is_rename;
     bool is_copy;
-    bool is_conflicted;
+    bool is_conflict;
     bool is_other;
 };
 
@@ -40,6 +40,8 @@ struct log_entry {
 
     bool has_diff_data;
     std::vector< my_diff_file > diff_files;
+
+    std::string diff_data_summary_html();
 
     log_entry() : has_diff_data( false ) {}
 };
@@ -52,16 +54,16 @@ struct diff_run_state {
     bool is_modification;
     bool is_rename;
     bool is_copy;
-    bool is_conflicted;
+    bool is_conflict;
     bool is_other;
 
     diff_run_state() : is_addition( false ), is_deletion( false ), is_modification( false ),
-                        is_rename( false ), is_copy( false ), is_conflicted( false ), is_other( false )
+                        is_rename( false ), is_copy( false ), is_conflict( false ), is_other( false )
     { }
 
     void clear() {
         is_addition = is_deletion = is_modification = false;
-        is_rename = is_copy = is_conflicted = is_other = false;
+        is_rename = is_copy = is_conflict = is_other = false;
     }
 };
 

@@ -4,6 +4,7 @@
 #include "messages.h"
 
 #include <string>
+#include <sstream>
 
 #include <QDebug>
 
@@ -260,9 +261,9 @@ int diff_file_callback( const git_diff_delta *delta, float progress, void *paylo
         entry->has_diff_data = true;
         break;
     case GIT_DELTA_CONFLICTED:
-        state->is_conflicted = true;
+        state->is_conflict = true;
         entry->diff_files.push_back( my_diff_file( delta->old_file.path, delta->new_file.path ) );
-        entry->diff_files.back().is_conflicted = true;
+        entry->diff_files.back().is_conflict = true;
         entry->has_diff_data = true;
         break;
     case GIT_DELTA_UNMODIFIED:
@@ -306,4 +307,70 @@ int diff_line_callback( const git_diff_delta *, const git_diff_hunk *, const git
     }
 
     return 0;
+}
+
+std::string log_entry::diff_data_summary_html()
+{
+    if ( !has_diff_data ) {
+        return std::string();
+    }
+
+    std::stringstream output;
+
+    // Gather additions
+    for ( std::vector< my_diff_file >::iterator it = diff_files.begin(); it != diff_files.end(); ++ it ) {
+        if( it->is_addition ) {
+            output << "<p style='white-space:pre;'><h3><span style='color:blue;'>ADDED:</span> " << it->new_path << "</h3></p>" << std::endl;
+        }
+    }
+
+    // Gather deletions
+    for ( std::vector< my_diff_file >::iterator it = diff_files.begin(); it != diff_files.end(); ++ it ) {
+        if( it->is_deletion ) {
+            output << "<p style='white-space:pre;'><h3><span style='color:red;'>DELETED:</span> " << it->old_path << "</h3></p>" << std::endl;
+        }
+    }
+
+    // Gather conflicts
+    for ( std::vector< my_diff_file >::iterator it = diff_files.begin(); it != diff_files.end(); ++ it ) {
+        if( it->is_conflict ) {
+            output << "<p style='white-space:pre;'><h3><span style='color:red;'>CONFLICT:</span> " << it->old_path << "</h3></p>" << std::endl;
+        }
+    }
+
+    // Gather renames
+    for ( std::vector< my_diff_file >::iterator it = diff_files.begin(); it != diff_files.end(); ++ it ) {
+        if( it->is_rename ) {
+            output << "<p style='white-space:pre;'><h3><span style='color:green;'>RENAMED:</span> " << it->old_path
+                    << " <span style='color:green;'>➡</span> " << it->new_path << "</h3></p>" << std::endl;
+        }
+    }
+
+    // Gather copies
+    for ( std::vector< my_diff_file >::iterator it = diff_files.begin(); it != diff_files.end(); ++ it ) {
+        if( it->is_copy ) {
+            output << "<p style='white-space:pre;'><h3><span style='color:brown;'>COPIED:</span> " << it->old_path
+                    << " <span style='color:brown;'>➡</span> " << it->new_path << "</h3></p>" << std::endl;
+        }
+    }
+
+    // Gather modifications
+    for ( std::vector< my_diff_file >::iterator it = diff_files.begin(); it != diff_files.end(); ++ it ) {
+        if( it->is_modification ) {
+            output << "<p style='white-space:pre;'><h3><span style='color:gray;'>MODIFIED:</span> " << it->old_path << "</h3>";
+            output << "<span style='font-size:large;'>";
+            for ( std::vector< myhunk >::iterator it2 = it->hunks.begin(); it2 != it->hunks.end(); ++ it2 ) {
+                int limit = 9;
+                for ( std::vector< std::string >::iterator it3 = it2->ulines.begin(); it3 != it2->ulines.end(); ++ it3 ) {
+                    if( ! limit -- ) {
+                        break;
+                    }
+                    output << *it3;
+                }
+            }
+            output << "</span></p>" << std::endl;
+        }
+    }
+
+    return output.str();
 }
