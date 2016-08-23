@@ -774,6 +774,33 @@ int lgit::readLog( const QString & tip_sha, const QString & hide, bool equip )
     return retval;
 }
 
+int lgit::listMergeHeads( std::vector<std::string> & output )
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (12)" );
+        return retval + 1000000 * 79;
+    }
+
+    std::vector< git_oid > heads;
+
+    git_repository_mergehead_foreach( repo_, mergehead_foreach_cb, &heads );
+
+    char sha[ GIT_OID_HEXSZ + 1 ];
+
+    for ( std::vector< git_oid >::iterator it = heads.begin(); it != heads.end(); ++ it ) {
+        git_oid_fmt( sha, &(*it) );
+        sha[ GIT_OID_HEXSZ ] = '\0';
+        output.push_back( std::string( sha ) );
+    }
+
+    retval += closeRepo();
+    return retval;
+}
+
 std::vector<std::string> lgit::gatherCheckoutOpDataForType( CheckoutOperationEvent type )
 {
     std::vector< std::string > accum;

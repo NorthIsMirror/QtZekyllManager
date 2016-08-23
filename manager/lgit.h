@@ -87,6 +87,7 @@ public:
     int establishCurrent();
     int listRemotes();
     int readLog( const QString & tip_sha, const QString & hide, bool equip = true );
+    int listMergeHeads( std::vector<std::string> & output );
 
     AnalysisResult analysisResult() const { return analysisResult_; }
 
