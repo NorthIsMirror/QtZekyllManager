@@ -226,12 +226,25 @@ int lgit_branches::fill_oid_parents(mybranch & newbranch, const git_oid *oid)
     return retval;
 }
 
-mybranch &lgit_branches::findSha(const char *_sha)
+mybranch & lgit_branches::findSha( const char *_sha )
 {
     std::string sha = std::string( _sha );
 
     for( std::vector< mybranch >::iterator it = raw_branches_.begin(); it != raw_branches_.end(); it ++ ) {
         if( it->tip_sha == sha ) {
+            return *it;
+        }
+    }
+
+    return dummy_;
+}
+
+const mybranch & lgit_branches::findFetchHeadSha( const char *_sha ) const
+{
+    std::string sha = std::string( _sha );
+
+    for( std::vector< mybranch >::const_iterator it = raw_branches_.begin(); it != raw_branches_.end(); it ++ ) {
+        if( it->tip_sha == sha && it->is_in_fetch_head ) {
             return *it;
         }
     }

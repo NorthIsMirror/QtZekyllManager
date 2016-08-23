@@ -64,7 +64,9 @@ public:
     int count() const { return raw_branches_.size(); }
     int size() const { return raw_branches_.size(); }
 
-    mybranch & findSha( const char *sha );
+    mybranch & findSha( const char *_sha );
+
+    const mybranch & findFetchHeadSha( const char *_sha ) const;
 
     const mybranch & findNameWithType( const char *_name, int type ) const;
 
