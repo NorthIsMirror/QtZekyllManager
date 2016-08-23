@@ -178,6 +178,7 @@ SET( SRCS
     lgit_remotes.cpp
     lgit_log.cpp
     gitoperationtracker.cpp
+    external_functions.cpp
 )
 
 QT5_WRAP_UI( UIS_HDRS
