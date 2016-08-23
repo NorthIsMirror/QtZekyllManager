@@ -82,7 +82,7 @@ private:
     void insertLZSDETableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
                                 const QString & description, const QString & error);
 
-    void closeEvent(QCloseEvent *event);
+    void closeEvent( QCloseEvent *event ) Q_DECL_OVERRIDE;
     void processCurRepoCombo( const QString & selected, int error );
     void setupDeferredApplyOfCodeSelectors( const std::vector<int> & bits ) { isDeferredApplyPrepared_ = true; deferredCodeSelectors_ = bits; }
     int applyDeferredCodeSelectors( bool silent );
