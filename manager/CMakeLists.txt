@@ -141,27 +141,37 @@ endif()
 
 SET( SRCS
     main.cpp
-    mainwindow.cpp
     closewithoutsavingdialog.cpp
     coding_functions.cpp
-    git.cpp
     lzcsde.cpp
     lzcsde_entry.cpp
+    mainwindow.cpp
     math_functions.cpp
     messages.cpp
-    myqtablewidget.cpp
     myqtabwidget.cpp
     script_functions.cpp
     zkiresize.cpp
     zkrewrite.cpp
     zmeditor.cpp
+    myqtablewidget.cpp
+    git.cpp
     lgit.cpp
+    myqlineedit.cpp
+    commitdialog.cpp
+    lgit_branches.cpp
+    pulldialog.cpp
+    lgit_current.cpp
+    lgit_remotes.cpp
+    lgit_log.cpp
+    gitoperationtracker.cpp
 )
 
 QT5_WRAP_UI( UIS_HDRS
     mainwindow.ui
     zmeditor.ui
     closewithoutsavingdialog.ui
+    commitdialog.ui
+    pulldialog.ui
 )
 
 # Needed -DQT_WIDGETS_LIB for Qt 5
