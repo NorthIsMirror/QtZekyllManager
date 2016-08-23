@@ -305,7 +305,8 @@ int lgit::commit( const QString & message, const QVector< QString > & _parents )
     if ( ( error = git_commit_create( &commit_id, repo_, "HEAD", sig, sig,
                                         NULL, message.toUtf8().constData(), tree, gparents_count,
                                         const_cast< const git_commit **> ( gparents ) ) ) < 0 ) {
-        MessagesI.AppendMessageT( "Cannot commit: could not create the commit" );
+        const char *spec_error = giterr_last()->message;
+        MessagesI.AppendMessageT( QString( "Cannot commit: %1" ).arg( QString::fromUtf8( spec_error ) ) );
         retval += 127 + (10000 * error * -1);
         git_tree_free( tree );
         git_signature_free( sig );
