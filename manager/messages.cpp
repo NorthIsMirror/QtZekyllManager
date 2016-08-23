@@ -45,19 +45,19 @@ QStringList Messages::GetMessagesNoRepeat( const QStringList & _messages )
         std::vector<QString> current;
         current.clear();
 
-        // Try future 0, 1, 2 elements, forming
-        // 1, 2, 3 elements packs
-        std::vector<bool> three_equal;
-        three_equal.clear();
-        for( int j = 0; j < 3; j ++ ) {
+        // Try future 0, 1, 2, 3 elements, forming
+        // 1, 2, 3, 4 elements packs
+        std::vector<bool> four_equal;
+        four_equal.clear();
+        for( int j = 0; j < 4; j ++ ) {
             if( j+i < size ) {
                 current.push_back( messages[ i + j ] );
             } else {
-                three_equal.push_back( false );
+                four_equal.push_back( false );
                 continue;
             }
 
-            // Compare if 1-3 messages repeated
+            // Compare if 1-4 messages repeated
             int k=1;
             bool equal = true;
             for( std::vector<QString>::reverse_iterator rit = current.rbegin(); rit != current.rend(); ++ rit ) {
@@ -76,16 +76,19 @@ QStringList Messages::GetMessagesNoRepeat( const QStringList & _messages )
                 k ++;
             }
 
-            three_equal.push_back( equal );
+            four_equal.push_back( equal );
         }
 
-        if( three_equal[2] ) {
+        if( four_equal[3] ) {
+            output.append( "<font color=green>Last 4 messages repeated</font>" );
+            i += 3; // also ++ i in loop
+        } else if( four_equal[2] ) {
             output.append( "<font color=green>Last 3 messages repeated</font>" );
             i += 2; // also ++ i in loop
-        } else if( three_equal[1] ) {
+        } else if( four_equal[1] ) {
             output.append( "<font color=green>Last 2 messages repeated</font>" );
             i += 1;
-        } else if( three_equal[0] ) {
+        } else if( four_equal[0] ) {
             output.append( "<font color=green>Last message repeated</font>" );
             i += 0;
         } else {
