@@ -586,7 +586,7 @@ int lgit::mergeBranch( const std::string & branch, const std::string & our_tip, 
     error = openRepo();
     if ( error > 0 ) {
         retval += error;
-        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (9)" );
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (10)" );
         return retval + 1000000 * 47;
     }
 
@@ -674,7 +674,7 @@ int lgit::indexHasConflicts( bool *result )
     error = openRepo();
     if ( error > 0 ) {
         retval += error;
-        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (9)" );
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (11)" );
         return retval + 1000000 * 53;
     }
 
