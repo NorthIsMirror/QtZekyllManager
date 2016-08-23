@@ -31,6 +31,20 @@ if( NOT Qt5Widgets_FOUND )
     message( FATAL_ERROR "Some components have not been found" )
 endif()
 
+#
+# Qt5MacExtras
+#
+
+if( "${CMAKE_SYSTEM_NAME}" MATCHES "Darwin" )
+    find_package( Qt5MacExtras ${QT_VERSION_REQ} QUIET )
+    if( NOT Qt5MacExtras_FOUND )
+        message( "=" )
+        message( "= Could not find Qt5 (its MacExtras component). Set CMAKE_PREFIX_PATH to where Qt is installed. =" )
+        message( "=" )
+        message( FATAL_ERROR "Some components have not been found" )
+    endif()
+endif()
+
 get_target_property( QT_QMAKE_EXECUTABLE Qt5::qmake LOCATION )
 
 #
@@ -175,7 +189,7 @@ QT5_WRAP_UI( UIS_HDRS
 )
 
 # Needed -DQT_WIDGETS_LIB for Qt 5
-add_definitions( ${Qt5Widgets_DEFINITIONS} )
+add_definitions( ${Qt5Widgets_DEFINITIONS} ${Qt5MacExtras_DEFINITIONS} )
 
 # Executables fail to build with Qt 5 without -fPIE
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
@@ -184,7 +198,7 @@ link_directories( ${CURL_LIBRARY_DIRS} ${LIBSSH2_LIBRARY_DIRS} )
 
 add_executable( QtZekyllManager ${SRCS} ${UIS_HDRS} )
 
-target_link_libraries( QtZekyllManager Qt5::Widgets ${CoreFoundation_LIBRARIES}
+target_link_libraries( QtZekyllManager Qt5::Widgets Qt5::MacExtras ${CoreFoundation_LIBRARIES}
                        ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${HTTP_PARSER_LIBRARIES} ${OPENSSL_LIBRARIES}
                        ${ICONV_LIBRARIES} ${SECURITY_LIBRARIES} ${LIBSSH2_LIBRARIES}
                        $<TARGET_PROPERTY:git2,INTERFACE_LINK_LIBRARIES>
