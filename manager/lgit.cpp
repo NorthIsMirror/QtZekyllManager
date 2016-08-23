@@ -33,6 +33,7 @@ static int fetch_transfer_progress_cb( const git_transfer_progress *stats, void 
 static int checkout_notify_cb( git_checkout_notify_t why, const char *path,
                                const git_diff_file *baseline, const git_diff_file *target, const git_diff_file *workdir,
                                void *payload );
+static int mergehead_foreach_cb( const git_oid *oid, void *payload );
 
 lgit::lgit( QObject *parent ) : QObject( parent ), constructor_error_code_( 0 ), backend_status_( NOT_INITIALIZED ),
                               is_name_set_( false ), is_email_set_( false ), is_when_set_( false ), analysisResult_( ANALYSIS_UNSET ),
@@ -259,6 +260,11 @@ int lgit::commit( const QString & message, const QVector< QString > & _parents )
         }
 
         my_parent_oids.push_back( my_parent_oid );
+
+        // Append any MERGE_HEAD commits
+        if( _parents.count() == 0 ) {
+            git_repository_mergehead_foreach( repo_, mergehead_foreach_cb, &my_parent_oids );
+        }
     } else {
         git_oid my_parent_oid;
         unsigned int in_parents_count = _parents.count();
@@ -837,4 +843,9 @@ static int checkout_notify_cb( git_checkout_notify_t why, const char *path,
     }
 
     return 0;
+}
+
+static int mergehead_foreach_cb( const git_oid *oid, void *payload ) {
+    std::vector< git_oid > *my_parent_oids = static_cast< std::vector< git_oid > * > ( payload );
+    my_parent_oids->push_back( *oid );
 }
