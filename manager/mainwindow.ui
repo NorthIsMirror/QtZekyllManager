@@ -358,13 +358,6 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="e">
-        <property name="text">
-         <string>E</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QToolButton" name="minus">
         <property name="text">
          <string>–</string>

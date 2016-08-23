@@ -77,6 +77,7 @@ private:
     GitOperationTracker op_tracker_;
 
     Ui::MainWindow *ui;
+    QAction *editAct;
 
     void insertLZCSDTableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, bool checked, const QString & section, const QString & description);
     void insertLZSDETableRow(const QString & lzcsde, QTableWidget * tableWidget, int id, const QString & zekyll, const QString & section,
@@ -99,6 +100,10 @@ private:
     bool setCurrentIndexInZcode();
     void writeSettings();
     void readSettings();
+
+#ifndef QT_NO_CONTEXTMENU
+    void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
+#endif // QT_NO_CONTEXTMENU
 
 signals:
     void repositoryChanged();
@@ -178,7 +183,7 @@ private slots:
 
     void on_gitPull_clicked();
 
-    void on_e_clicked();
+    void edit_zekyll();
 
 public:
     int currentIndex() const { return current_index_; }

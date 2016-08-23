@@ -130,6 +130,10 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     lgit_->setOpTracker( &op_tracker_ );
+
+    editAct = new QAction( tr("Edit zekyll value"), this);
+    editAct->setStatusTip( tr("Edit zekyll value") );
+    connect( editAct, &QAction::triggered, this, &MainWindow::edit_zekyll );
 }
 
 MainWindow::~MainWindow()
@@ -1801,7 +1805,7 @@ void MainWindow::on_gitPull_clicked()
     pullDialog->exec();
 }
 
-void MainWindow::on_e_clicked()
+void MainWindow::edit_zekyll()
 {
     if(ui->tabWidget->currentIndex() == 0) {
         if( ui->tableWidget->selectedItems().count() > 0)
@@ -1812,3 +1816,19 @@ void MainWindow::on_e_clicked()
         }
     }
 }
+
+#ifndef QT_NO_CONTEXTMENU
+void MainWindow::contextMenuEvent( QContextMenuEvent *event )
+{
+    if ( ui->tabWidget->currentIndex() != 0 ) {
+        return;
+    }
+
+    if ( ui->tableWidget->rect().contains( ui->tableWidget->mapFromGlobal( event->globalPos() ) ) ) {
+        QMenu menu( this );
+        menu.addAction( editAct );
+        menu.exec( event->globalPos() );
+    }
+}
+
+#endif // QT_NO_CONTEXTMENU
