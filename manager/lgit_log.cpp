@@ -203,9 +203,49 @@ int lgit_log::equip_with_diff_data_single( git_repository *repo, log_entry & fir
     return 0;
 }
 
+/*
+ * First log entry doesn't have predecessor, so we have
+ * to additionally query for the entry's parent commit
+ */
 int lgit_log::equip_with_diff_data_first(git_repository *repo, log_entry &first)
 {
+    int error, retval = 0;
+    git_oid my_commit_oid;
 
+    if ( ( error = git_oid_fromstr( &my_commit_oid, first.sha.c_str() ) ) < 0 ) {
+        MessagesI.AppendMessageT( QString( "Could not parse commit's SHA (%1)" ).arg( first.sha.c_str() ) );
+        return 419 + ( 10000 * error * -1 );
+    }
+
+    git_commit *my_commit;
+    if ( ( error = git_commit_lookup( &my_commit, repo, &my_commit_oid ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Could not find log's commit (the log at the bottom)" );
+        return 421 + ( 10000 * error * -1 );
+    }
+
+    if( !my_commit ) {
+        MessagesI.AppendMessageT( "Libgit2 internal error (null commit pointer)");
+        return 433;
+    }
+
+    int pcount = git_commit_parentcount( my_commit );
+    if( pcount > 0 ) {
+        const git_oid *my_parent_oid = git_commit_parent_id( my_commit, 0 );
+        if( !my_parent_oid ) {
+            MessagesI.AppendMessageT( "Libgit2 internal error: could not get parent's OID" );
+            return 431;
+        }
+
+        char sha[ GIT_OID_HEXSZ + 1 ];
+        git_oid_fmt( sha, my_parent_oid );
+        sha[ GIT_OID_HEXSZ ] = '\0';
+
+        log_entry second;
+        second.sha = std::string( sha );
+        retval += equip_with_diff_data_single( repo, first, second );
+    }
+
+    return retval;
 }
 
 int lgit_log::equip_with_diff_data( git_repository *repo )
