@@ -1746,6 +1746,25 @@ void MainWindow::on_gitCommit_clicked()
         }
     }
 
+    std::vector< std::string > merge_heads;
+    if ( ( error = lgit_->listMergeHeads( merge_heads ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Could not read merge state" );
+    } else if( merge_heads.size() > 0 ) {
+        std::string head = merge_heads.front();
+        if ( ( error = lgit_->loadBranches( BRANCH_ALL ) ) < 0 ) {
+            MessagesI.AppendMessageT( "Could not load branch list" );
+        } else {
+            const mybranch & fhbranch = lgit_->branches().findFetchHeadSha( head.c_str() );
+            if( fhbranch.invalid != INVALID_DUMMY ) {
+                QString msg = "Merge branch '";
+                msg += QString::fromStdString( fhbranch.name ) + "' of ";
+                msg += QString::fromStdString( fhbranch.fetch_head_remote_url );
+
+                dialog->setCommitMessage( msg );
+            }
+        }
+    }
+
     if( dialog->exec() == QDialog::Rejected ) {
         MessagesI.AppendMessageT( "<font color=green>Commit has been stopped</font>" );
         delete dialog;
