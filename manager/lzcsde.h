@@ -67,6 +67,8 @@ public:
 
     bool updateDescriptionOfId( const QString & id, const QString & description );
 
+    bool updateZekyllOfId( const QString & id, const QString & zekyll );
+
     unsigned int count() const { return entries_.count(); }
 };
 

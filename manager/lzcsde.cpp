@@ -168,3 +168,20 @@ bool LZCSDE::updateDescriptionOfId( const QString & id, const QString & descript
     entries_[idx].setDescription( description );
     return true;
 }
+
+bool LZCSDE::updateZekyllOfId( const QString & id, const QString & zekyll )
+{
+    bool ok = false;
+    int intid = id.toInt( &ok );
+    if(!ok) {
+        return false;
+    }
+
+    int idx = findIdxOfId( intid );
+    if( idx == -1 ) {
+        return false;
+    }
+
+    entries_[idx].setZekyll( zekyll );
+    return true;
+}

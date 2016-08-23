@@ -300,7 +300,7 @@ void MainWindow::insertLZCSDTableRow(const QString & lzcsde, QTableWidget * tabl
     idItem->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
 
     QTableWidgetItem *zekyllItem = new QTableWidgetItem(zekyll);
-    zekyllItem->setFlags(zekyllItem->flags() ^ Qt::ItemIsEditable);
+    //zekyllItem->setFlags(zekyllItem->flags() ^ Qt::ItemIsEditable);
     zekyllItem->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
 
     QTableWidgetItem *checkItem = new QTableWidgetItem(tr(""));
@@ -983,14 +983,19 @@ void MainWindow::on_save_clicked()
             const LZCSDE_Entry & current = lzcsde_list_.entries()[idx];
             changed = 0;
 
+            // Zekyll changed? A special case, needed for duplicate resolution
+            if( initial.zekyll() != current.zekyll() ) {
+                changed = 1;
+            }
+
             // Section changed?
             if( initial.section() != current.section() ) {
-                changed = 1;
+                changed += 2;
             }
 
             // Description changed?
             if( initial.description() != current.description() ) {
-                changed += 2;
+                changed += 4;
             }
 
             if( changed > 0 ) {
@@ -1063,7 +1068,7 @@ void MainWindow::handle_git_mv( int exitCode, QStringList entries ) {
     MessagesI.AppendMessageT( QString("[Exit code: %1] ").arg(exitCode) + "<font color=red>Git ran with errors</font>", entries );
 }
 
-void MainWindow::on_tableWidget_itemChanged(QTableWidgetItem *item)
+void MainWindow::on_tableWidget_itemChanged( QTableWidgetItem *item )
 {
     if( is_loading_ ) {
         return;
@@ -1077,7 +1082,10 @@ void MainWindow::on_tableWidget_itemChanged(QTableWidgetItem *item)
 
     QTableWidgetItem *id_item = ui->tableWidget->item(row, 0);
     QString id = id_item->text();
-    if( column == 3 ) {
+    if( column == 1 ) {
+        QString new_zekyll = item->text();
+        lzcsde_list_.updateZekyllOfId( id, new_zekyll );
+    } else if( column == 3 ) {
         QString new_section = item->text();
         lzcsde_list_.updateSectionOfId( id, new_section );
     } else if( column == 4 ) {
@@ -1772,4 +1780,16 @@ void MainWindow::on_gitPull_clicked()
     op_tracker_.setPullDialog( pullDialog );
     error = pullDialog->reset();
     pullDialog->exec();
+}
+
+void MainWindow::on_e_clicked()
+{
+    if(ui->tabWidget->currentIndex() == 0) {
+        if( ui->tableWidget->selectedItems().count() > 0)
+        {
+            int row = ui->tableWidget->currentRow();
+            QModelIndex index = ui->tableWidget->model()->index( row, 1 );
+            ui->tableWidget->edit( index );
+        }
+    }
 }
