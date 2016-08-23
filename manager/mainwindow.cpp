@@ -23,6 +23,7 @@
 #include "math_functions.h"
 #include "script_functions.h"
 #include "coding_functions.h"
+#include "external_functions.h"
 #include "commitdialog.h"
 #include "zmeditor.h"
 #include "pulldialog.h"
@@ -915,15 +916,35 @@ void MainWindow::checkBoxClicked( bool checked )
  void MainWindow::updateMessages( const QStringList & messages ) {
      ui->messages->clear();
      int counter = messages.count();
+     QString str_prev, str_accum;
+     bool first = true;
      QStringList::const_iterator it = messages.constEnd();
      while( it != messages.constBegin() ) {
          -- it;
-         QString str2 = *it;
-         str2.replace( QRegExp("[\r\n]+"), QString("<br/>") );
-         str2 = QString("<font color=magenta>{<b>%1</b>}</font> ").arg( counter ) + str2;
-         ui->messages->appendHtml( str2 );
+
+         QString str = *it;
+         str.replace( QRegExp("[\r\n]+"), QString("<br/>") );
+
+         if( first ) {
+             first = false;
+             str_prev = str;
+             str_accum = str;
+         } else {
+             int distance = levenshtein( str.toUtf8().constData(), str_prev.toUtf8().constData(), 1, 1, 1, 1 );
+             if( distance > 5 ) {
+                 QString msg = QString("<font color=magenta>{<b>%1</b>}</font> ").arg( counter + 1 ) + str_accum;
+                 ui->messages->appendHtml( msg );
+                 str_accum = str;
+             } else {
+                 str_accum += "<font color=red><b> ▎</b></font>" + str;
+             }
+
+             str_prev = str;
+         }
+
          -- counter;
      }
+     ui->messages->appendHtml( QString("<font color=magenta>{<b>1</b>}</font> ") + str_accum );
      ui->messages->moveCursor (QTextCursor::Start);
      ui->messages->ensureCursorVisible();
  }
