@@ -1868,5 +1868,4 @@ void MainWindow::contextMenuEvent( QContextMenuEvent *event )
         menu.exec( event->globalPos() );
     }
 }
-
 #endif // QT_NO_CONTEXTMENU
