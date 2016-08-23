@@ -26,7 +26,7 @@ Messages::Messages(QObject* parent)
 }
 
 void Messages::AppendMessageT(const QString &message) {
-    messages_ += message + "\n";
+    messages_ += message;
 
     emit messagesChanged( GetMessagesNoRepeat(messages_) );
 }
@@ -36,6 +36,9 @@ void Messages::AppendMessageT(const QString &message, QStringList &arr) {
     foreach( const QString &str, arr ) {
         final_message += str + "\n";
     }
+
+    // No trailing new line
+    final_message.replace( QRegExp("[\r\n]+$"), QString("") );
 
     messages_ += final_message;
 
@@ -47,6 +50,9 @@ void Messages::AppendMessageT(const QString &message, vector<string> &arr) {
     foreach( const string &str, arr ) {
         final_message += QString::fromStdString(str) + "\n";
     }
+
+    // No trailing new line
+    final_message.replace( QRegExp("[\r\n]+$"), QString("") );
 
     messages_ += final_message;
 
