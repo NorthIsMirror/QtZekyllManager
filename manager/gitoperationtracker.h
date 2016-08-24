@@ -29,9 +29,14 @@ public:
     int updateFetchProgress( double progress );
     int checkoutNotify( git_checkout_notify_t why, const char *path );
 
-    void setPullDialog( void * pullDialog ) { pulldialog_ = pullDialog; }
+    void setPullDialog( void * pullDialog ) { pulldialog_ = pullDialog; is_pull = true; is_checkout = false; }
+    void setCheckoutDialog( void * checkoutDialog ) { checkoutdialog_ = checkoutDialog; is_pull = false; is_checkout = true; }
 private:
     void *pulldialog_;
+    void *checkoutdialog_;
+
+    bool is_pull;
+    bool is_checkout;
 };
 
 #endif // GITOPERATIONTRACKER_H

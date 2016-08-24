@@ -1874,6 +1874,13 @@ void MainWindow::contextMenuEvent( QContextMenuEvent *event )
 void MainWindow::on_gitCheckout_clicked()
 {
     CheckoutDialog *dialog = new CheckoutDialog();
+    if( !dialog ) {
+        MessagesI.AppendMessageT( "Internal error occured (C++ new failed)" );
+        return;
+    }
+
+    op_tracker_.setCheckoutDialog( dialog );
+
     lgit_->loadBranches( BRANCH_LOCAL );
     lgit_->loadTags();
 

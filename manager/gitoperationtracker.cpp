@@ -18,20 +18,23 @@
 #include "gitoperationtracker.h"
 
 #include "pulldialog.h"
+#include "checkoutdialog.h"
 
 #include <QString>
 #include <QDebug>
 
-GitOperationTracker::GitOperationTracker()
+GitOperationTracker::GitOperationTracker() : is_pull( false ), is_checkout( false )
 {
 
 }
 
 int GitOperationTracker::updateFetchProgress( double progress )
 {
-    PullDialog *pdialog = static_cast< PullDialog * > ( pulldialog_ );
-    if( !pdialog ) {
-        return 1;
+    if ( is_pull ) {
+        PullDialog *pdialog = static_cast< PullDialog * > ( pulldialog_ );
+        if ( !pdialog ) {
+            return 1;
+        }
     }
 
     return 0;
@@ -39,12 +42,21 @@ int GitOperationTracker::updateFetchProgress( double progress )
 
 int GitOperationTracker::checkoutNotify(git_checkout_notify_t why, const char *path)
 {
-    PullDialog *pdialog = static_cast< PullDialog * > ( pulldialog_ );
-    if( !pdialog ) {
-        return 1;
-    }
+    if ( is_pull ) {
+        PullDialog *pdialog = static_cast< PullDialog * > ( pulldialog_ );
+        if ( !pdialog ) {
+            return 1;
+        }
 
-    pdialog->addNotification( why, path );
+        pdialog->addNotification( why, path );
+    } else if ( is_checkout ) {
+        CheckoutDialog *cdialog = static_cast< CheckoutDialog * > ( checkoutdialog_ );
+        if ( !cdialog ) {
+            return 1;
+        }
+
+        cdialog->addNotification( why, path );
+    }
 
     return 0;
 }

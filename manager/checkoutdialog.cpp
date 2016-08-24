@@ -17,6 +17,11 @@ CheckoutDialog::~CheckoutDialog()
     delete ui;
 }
 
+void CheckoutDialog::addNotification( git_checkout_notify_t why, const QString & path )
+{
+
+}
+
 int CheckoutDialog::addBranch( const QString & name, const QString & sha_tip )
 {
     if( startBranches() ) {
