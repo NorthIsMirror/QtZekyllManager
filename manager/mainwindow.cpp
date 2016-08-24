@@ -41,6 +41,12 @@
 
 #define MessagesI Singleton<Messages>::instance()
 
+static QDebug operator<<(QDebug out, const std::string & str)
+{
+    out << QString::fromStdString(str);
+    return out;
+}
+
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
