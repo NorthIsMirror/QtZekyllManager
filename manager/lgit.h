@@ -107,6 +107,7 @@ public:
     int readLog( const QString & tip_sha, const QString & hide, bool equip = true );
     int listMergeHeads( std::vector<std::string> & output );
     int loadTags();
+    int checkout( const std::string & target, const std::string & tip_sha, bool is_branch, bool is_tag );
 
     AnalysisResult analysisResult() const { return analysisResult_; }
 

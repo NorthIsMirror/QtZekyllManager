@@ -836,6 +836,87 @@ int lgit::loadTags()
     return retval;
 }
 
+int lgit::checkout( const std::string & target, const std::string & tip_sha, bool is_branch, bool is_tag )
+{
+    int error, retval = 0;
+
+    // Check if tip_sha is up to date (provided that caller will call loadBranches())
+    if ( is_branch ) {
+        mybranch & branch = git_branches_.findSha( tip_sha.c_str() );
+        if( branch.invalid == INVALID_DUMMY || branch.is_in_fetch_head ) {
+            MessagesI.AppendMessageT( "Repository changed when dialog was open, please reopen it and try again" );
+            return 467;
+        }
+    }
+
+    // Open repo and continue with the checkout
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (14)" );
+        return retval + 1000000 * 89;
+    }
+
+    git_oid oid;
+    git_commit *new_tip_commit;
+
+    if ( ( error = git_oid_fromstr( &oid, tip_sha.c_str() ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Selected branch or tag has improper SHA, cannot checkout" ) );
+        retval += closeRepo();
+        return retval + 449 + ( 10000 * error * -1 );
+    }
+
+    // Find new tip commit, to be used as tree pointer in checkout
+    if ( ( error = git_commit_lookup( &new_tip_commit, repo_, &oid ) ) < 0 ) {
+        MessagesI.AppendMessageT( tr( "Selected branch or tag points to non-existent commit, cannot checkout" ) );
+        retval += closeRepo();
+        return retval + 457 + ( 10000 * error * -1 );
+    }
+
+    git_checkout_options checkout_options;
+
+    if ( ( error = git_checkout_init_options( &checkout_options, GIT_CHECKOUT_OPTIONS_VERSION ) ) < 0 ) {
+        git_commit_free( new_tip_commit );
+        MessagesI.AppendMessageT( tr( "Could not initialize checkout" ) );
+        retval += closeRepo();
+        return retval + 461 + ( 10000 * error * -1 );
+    }
+
+    checkout_options.notify_flags = GIT_CHECKOUT_NOTIFY_CONFLICT | GIT_CHECKOUT_NOTIFY_DIRTY |
+                                    GIT_CHECKOUT_NOTIFY_UPDATED | GIT_CHECKOUT_NOTIFY_UNTRACKED |
+                                    GIT_CHECKOUT_NOTIFY_IGNORED;
+    checkout_options.notify_payload = static_cast< void * >( op_tracker_ );
+    checkout_options.notify_cb = checkout_notify_cb;
+    checkout_options.checkout_strategy = GIT_CHECKOUT_FORCE;
+
+    if ( ( error = git_checkout_tree( repo_, (git_object *) new_tip_commit, &checkout_options ) ) < 0 ) {
+        git_commit_free( new_tip_commit );
+        const char *spec_error = giterr_last()->message;
+        MessagesI.AppendMessageT( "Checkout (2) failed with git error: " + QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error*-1 ) );
+        retval += closeRepo();
+        return retval + 463 + ( 10000 * error * -1 );
+    }
+
+    // Commit is never used from now on
+    git_commit_free( new_tip_commit );
+
+    std::string new_head;
+    if ( is_branch ) {
+        new_head = std::string( "refs/heads/" ) + target;
+    } else if ( is_tag ) {
+        new_head = std::string( "refs/tags/" ) + target;
+    }
+
+    if ( ( error = git_repository_set_head( repo_, new_head.c_str() ) ) < 0 ) {
+        const char *spec_error = giterr_last()->message;
+        MessagesI.AppendMessageT( QString( "Checkout incomplete: workdir updated, but HEAD wasn't moved (exit code: %1). Backend message: %2" )
+                                  .arg( error * -1 ).arg( QString::fromUtf8( spec_error ) ) );
+    }
+
+    retval += closeRepo();
+    return retval;
+}
+
 std::vector<std::string> lgit::gatherCheckoutOpDataForType( CheckoutOperationEvent type )
 {
     std::vector< std::string > accum;
