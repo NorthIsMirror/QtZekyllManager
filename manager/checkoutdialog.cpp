@@ -3,6 +3,22 @@
 
 #include <QFont>
 
+struct MyRefData {
+    QString name;
+    QString tip_sha;
+    bool is_branch;
+    bool is_tag;
+
+    MyRefData() : is_branch( false ), is_tag( false )
+    { }
+
+    MyRefData( const QString & _name, const QString & _tip_sha, bool _is_branch, bool _is_tag ) :
+        name( _name ), tip_sha( _tip_sha ), is_branch( _is_branch ), is_tag( _is_tag )
+    { }
+};
+
+Q_DECLARE_METATYPE( MyRefData );
+
 CheckoutDialog::CheckoutDialog( QWidget *parent ) :
     QDialog( parent ),
     inserting_branches_( false ),
@@ -22,7 +38,7 @@ void CheckoutDialog::addNotification( git_checkout_notify_t why, const QString &
 
 }
 
-int CheckoutDialog::addBranch( const QString & name, const QString & sha_tip )
+int CheckoutDialog::addBranch( const QString & name, const QString & tip_sha )
 {
     if( startBranches() ) {
         return 1;
@@ -30,12 +46,17 @@ int CheckoutDialog::addBranch( const QString & name, const QString & sha_tip )
 
     ui->list->addItem( name );
     int rows = ui->list->count();
-    ui->list->item( rows - 1 )->setToolTip( "<h3>" + sha_tip + "</h3>" );
+    QListWidgetItem *item = ui->list->item( rows - 1 );
+    item->setToolTip( "<h3>" + tip_sha + "</h3>" );
+
+    MyRefData refData( name, tip_sha, true, false );
+    QVariant vRefData = QVariant::fromValue( refData );
+    item->setData( Qt::UserRole, vRefData );
 
     return 0;
 }
 
-int CheckoutDialog::addTag( const QString & name, const QString & sha_tip )
+int CheckoutDialog::addTag( const QString & name, const QString & tip_sha )
 {
     if( startTags() ) {
         return 1;
@@ -43,7 +64,12 @@ int CheckoutDialog::addTag( const QString & name, const QString & sha_tip )
 
     ui->list->addItem( name );
     int rows = ui->list->count();
-    ui->list->item( rows - 1 )->setToolTip( "<h3>" + sha_tip + "</h3>" );
+    QListWidgetItem *item = ui->list->item( rows - 1 );
+    item->setToolTip( "<h3>" + tip_sha + "</h3>" );
+
+    MyRefData refData( name, tip_sha, false, true );
+    QVariant vRefData = QVariant::fromValue( refData );
+    item->setData( Qt::UserRole, vRefData );
 
     return 0;
 }
