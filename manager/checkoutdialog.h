@@ -5,6 +5,7 @@
 
 #include <QString>
 #include <QDialog>
+#include <QAbstractButton>
 
 #include "git2.h"
 #include "git2/checkout.h"
@@ -26,6 +27,10 @@ public:
     int addTag( const QString & name, const QString & tip_sha );
 
     void setLGit( lgit *_lgit ) { lgit_ = _lgit; }
+
+private slots:
+    void on_buttonBox_clicked( QAbstractButton *button );
+
 private:
     int addNonselectable( const QString & title );
     int startBranches();

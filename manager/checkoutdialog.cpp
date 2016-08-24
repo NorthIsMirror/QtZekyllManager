@@ -2,6 +2,8 @@
 #include "ui_checkoutdialog.h"
 
 #include <QFont>
+#include <QPushButton>
+#include <QDebug>
 
 struct MyRefData {
     QString name;
@@ -26,6 +28,7 @@ CheckoutDialog::CheckoutDialog( QWidget *parent ) :
     ui( new Ui::CheckoutDialog )
 {
     ui->setupUi( this );
+    ui->label->setText( "" );
 }
 
 CheckoutDialog::~CheckoutDialog()
@@ -120,4 +123,27 @@ int CheckoutDialog::startTags()
     inserting_tags_ = true;
 
     return 0;
+}
+
+void CheckoutDialog::on_buttonBox_clicked( QAbstractButton *button )
+{
+    int error;
+
+    if( button == static_cast< QAbstractButton * > ( ui->buttonBox->button( QDialogButtonBox::Apply ) ) ) {
+        if ( ui->list->selectedItems().count() == 0 ) {
+            ui->label->setText( tr("No branch or tag selected") );
+        } else {
+            QListWidgetItem *item = ui->list->selectedItems().first();
+            MyRefData refData = item->data( Qt::UserRole ).value<MyRefData>();
+
+            // Refresh branches to allow right-before-action verification of tip sha
+            lgit_->loadBranches( BRANCH_LOCAL );
+
+            if( ( error = lgit_->checkout( refData.name.toStdString(), refData.tip_sha.toStdString(), refData.is_branch, refData.is_tag ) ) > 0 ) {
+                ui->label->setText( tr( "Problems with checkout, error code: %1" ).arg( error ) );
+            } else {
+                ui->label->setText( tr( "Checkout successful" ) );
+            }
+        }
+    }
 }
