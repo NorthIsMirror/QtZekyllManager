@@ -529,7 +529,6 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
     if ( ( error = git_checkout_init_options( &checkout_options, GIT_CHECKOUT_OPTIONS_VERSION ) ) < 0 ) {
         git_commit_free( new_tip_commit );
         MessagesI.AppendMessageT( tr( "Could not initialize checkout, cannot fast-forward" ) );
-        analysisResult_ = ANALYSIS_ERROR;
         retval += closeRepo();
         return retval + 263 + ( 10000 * error * -1 );
     }
