@@ -27,6 +27,7 @@
 #include "commitdialog.h"
 #include "zmeditor.h"
 #include "pulldialog.h"
+#include "checkoutdialog.h"
 
 #include <QMap>
 #include <QDir>
@@ -1869,3 +1870,25 @@ void MainWindow::contextMenuEvent( QContextMenuEvent *event )
     }
 }
 #endif // QT_NO_CONTEXTMENU
+
+void MainWindow::on_gitCheckout_clicked()
+{
+    CheckoutDialog *dialog = new CheckoutDialog();
+    lgit_->loadBranches( BRANCH_LOCAL );
+    lgit_->loadTags();
+
+    for ( std::vector< mybranch >::const_iterator it = lgit_->raw_branches().begin(); it != lgit_->raw_branches().end(); ++ it ) {
+        if( it->is_in_fetch_head ) {
+            continue;
+        }
+        dialog->addBranch( QString::fromStdString( it->name ), QString::fromStdString( it->tip_sha ) );
+    }
+
+    for ( std::vector< mytag >::const_iterator it = lgit_->raw_tags().begin(); it != lgit_->raw_tags().end(); ++ it ) {
+        dialog->addTag( QString::fromStdString( it->name ), QString::fromStdString( it->targetSha ) );
+    }
+
+    dialog->exec();
+
+    delete dialog;
+}

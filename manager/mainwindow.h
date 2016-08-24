@@ -202,6 +202,8 @@ private slots:
 
     void edit_zekyll();
 
+    void on_gitCheckout_clicked();
+
 public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();
