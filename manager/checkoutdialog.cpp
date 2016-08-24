@@ -38,7 +38,48 @@ CheckoutDialog::~CheckoutDialog()
 
 void CheckoutDialog::addNotification( git_checkout_notify_t why, const QString & path )
 {
+    QTableWidgetItem *item1;
 
+    if ( why == GIT_CHECKOUT_NOTIFY_NONE ) {
+            return;
+    }
+
+    if ( ui->stackedWidget->currentIndex() != 1 ) {
+        ui->stackedWidget->setCurrentIndex( 1 );
+    }
+
+    switch( why ) {
+    case GIT_CHECKOUT_NOTIFY_CONFLICT:
+        item1 = new QTableWidgetItem( "Conflict" );
+        item1->setBackground( Qt::yellow );
+        break;
+    case GIT_CHECKOUT_NOTIFY_DIRTY:
+        item1 = new QTableWidgetItem( "Dirty" );
+        item1->setBackground( Qt::red );
+        break;
+    case GIT_CHECKOUT_NOTIFY_UPDATED:
+        item1 = new QTableWidgetItem( "Updated" );
+        item1->setBackground( Qt::green );
+        break;
+    case GIT_CHECKOUT_NOTIFY_UNTRACKED:
+        item1 = new QTableWidgetItem( "Untracked" );
+        break;
+    case GIT_CHECKOUT_NOTIFY_IGNORED:
+        item1 = new QTableWidgetItem( "Ignored" );
+        item1->setForeground( Qt::blue );
+        break;
+    default:
+        item1 = new QTableWidgetItem( "" );
+        break;
+    }
+
+    QTableWidgetItem *item2 = new QTableWidgetItem( path );
+
+    int row = ui->table->rowCount();
+    ui->table->insertRow(row);
+
+    ui->table->setItem( row, 0, item1 );
+    ui->table->setItem( row, 1, item2 );
 }
 
 int CheckoutDialog::addBranch( const QString & name, const QString & tip_sha )
@@ -135,6 +176,9 @@ void CheckoutDialog::on_buttonBox_clicked( QAbstractButton *button )
         } else {
             QListWidgetItem *item = ui->list->selectedItems().first();
             MyRefData refData = item->data( Qt::UserRole ).value<MyRefData>();
+
+            // Clear notifications table
+            ui->table->setRowCount( 0 );
 
             // Refresh branches to allow right-before-action verification of tip sha
             lgit_->loadBranches( BRANCH_LOCAL );
