@@ -1848,6 +1848,7 @@ void MainWindow::on_gitPull_clicked()
     op_tracker_.setPullDialog( pullDialog );
     error = pullDialog->reset();
     pullDialog->exec();
+    delete pullDialog;
 }
 
 void MainWindow::edit_zekyll()
