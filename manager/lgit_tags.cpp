@@ -145,6 +145,13 @@ int lgit_tags::list( git_repository *repo )
             break;
         }
 
+        // Remove "refs/tags/" from the tag name
+        QStringList parts = QString::fromStdString( newtag.name ).split( "/", QString::SkipEmptyParts );
+        if ( parts.count() != 3 ) {
+            MessagesI.AppendMessageT( QString( "Unexpected tag reference occured: %1" ).arg( QString::fromStdString( newtag.name ) ) );
+        }
+        newtag.name = parts.last().toStdString();
+
         tags_.push_back( newtag );
     }
 
