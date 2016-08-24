@@ -1881,6 +1881,7 @@ void MainWindow::on_gitCheckout_clicked()
 
     op_tracker_.setCheckoutDialog( dialog );
 
+    dialog->setLGit( lgit_ );
     lgit_->loadBranches( BRANCH_LOCAL );
     lgit_->loadTags();
 

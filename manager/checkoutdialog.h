@@ -1,6 +1,8 @@
 #ifndef CHECKOUTDIALOG_H
 #define CHECKOUTDIALOG_H
 
+#include "lgit.h"
+
 #include <QString>
 #include <QDialog>
 
@@ -23,6 +25,7 @@ public:
     int addBranch( const QString & name, const QString & sha_tip );
     int addTag( const QString & name, const QString & sha_tip );
 
+    void setLGit( lgit *_lgit ) { lgit_ = _lgit; }
 private:
     int addNonselectable( const QString & title );
     int startBranches();
@@ -30,6 +33,8 @@ private:
 
     bool inserting_branches_;
     bool inserting_tags_;
+
+    lgit *lgit_;
 
     Ui::CheckoutDialog *ui;
 };
