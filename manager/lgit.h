@@ -23,6 +23,7 @@
 #include "lgit_current.h"
 #include "lgit_remotes.h"
 #include "lgit_log.h"
+#include "lgit_tags.h"
 
 #include <tuple>
 
@@ -105,6 +106,7 @@ public:
     int listRemotes();
     int readLog( const QString & tip_sha, const QString & hide, bool equip = true );
     int listMergeHeads( std::vector<std::string> & output );
+    int loadTags();
 
     AnalysisResult analysisResult() const { return analysisResult_; }
 
@@ -127,6 +129,9 @@ public:
 
     const lgit_log & log() const { return git_log_; }
     const std::vector< log_entry > & raw_log() const { return git_log_.raw_log(); }
+
+    const lgit_tags & tags() const { return git_tags_; }
+    const std::vector< mytag > & raw_tags() const { return git_tags_.raw_tags(); }
 
     GitOperationTracker *opTracker() { return op_tracker_; }
     void setOpTracker( GitOperationTracker *op_tracker ) { op_tracker_ = op_tracker; }
@@ -164,6 +169,7 @@ private:
     lgit_current git_current_;
     lgit_remotes git_remotes_;
     lgit_log git_log_;
+    lgit_tags git_tags_;
 };
 
 #endif // LGIT_H

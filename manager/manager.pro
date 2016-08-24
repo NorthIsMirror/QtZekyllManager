@@ -36,7 +36,8 @@ SOURCES += main.cpp \
     lgit_remotes.cpp \
     lgit_log.cpp \
     gitoperationtracker.cpp \
-    external_functions.cpp
+    external_functions.cpp \
+    lgit_tags.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -64,7 +65,8 @@ HEADERS  += mainwindow.h \
     lgit_remotes.h \
     lgit_log.h \
     gitoperationtracker.h \
-    external_functions.h
+    external_functions.h \
+    lgit_tags.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \

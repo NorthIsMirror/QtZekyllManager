@@ -818,6 +818,24 @@ int lgit::listMergeHeads( std::vector<std::string> & output )
     return retval;
 }
 
+int lgit::loadTags()
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (13)" );
+        return retval + 1000000 * 83;
+    }
+
+    git_tags_.clear();
+    retval += git_tags_.list( repo_ );
+
+    retval += closeRepo();
+    return retval;
+}
+
 std::vector<std::string> lgit::gatherCheckoutOpDataForType( CheckoutOperationEvent type )
 {
     std::vector< std::string > accum;
