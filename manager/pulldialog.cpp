@@ -22,10 +22,13 @@
 #include "messages.h"
 #include "commitdialog.h"
 
+#include <cmath>
+
 #include <QVariant>
 #include <QMessageBox>
 #include <QTableWidgetItem>
 #include <QTableWidget>
+#include <QCoreApplication>
 #include <QDebug>
 
 #define MessagesI Singleton<Messages>::instance()
@@ -39,6 +42,8 @@ static QDebug operator<< ( QDebug out, const std::string & str )
 PullDialog::PullDialog( QWidget *parent ) :
     QDialog( parent ),
     table_has_notifications_( false ),
+    progressShown_( false ),
+    pwidget_( 0 ),
     ui( new Ui::PullDialog )
 {
     ui->setupUi(this);
@@ -56,6 +61,8 @@ PullDialog::PullDialog( QWidget *parent ) :
 
     ui->verticalLayout->setAlignment( Qt::AlignTop );
     ui->verticalLayout->setSpacing( 0 );
+
+    pwidget_ = new ProgressWidget( this );
 }
 
 PullDialog::~PullDialog()
@@ -454,6 +461,24 @@ void PullDialog::addNotification( git_checkout_notify_t why, const QString &path
     ui->tableWidget->setItem( row, 1, item2 );
 }
 
+void PullDialog::updateProgress( double progress )
+{
+    pwidget_->upd( progress );
+
+    if( !progressShown_ ) {
+        pwidget_->show();
+        pwidget_->raise();
+        progressShown_ = true;
+    }
+
+    if( fabs( progress - 1.0 ) < 0.05 ) {
+        pwidget_->hide();
+        progressShown_ = false;
+    }
+
+    QCoreApplication::processEvents();
+}
+
 void PullDialog::on_fetchHeadCombo_activated( int index )
 {
     reset();
@@ -474,7 +499,11 @@ void PullDialog::on_fetchBranch_clicked()
     QString branchArg = QString::fromStdString( b.name );
     QString remoteArg = QString::fromStdString( r.name );
 
+    updateProgress( 0.05 );
+
     int error = lgit_->fetchBranch( branchArg, remoteArg );
+
+    updateProgress( 1.0 );
 
     reset();
 }
@@ -491,7 +520,9 @@ void PullDialog::on_fetchAll_clicked()
     const myremote & remote = lgit_->remotes().entry( idx );
 
     if( remote.name != "-" ) {
+        updateProgress( 0.05 );
         int error = lgit_->fetchBranch( "", QString::fromStdString( remote.name ) );
+        updateProgress( 1.0 );
     } else {
         MessagesI.AppendMessageT( "Could not find selected remote, cannot fetch" );
         return;
@@ -514,7 +545,11 @@ void PullDialog::on_fetchURL_clicked()
         branch = "master";
     }
 
+    updateProgress( 0.05 );
+
     int error = lgit_->fetchBranch( branch, url );
+
+    updateProgress( 1.0 );
 
     reset();
 }

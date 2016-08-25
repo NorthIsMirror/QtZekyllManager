@@ -21,6 +21,7 @@
 #include "lgit.h"
 #include "lgit_branches.h"
 #include "lgit_current.h"
+#include "progresswidget.h"
 
 #include <QDialog>
 
@@ -45,6 +46,7 @@ public:
     int logOfTip( QString sha, QString branch );
     void runCommitDialog( const std::string & msg, bool usem, const std::string & parent1, bool use1, const std::string & parent2 , bool use2 );
     void addNotification( git_checkout_notify_t why, const QString & path );
+    void updateProgress( double progress );
 
 private slots:
     void on_fetchHeadCombo_activated(int index);
@@ -63,6 +65,9 @@ private:
     lgit_current *lgit_current_;
 
     bool table_has_notifications_;
+
+    bool progressShown_;
+    ProgressWidget *pwidget_;
 
     Ui::PullDialog *ui;
 };

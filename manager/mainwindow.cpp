@@ -1843,7 +1843,7 @@ void MainWindow::on_gitPull_clicked()
 {
     int error;
 
-    PullDialog *pullDialog = new PullDialog();
+    PullDialog *pullDialog = new PullDialog( this );
     pullDialog->setLGit( lgit_ );
     op_tracker_.setPullDialog( pullDialog );
     error = pullDialog->reset();

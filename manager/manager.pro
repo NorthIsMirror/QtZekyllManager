@@ -38,7 +38,8 @@ SOURCES += main.cpp \
     gitoperationtracker.cpp \
     external_functions.cpp \
     checkoutdialog.cpp \
-    lgit_tags.cpp
+    lgit_tags.cpp \
+    progresswidget.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -68,14 +69,16 @@ HEADERS  += mainwindow.h \
     gitoperationtracker.h \
     external_functions.h \
     checkoutdialog.h \
-    lgit_tags.h
+    lgit_tags.h \
+    progresswidget.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \
     closewithoutsavingdialog.ui \
     commitdialog.ui \
     pulldialog.ui \
-    checkoutdialog.ui
+    checkoutdialog.ui \
+    progresswidget.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libgit2/release/ -lgit2
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libgit2/debug/ -lgit2

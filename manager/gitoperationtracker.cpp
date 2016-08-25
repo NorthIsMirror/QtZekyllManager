@@ -35,6 +35,7 @@ int GitOperationTracker::updateFetchProgress( double progress )
         if ( !pdialog ) {
             return 1;
         }
+        pdialog->updateProgress( progress );
     }
 
     return 0;
