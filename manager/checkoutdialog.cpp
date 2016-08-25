@@ -25,6 +25,7 @@ CheckoutDialog::CheckoutDialog( QWidget *parent ) :
     QDialog( parent ),
     inserting_branches_( false ),
     inserting_tags_( false ),
+    lgit_( 0 ),
     ui( new Ui::CheckoutDialog )
 {
     ui->setupUi( this );
@@ -171,6 +172,10 @@ void CheckoutDialog::on_buttonBox_clicked( QAbstractButton *button )
     int error;
 
     if( button == static_cast< QAbstractButton * > ( ui->buttonBox->button( QDialogButtonBox::Apply ) ) ) {
+        if ( !lgit_ ) {
+            return;
+        }
+
         if ( ui->list->selectedItems().count() == 0 ) {
             ui->label->setText( tr("No branch or tag selected") );
         } else {
