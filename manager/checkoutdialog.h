@@ -25,6 +25,7 @@ public:
     void addNotification( git_checkout_notify_t why, const QString & path );
     int addBranch( const QString & name, const QString & tip_sha );
     int addTag( const QString & name, const QString & tip_sha );
+    void setCurrent( const QString & current );
 
     void setLGit( lgit *_lgit ) { lgit_ = _lgit; }
 
@@ -38,6 +39,8 @@ private:
 
     bool inserting_branches_;
     bool inserting_tags_;
+
+    QString current_;
 
     lgit *lgit_;
 

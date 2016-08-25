@@ -1891,6 +1891,21 @@ void MainWindow::on_gitCheckout_clicked()
     dialog->setLGit( lgit_ );
     lgit_->loadBranches( BRANCH_LOCAL );
     lgit_->loadTags();
+    lgit_->establishCurrent();
+
+    switch( lgit_->current().type() ) {
+    case CURRENT_TYPE_BRANCH:
+        dialog->setCurrent( QString::fromStdString( lgit_->current().branch() ) );
+        break;
+    case CURRENT_TYPE_TAG:
+        dialog->setCurrent( QString::fromStdString( lgit_->current().tag() ) );
+        break;
+    case CURRENT_TYPE_OID:
+        dialog->setCurrent( QString::fromStdString( lgit_->current().oid() ).left( 7 ) );
+        break;
+    default:
+        break;
+    }
 
     for ( std::vector< mybranch >::const_iterator it = lgit_->raw_branches().begin(); it != lgit_->raw_branches().end(); ++ it ) {
         if( it->is_in_fetch_head ) {

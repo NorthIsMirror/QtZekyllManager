@@ -119,6 +119,12 @@ int CheckoutDialog::addTag( const QString & name, const QString & tip_sha )
     return 0;
 }
 
+void CheckoutDialog::setCurrent( const QString & current )
+{
+    current_ = current;
+    ui->currentLabel->setText( tr( "Current HEAD: " ) + current );
+}
+
 int CheckoutDialog::addNonselectable( const QString & title )
 {
     QListWidgetItem *item = new QListWidgetItem( title );
@@ -190,8 +196,10 @@ void CheckoutDialog::on_buttonBox_clicked( QAbstractButton *button )
 
             if( ( error = lgit_->checkout( refData.name.toStdString(), refData.tip_sha.toStdString(), refData.is_branch, refData.is_tag ) ) > 0 ) {
                 ui->label->setText( tr( "Problems with checkout, error code: %1" ).arg( error ) );
+                ui->currentLabel->setText( tr( "Current HEAD: unknown" ) );
             } else {
                 ui->label->setText( tr( "Checkout successful" ) );
+                ui->currentLabel->setText( tr( "Current HEAD: " ) + refData.name );
             }
         }
     }
