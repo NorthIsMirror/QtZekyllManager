@@ -328,10 +328,10 @@ int PullDialog::logOfTip( QString sha, QString hide )
         item2->setTextAlignment( Qt::AlignLeft | Qt::AlignVCenter );
         item3->setTextAlignment( Qt::AlignLeft | Qt::AlignVCenter );
 
-        item1->setToolTip( QString::fromStdString( entry.diff_data_summary_html() ) );
-        item2->setToolTip( QString::fromStdString( entry.diff_data_summary_html() ) );
-        item3->setToolTip( QString::fromStdString( entry.diff_data_summary_html() ) );
-
+        QString summary = QString::fromStdString( entry.diff_data_summary_html() );
+        item1->setToolTip( summary );
+        item2->setToolTip( summary );
+        item3->setToolTip( summary );
 
         int row = ui->tableWidget->rowCount();
         ui->tableWidget->insertRow(row);
