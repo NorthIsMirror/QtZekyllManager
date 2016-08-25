@@ -1573,7 +1573,7 @@ bool MainWindow::setCurrentIndexInZcode()
 
 void MainWindow::writeSettings()
 {
-    QSettings settings( "qtzekyllman.ini", QSettings::IniFormat );
+    QSettings settings( "qtzekyllmgr.ini", QSettings::IniFormat );
 
     settings.beginGroup( "Main" );
     settings.setValue( "size", size() );
@@ -1586,7 +1586,7 @@ void MainWindow::writeSettings()
 
 void MainWindow::readSettings()
 {
-    QSettings settings( "qtzekyllman.ini", QSettings::IniFormat );
+    QSettings settings( "qtzekyllmgr.ini", QSettings::IniFormat );
 
     settings.beginGroup("Main");
     resize( settings.value( "size", QSize(800, 700) ).toSize() );
