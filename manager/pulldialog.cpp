@@ -63,6 +63,9 @@ PullDialog::PullDialog( QWidget *parent ) :
     ui->verticalLayout->setSpacing( 0 );
 
     pwidget_ = new ProgressWidget( this );
+
+    table_has_notifications_ = true;
+    switchTableToLog();
 }
 
 PullDialog::~PullDialog()
@@ -276,6 +279,10 @@ int PullDialog::switchTableToLog()
     ui->tableWidget->setRowCount( 0 );
     ui->tableWidget->setColumnCount( 3 );
     ui->tableWidget->verticalHeader()->setDefaultSectionSize( 50 );
+    QStringList labels;
+    labels << tr( "ID" ) << tr( "Author" ) << tr( "Message" );
+    ui->tableWidget->horizontalHeader()->setVisible( true );
+    ui->tableWidget->setHorizontalHeaderLabels( labels );
 
     return 0;
 }
