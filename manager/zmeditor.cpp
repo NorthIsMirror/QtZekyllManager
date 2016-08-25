@@ -17,9 +17,12 @@
 
 #include "zmeditor.h"
 #include "ui_zmeditor.h"
+
 #include "closewithoutsavingdialog.h"
+
 #include <QFile>
 #include <QColor>
+
 #include "Qsci/qscilexerbatch.h"
 #include "Qsci/qscilexermakefile.h"
 #include "Qsci/qscilexertex.h"
@@ -31,6 +34,7 @@ ZMEditor::ZMEditor(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setAttribute( Qt::WA_DeleteOnClose );
 
     font_.setFamily( "Courier" );
     font_.setFixedPitch( true );
@@ -64,6 +68,9 @@ ZMEditor::ZMEditor(QWidget *parent) :
 
 ZMEditor::~ZMEditor()
 {
+    delete lexer_[2];
+    delete lexer_[1];
+    delete lexer_[0];
     delete ui;
 }
 

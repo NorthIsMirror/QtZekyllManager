@@ -163,6 +163,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete editAct;
     delete lgit_;
     delete git_;
     delete zkrewrite_;
@@ -1827,9 +1828,10 @@ void MainWindow::on_gitCommit_clicked()
         lgit_->setEmail( dialog->email() );
     }
 
-    error = lgit_->commit( dialog->commitMessage() );
-
+    QString message = dialog->commitMessage();
     delete dialog;
+
+    error = lgit_->commit( message );
 
     if( error == 0 ) {
         MessagesI.AppendMessageT( QString("Successfully performed git commit on repository") + " <b>" + current_repo_ + "</b>" );
@@ -1880,7 +1882,7 @@ void MainWindow::contextMenuEvent( QContextMenuEvent *event )
 
 void MainWindow::on_gitCheckout_clicked()
 {
-    CheckoutDialog *dialog = new CheckoutDialog();
+    CheckoutDialog *dialog = new CheckoutDialog( this );
     if( !dialog ) {
         MessagesI.AppendMessageT( "Internal error occured (C++ new failed)" );
         return;
