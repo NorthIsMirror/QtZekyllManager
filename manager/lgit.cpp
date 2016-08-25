@@ -130,7 +130,7 @@ int lgit::hardReset()
         retval += 67 + (10000 * error * -1);
     }
     if( error < 0 ) {
-        closeRepo();
+        retval += closeRepo();
         return retval;
     }
 
@@ -138,7 +138,7 @@ int lgit::hardReset()
     if( error < 0 ) {
         MessagesI.AppendMessageT( QString( "Git backend error (2) – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
         retval += 73 + (10000 * error * -1);
-        closeRepo();
+        retval += closeRepo();
         return retval;
     }
 
@@ -147,7 +147,7 @@ int lgit::hardReset()
         MessagesI.AppendMessageT( QString( "Git backend error (3) – \"%1\"" ).arg( decode_libgit2_error_code( error ) ) );
         retval += 83 + (10000 * error * -1);
         git_commit_free( target );
-        closeRepo();
+        retval += closeRepo();
         return retval;
     }
 
@@ -419,6 +419,7 @@ int lgit::fetchBranch( const QString & branch , const QString & from ) {
         if ( refspec_cstr ) {
             delete [] refspec_cstr;
         }
+        retval += closeRepo();
         return retval;
     }
 
@@ -456,13 +457,15 @@ int lgit::analyzeMerge( const std::string &, const std::string & tip_sha )
     if ( ( error = git_oid_fromstr( &their_oids[0], tip_sha.c_str() ) ) < 0 ) {
         MessagesI.AppendMessageT( tr( "FETCH_HEAD contained improper SHA, cannot merge" ) );
         analysisResult_ = ANALYSIS_ERROR;
-        return 229 + ( 10000 * error * -1 );
+        retval += closeRepo();
+        return retval + 229 + ( 10000 * error * -1 );
     }
 
     if ( ( error = git_annotated_commit_lookup( &their_heads[0], repo_, &their_oids[0] ) ) < 0 ) {
         MessagesI.AppendMessageT( tr( "FETCH_HEAD contained improper OID, cannot merge" ) );
         analysisResult_ = ANALYSIS_ERROR;
-        return 233 + ( 10000 * error * -1 );
+        retval += closeRepo();
+        return retval + 233 + ( 10000 * error * -1 );
     }
 
     git_merge_analysis_t manalysis;
@@ -471,7 +474,9 @@ int lgit::analyzeMerge( const std::string &, const std::string & tip_sha )
     if ( ( error = git_merge_analysis( &manalysis, &mpreference, repo_, (const git_annotated_commit **) their_heads, 1 ) ) < 0 ) {
         MessagesI.AppendMessageT( tr( "Could not analyze merge, error code: %1" ).arg( error * -1 ) );
         analysisResult_ = ANALYSIS_ERROR;
-        return 239 + ( 10000 * error * -1 );
+        git_annotated_commit_free( their_heads[0] );
+        retval += closeRepo();
+        return retval + 239 + ( 10000 * error * -1 );
     }
 
     unsigned int result = ANALYSIS_EMPTY;
@@ -493,6 +498,7 @@ int lgit::analyzeMerge( const std::string &, const std::string & tip_sha )
 
     analysisResult_ = static_cast< AnalysisResult > ( result );
 
+    git_annotated_commit_free( their_heads[0] );
     retval += closeRepo();
     return retval;
 }
@@ -527,8 +533,8 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
     git_checkout_options checkout_options;
 
     if ( ( error = git_checkout_init_options( &checkout_options, GIT_CHECKOUT_OPTIONS_VERSION ) ) < 0 ) {
-        git_commit_free( new_tip_commit );
         MessagesI.AppendMessageT( tr( "Could not initialize checkout, cannot fast-forward" ) );
+        git_commit_free( new_tip_commit );
         retval += closeRepo();
         return retval + 263 + ( 10000 * error * -1 );
     }
@@ -551,14 +557,15 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
         break;
     default:
         MessagesI.AppendMessageT( "Internal error on checkout, could not determine checkout type" );
+        git_commit_free( new_tip_commit );
         retval += closeRepo();
         return retval + 269 + ( 10000 * error * -1 );
     }
 
     if ( ( error = git_checkout_tree( repo_, (git_object *) new_tip_commit, &checkout_options ) ) < 0 ) {
-        git_commit_free( new_tip_commit );
         const char *spec_error = giterr_last()->message;
         MessagesI.AppendMessageT( "Checkout failed with git error: " + QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error*-1 ) );
+        git_commit_free( new_tip_commit );
         retval += closeRepo();
         return retval + 271 + ( 10000 * error * -1 );
     }
@@ -581,10 +588,10 @@ int lgit::fastForwardSha( const std::string & target_branch, const std::string &
     }
 
     if ( ( error = git_reference_set_target( &new_branch_reference, branch_reference, &oid, "merge: Fast-forward" ) ) < 0 ) {
-        git_reference_free( branch_reference );
         const char *spec_error = giterr_last()->message;
         MessagesI.AppendMessageT( "Fast-forward failed with git error (2): " + QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error*-1 ) +
                                   "Working tree has the new expected state, however libgit2 didn't update meta-data (i.e. the branch reference)" );
+        git_reference_free( branch_reference );
         retval += closeRepo();
         return retval + 281 + ( 10000 * error * -1 );
     }
@@ -843,7 +850,7 @@ int lgit::checkout( const std::string & target, const std::string & tip_sha, boo
     if ( is_branch ) {
         mybranch & branch = git_branches_.findSha( tip_sha.c_str() );
         if( branch.invalid == INVALID_DUMMY || branch.is_in_fetch_head ) {
-            MessagesI.AppendMessageT( "Repository changed when dialog was open, please reopen it and try again" );
+            MessagesI.AppendMessageT( "Repository changed when dialog was open, please reopen and try again" );
             return 467;
         }
     }
@@ -875,8 +882,8 @@ int lgit::checkout( const std::string & target, const std::string & tip_sha, boo
     git_checkout_options checkout_options;
 
     if ( ( error = git_checkout_init_options( &checkout_options, GIT_CHECKOUT_OPTIONS_VERSION ) ) < 0 ) {
-        git_commit_free( new_tip_commit );
         MessagesI.AppendMessageT( tr( "Could not initialize checkout" ) );
+        git_commit_free( new_tip_commit );
         retval += closeRepo();
         return retval + 461 + ( 10000 * error * -1 );
     }
@@ -889,9 +896,9 @@ int lgit::checkout( const std::string & target, const std::string & tip_sha, boo
     checkout_options.checkout_strategy = GIT_CHECKOUT_FORCE;
 
     if ( ( error = git_checkout_tree( repo_, (git_object *) new_tip_commit, &checkout_options ) ) < 0 ) {
-        git_commit_free( new_tip_commit );
         const char *spec_error = giterr_last()->message;
         MessagesI.AppendMessageT( "Checkout (2) failed with git error: " + QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error*-1 ) );
+        git_commit_free( new_tip_commit );
         retval += closeRepo();
         return retval + 463 + ( 10000 * error * -1 );
     }

@@ -105,7 +105,7 @@ int lgit_log::log_of_tip( git_repository *repo, const std::string & sha, const s
     while ( ( error2 = git_revwalk_next( &outid, walk ) ) == 0 ) {
         git_commit *commit;
         if ( ( error = git_commit_lookup( &commit, repo, &outid ) ) < 0 ) {
-            MessagesI.AppendMessageT( "Unable to lookup commit" );
+            MessagesI.AppendMessageT( "Unable to lookup commit (when reading log)" );
             continue;
         }
 
@@ -144,6 +144,7 @@ int lgit_log::log_of_tip( git_repository *repo, const std::string & sha, const s
 
         entries_.push_back( newentry );
 
+        git_commit_free( commit );
         // qDebug() << newentry.sha << newentry.author << newentry.message;
     }
 
