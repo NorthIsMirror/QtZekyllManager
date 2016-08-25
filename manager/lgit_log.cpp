@@ -178,6 +178,8 @@ int lgit_log::equip_with_diff_data_single( git_repository *repo, log_entry & fir
         return 379 + ( 10000 * error * -1 );
     }
 
+    diffopts.context_lines = 2;
+
     if ( ( error = git_diff_find_init_options( &findopts, GIT_DIFF_FIND_OPTIONS_VERSION ) ) < 0 ) {
         MessagesI.AppendMessageT( "Could not initialize diff (find)" );
         return 383 + ( 10000 * error * -1 );
