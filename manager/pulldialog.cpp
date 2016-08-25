@@ -292,6 +292,7 @@ int PullDialog::switchTableToNotifications()
     ui->tableWidget->setRowCount( 0 );
     ui->tableWidget->setColumnCount( 2 );
     ui->tableWidget->verticalHeader()->setDefaultSectionSize( 32 );
+    ui->tableWidget->horizontalHeader()->setVisible( false );
 
     return 0;
 }
