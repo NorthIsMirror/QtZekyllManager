@@ -18,4 +18,6 @@ void StatusDialog::setText( const QString & richText )
     richText_ = richText;
     ui->textEdit->document()->clear();
     ui->textEdit->appendHtml( richText );
+    ui->textEdit->moveCursor( QTextCursor::Start );
+    ui->textEdit->ensureCursorVisible();
 }
