@@ -28,6 +28,7 @@
 #include "zmeditor.h"
 #include "pulldialog.h"
 #include "checkoutdialog.h"
+#include "statusdialog.h"
 
 #include <QMap>
 #include <QDir>
@@ -1923,4 +1924,13 @@ void MainWindow::on_gitCheckout_clicked()
     dialog->exec();
 
     delete dialog;
+}
+
+void MainWindow::on_gitStatus_clicked()
+{
+    StatusDialog *sdialog = new StatusDialog( this );
+    lgit_->doStatus();
+    sdialog->setText( QString::fromStdString( lgit_->status_summary() ) );
+    sdialog->exec();
+    sdialog->deleteLater();
 }

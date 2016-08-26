@@ -109,6 +109,7 @@ public:
     int listMergeHeads( std::vector<std::string> & output );
     int loadTags();
     int checkout( const std::string & target, const std::string & tip_sha, bool is_branch, bool is_tag );
+    int doStatus();
 
     AnalysisResult analysisResult() const { return analysisResult_; }
 
@@ -134,6 +135,9 @@ public:
 
     const lgit_tags & tags() const { return git_tags_; }
     const std::vector< mytag > & raw_tags() const { return git_tags_.raw_tags(); }
+
+    const lgit_status & status() const { return git_status_; }
+    const std::string & status_summary() const { return git_status_.status_summary(); }
 
     GitOperationTracker *opTracker() { return op_tracker_; }
     void setOpTracker( GitOperationTracker *op_tracker ) { op_tracker_ = op_tracker; }

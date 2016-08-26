@@ -923,6 +923,23 @@ int lgit::checkout( const std::string & target, const std::string & tip_sha, boo
     return retval;
 }
 
+int lgit::doStatus()
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (15)" );
+        return retval + 1000000 * 97;
+    }
+
+    retval += git_status_.status( repo_ );
+
+    retval += closeRepo();
+    return retval;
+}
+
 std::vector<std::string> lgit::gatherCheckoutOpDataForType( CheckoutOperationEvent type )
 {
     std::vector< std::string > accum;
