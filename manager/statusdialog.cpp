@@ -6,6 +6,7 @@ StatusDialog::StatusDialog( QWidget *parent ) :
     ui( new Ui::StatusDialog )
 {
     ui->setupUi( this );
+    ui->textEdit->setReadOnly( true );
 }
 
 StatusDialog::~StatusDialog()
