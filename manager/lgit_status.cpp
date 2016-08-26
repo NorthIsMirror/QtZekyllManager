@@ -150,68 +150,68 @@ const std::string & lgit_status::status_summary() const
         return status_text_;
     }
 
-    output << "<b>Staged changes:</b>" << std::endl;
+    output << "<b>Staged changes:</b>" << "<br/>" << std::endl;
 
     for ( std::vector< std::string > :: const_iterator it = additions_idx_.begin(); it != additions_idx_.end(); ++ it ) {
-        output << "new file: " << *it << std::endl;
+        output << "new file: " << *it << "<br/>" << std::endl;
     }
 
     for ( std::vector< std::string > :: const_iterator it = modifications_idx_.begin(); it != modifications_idx_.end(); ++ it ) {
-        output << "modified: " << *it << std::endl;
+        output << "modified: " << *it << "<br/>" << std::endl;
     }
 
     for ( std::vector< std::string > :: const_iterator it = deletions_idx_.begin(); it != deletions_idx_.end(); ++ it ) {
-        output << "deleted: " << *it << std::endl;
+        output << "deleted: " << *it << "<br/>" << std::endl;
     }
 
     for ( std::vector< std::string > :: const_iterator it = type_changes_idx_.begin(); it != type_changes_idx_.end(); ++ it ) {
-        output << "type change: " << *it << std::endl;
+        output << "type change: " << *it << "<br/>" << std::endl;
     }
 
     for ( std::vector< std::pair< std::string, std::string > > :: const_iterator it = renames_idx_.begin(); it != renames_idx_.end(); ++ it ) {
-        output << it->first << " -> " << it->second;
+        output << it->first << " -> " << it->second << "<br/>" << std::endl;
     }
 
-    output << std::endl << "<b>Workdir changes:</b>" << std::endl;
+    output << "<br/>" << std::endl << "<b>Workdir changes:</b>" << "<br/>" << std::endl;
 
     for ( std::vector< std::string > :: const_iterator it = modifications_wd_.begin(); it != modifications_wd_.end(); ++ it ) {
-        output << "modified: " << *it << std::endl;
+        output << "modified: " << *it << "<br/>" << std::endl;
     }
 
     for ( std::vector< std::string > :: const_iterator it = deletions_wd_.begin(); it != deletions_wd_.end(); ++ it ) {
-        output << "deleted: " << *it << std::endl;
+        output << "deleted: " << *it << "<br/>" << std::endl;
     }
 
     for ( std::vector< std::string > :: const_iterator it = type_changes_wd_.begin(); it != type_changes_wd_.end(); ++ it ) {
-        output << "type change: " << *it << std::endl;
+        output << "type change: " << *it << "<br/>" << std::endl;
     }
 
     for ( std::vector< std::pair< std::string, std::string > > :: const_iterator it = renames_wd_.begin(); it != renames_wd_.end(); ++ it ) {
-        output << it->first << " -> " << it->second;
+        output << it->first << " -> " << it->second << "<br/>" << std::endl;
     }
 
-    output << std::endl << "<b>Untracked files:</b>" << std::endl;
+    output << "<br/>" << std::endl << "<b>Untracked files:</b>" << "<br/>" << std::endl;
 
     for ( std::vector< std::string > :: const_iterator it = additions_wd_.begin(); it != additions_wd_.end(); ++ it ) {
-        output << *it << std::endl;
+        output << *it << "<br/>" << std::endl;
     }
 
-    output << std::endl << "<b>Ignored files:</b>" << std::endl;
+    output << "<br/>" << std::endl << "<b>Ignored files:</b>" << "<br/>" << std::endl;
 
     for ( std::vector< std::string > :: const_iterator it = ignores.begin(); it != ignores.end(); ++ it ) {
-        output << *it << std::endl;
+        output << *it << "<br/>" << std::endl;
     }
 
-    output << std::endl << "<b>Conflicts:</b>" << std::endl;
+    output << "<br/>" << std::endl << "<b>Conflicts:</b>" << "<br/>" << std::endl;
 
     for ( std::vector< std::string > :: const_iterator it = conflicts.begin(); it != conflicts.end(); ++ it ) {
-        output << *it << std::endl;
+        output << *it << "<br/>" << std::endl;
     }
 
-    output << std::endl << "<b>Submodules:</b>" << std::endl;
+    output << "<br/>" << std::endl << "<b>Submodules:</b>" << "<br/>" << std::endl;
 
     for ( std::vector< std::string > :: const_iterator it = submodules_names.begin(); it != submodules_names.end(); ++ it ) {
-        output << *it << std::endl;
+        output << *it << "<br/>" << std::endl;
     }
 
     status_text_ = output.str();
