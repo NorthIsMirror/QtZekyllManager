@@ -142,7 +142,7 @@ int lgit_status::status( git_repository *repo )
     return retval;
 }
 
-const std::string & lgit_status::status_summary()
+const std::string & lgit_status::status_summary() const
 {
     std::stringstream output;
 
@@ -152,65 +152,65 @@ const std::string & lgit_status::status_summary()
 
     output << "<b>Staged changes:</b>" << std::endl;
 
-    for ( std::vector< std::string > :: iterator it = additions_idx_.begin(); it != additions_idx_.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = additions_idx_.begin(); it != additions_idx_.end(); ++ it ) {
         output << "new file: " << *it << std::endl;
     }
 
-    for ( std::vector< std::string > :: iterator it = modifications_idx_.begin(); it != modifications_idx_.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = modifications_idx_.begin(); it != modifications_idx_.end(); ++ it ) {
         output << "modified: " << *it << std::endl;
     }
 
-    for ( std::vector< std::string > :: iterator it = deletions_idx_.begin(); it != deletions_idx_.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = deletions_idx_.begin(); it != deletions_idx_.end(); ++ it ) {
         output << "deleted: " << *it << std::endl;
     }
 
-    for ( std::vector< std::string > :: iterator it = type_changes_idx_.begin(); it != type_changes_idx_.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = type_changes_idx_.begin(); it != type_changes_idx_.end(); ++ it ) {
         output << "type change: " << *it << std::endl;
     }
 
-    for ( std::vector< std::pair< std::string, std::string > > :: iterator it = renames_idx_.begin(); it != renames_idx_.end(); ++ it ) {
+    for ( std::vector< std::pair< std::string, std::string > > :: const_iterator it = renames_idx_.begin(); it != renames_idx_.end(); ++ it ) {
         output << it->first << " -> " << it->second;
     }
 
     output << std::endl << "<b>Workdir changes:</b>" << std::endl;
 
-    for ( std::vector< std::string > :: iterator it = modifications_wd_.begin(); it != modifications_wd_.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = modifications_wd_.begin(); it != modifications_wd_.end(); ++ it ) {
         output << "modified: " << *it << std::endl;
     }
 
-    for ( std::vector< std::string > :: iterator it = deletions_wd_.begin(); it != deletions_wd_.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = deletions_wd_.begin(); it != deletions_wd_.end(); ++ it ) {
         output << "deleted: " << *it << std::endl;
     }
 
-    for ( std::vector< std::string > :: iterator it = type_changes_wd_.begin(); it != type_changes_wd_.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = type_changes_wd_.begin(); it != type_changes_wd_.end(); ++ it ) {
         output << "type change: " << *it << std::endl;
     }
 
-    for ( std::vector< std::pair< std::string, std::string > > :: iterator it = renames_wd_.begin(); it != renames_wd_.end(); ++ it ) {
+    for ( std::vector< std::pair< std::string, std::string > > :: const_iterator it = renames_wd_.begin(); it != renames_wd_.end(); ++ it ) {
         output << it->first << " -> " << it->second;
     }
 
     output << std::endl << "<b>Untracked files:</b>" << std::endl;
 
-    for ( std::vector< std::string > :: iterator it = additions_wd_.begin(); it != additions_wd_.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = additions_wd_.begin(); it != additions_wd_.end(); ++ it ) {
         output << *it << std::endl;
     }
 
     output << std::endl << "<b>Ignored files:</b>" << std::endl;
 
-    for ( std::vector< std::string > :: iterator it = ignores.begin(); it != ignores.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = ignores.begin(); it != ignores.end(); ++ it ) {
         output << *it << std::endl;
     }
 
     output << std::endl << "<b>Conflicts:</b>" << std::endl;
 
-    for ( std::vector< std::string > :: iterator it = conflicts.begin(); it != conflicts.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = conflicts.begin(); it != conflicts.end(); ++ it ) {
         output << *it << std::endl;
     }
 
     output << std::endl << "<b>Submodules:</b>" << std::endl;
 
-    for ( std::vector< std::string > :: iterator it = submodules_names.begin(); it != submodules_names.end(); ++ it ) {
+    for ( std::vector< std::string > :: const_iterator it = submodules_names.begin(); it != submodules_names.end(); ++ it ) {
         output << *it << std::endl;
     }
 
