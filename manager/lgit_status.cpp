@@ -169,7 +169,7 @@ const std::string & lgit_status::status_summary() const
     }
 
     for ( std::vector< std::pair< std::string, std::string > > :: const_iterator it = renames_idx_.begin(); it != renames_idx_.end(); ++ it ) {
-        output << it->first << " -> " << it->second << "<br/>" << std::endl;
+        output << it->first << " ➡ " << it->second << "<br/>" << std::endl;
     }
 
     output << "<br/>" << std::endl << "<b>Workdir changes:</b>" << "<br/>" << std::endl;
@@ -187,7 +187,7 @@ const std::string & lgit_status::status_summary() const
     }
 
     for ( std::vector< std::pair< std::string, std::string > > :: const_iterator it = renames_wd_.begin(); it != renames_wd_.end(); ++ it ) {
-        output << it->first << " -> " << it->second << "<br/>" << std::endl;
+        output << it->first << " ➡ " << it->second << "<br/>" << std::endl;
     }
 
     output << "<br/>" << std::endl << "<b>Untracked files:</b>" << "<br/>" << std::endl;
