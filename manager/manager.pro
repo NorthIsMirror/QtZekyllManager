@@ -39,7 +39,8 @@ SOURCES += main.cpp \
     external_functions.cpp \
     checkoutdialog.cpp \
     lgit_tags.cpp \
-    progresswidget.cpp
+    progresswidget.cpp \
+    lgit_status.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -70,7 +71,8 @@ HEADERS  += mainwindow.h \
     external_functions.h \
     checkoutdialog.h \
     lgit_tags.h \
-    progresswidget.h
+    progresswidget.h \
+    lgit_status.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \

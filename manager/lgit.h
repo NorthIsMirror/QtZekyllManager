@@ -24,6 +24,7 @@
 #include "lgit_remotes.h"
 #include "lgit_log.h"
 #include "lgit_tags.h"
+#include "lgit_status.h"
 
 #include <tuple>
 
@@ -171,6 +172,7 @@ private:
     lgit_remotes git_remotes_;
     lgit_log git_log_;
     lgit_tags git_tags_;
+    lgit_status git_status_;
 };
 
 #endif // LGIT_H
