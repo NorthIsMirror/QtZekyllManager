@@ -60,6 +60,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->messages->setReadOnly( true );
+
     readSettings();
 
     ui->tabWidget->saveTheColor();

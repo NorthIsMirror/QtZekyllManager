@@ -498,6 +498,9 @@
         <height>90</height>
        </size>
       </property>
+      <property name="textInteractionFlags">
+       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+      </property>
      </widget>
     </item>
    </layout>
