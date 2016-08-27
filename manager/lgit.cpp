@@ -972,6 +972,24 @@ int lgit::createBranch( const std::string & name, const std::string & tip_sha )
     return retval;
 }
 
+int lgit::deleteBranch( const std::string & name, bool local )
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (16)" );
+        return retval + 1000000 * 2;
+    }
+
+    git_branches_.set_cur_repo( repo_ );
+    retval += git_branches_.removeLocal( name );
+
+    retval += closeRepo();
+    return retval;
+}
+
 std::vector<std::string> lgit::gatherCheckoutOpDataForType( CheckoutOperationEvent type )
 {
     std::vector< std::string > accum;

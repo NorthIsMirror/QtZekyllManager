@@ -111,6 +111,7 @@ public:
     int checkout( const std::string & target, const std::string & tip_sha, bool is_branch, bool is_tag );
     int doStatus();
     int createBranch( const std::string & name, const std::string & tip_sha = std::string() );
+    int deleteBranch( const std::string & name, bool local = true );
 
     AnalysisResult analysisResult() const { return analysisResult_; }
 
