@@ -291,6 +291,41 @@ const mybranch &lgit_branches::findNameWithType( const char *_name, int type ) c
     return dummy_;
 }
 
+int lgit_branches::create( const std::string & name, const std::string & tip_sha )
+{
+    int error;
+
+    git_oid oid;
+    git_commit *tip_commit;
+
+    if ( tip_sha != "" ) {
+        if ( ( error = git_oid_fromstr( &oid, tip_sha.c_str() ) ) < 0 ) {
+            MessagesI.AppendMessageT( "Provided SHA is invalid, cannot create branch" );
+            return 491 + ( 10000 * error * -1 );
+        }
+    } else {
+        if ( ( error = git_reference_name_to_id( &oid, cur_repo_, "HEAD" ) ) < 0 ) {
+            MessagesI.AppendMessageT( "Could not read HEAD, is repository consistent? (2)");
+            return 521 + ( 10000 * error * -1 );
+        }
+    }
+
+    // Find new tip commit, to be used as tree pointer in checkout
+    if ( ( error = git_commit_lookup( &tip_commit, cur_repo_, &oid ) ) < 0 ) {
+        MessagesI.AppendMessageT( "Provided commit doesn't exist, cannot create branch" );
+        return 499 + ( 10000 * error * -1 );
+    }
+
+    git_reference *newbranch;
+    if ( ( error = git_branch_create( &newbranch, cur_repo_, name.c_str(), tip_commit, 0 ) ) < 0 ) {
+        const char *spec_error = giterr_last()->message;
+        MessagesI.AppendMessageT( QString( "Could not create branch: %1 (%2)" ).arg( spec_error ).arg( error * -1 ) );
+        return 503 + ( error * 10000 * -1 );
+    }
+
+    return 0;
+}
+
 static int fetchhead_foreach_cb( const char *ref_name, const char *remote_url, const git_oid *oidp,
                                  unsigned int is_merge, void *payload )
 {

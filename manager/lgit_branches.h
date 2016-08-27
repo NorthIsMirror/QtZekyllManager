@@ -89,6 +89,8 @@ public:
 
     const mybranch & findNameWithType( const char *_name, int type ) const;
 
+    int create( const std::string & name, const std::string & tip_sha = std::string() );
+
 private:
     std::vector< mybranch > raw_branches_;
     git_repository *cur_repo_;
