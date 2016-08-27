@@ -78,9 +78,16 @@ int lgit_log::log_of_tip( git_repository *repo, const std::string & sha, const s
     git_oid oid, outid;
     git_object *obj;
 
-    if ( ( error = git_oid_fromstr( &oid, sha.c_str() ) ) < 0 ) {
-        MessagesI.AppendMessageT( "Invalid SHA given" );
-        return 211 + ( 10000 * error * -1 );
+    if ( sha != "" ) {
+        if ( ( error = git_oid_fromstr( &oid, sha.c_str() ) ) < 0 ) {
+            MessagesI.AppendMessageT( "Invalid SHA given" );
+            return 211 + ( 10000 * error * -1 );
+        }
+    } else {
+        if ( ( error = git_reference_name_to_id( &oid, repo, "HEAD" ) ) < 0 ) {
+            MessagesI.AppendMessageT( "Could not read HEAD, is repository consistent?");
+            return 509 + ( 10000 * error * -1 );
+        }
     }
 
     if( hide != "" ) {
