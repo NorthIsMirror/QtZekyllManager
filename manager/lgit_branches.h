@@ -91,6 +91,8 @@ public:
 
     int create( const std::string & name, const std::string & tip_sha = std::string() );
 
+    int removeLocal( const std::string & name );
+
 private:
     std::vector< mybranch > raw_branches_;
     git_repository *cur_repo_;

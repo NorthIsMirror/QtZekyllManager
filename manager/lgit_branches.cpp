@@ -326,6 +326,27 @@ int lgit_branches::create( const std::string & name, const std::string & tip_sha
     return 0;
 }
 
+int lgit_branches::removeLocal( const std::string & name )
+{
+    int error;
+    git_reference *ref;
+    std::string ref_name = "refs/heads/" + name;
+
+    if ( ( error = git_reference_lookup( &ref, cur_repo_, ref_name.c_str() ) ) < 0 ) {
+        MessagesI.AppendMessageT( QString( "Could not resolve branch name, cannot delete branch <b>" ) + QString::fromStdString( name ) + "</b>" );
+        return 541 + ( 10000 * error * -1 );
+    }
+
+    if ( ( error = git_branch_delete( ref ) ) < 0 ) {
+        const char *spec_error = giterr_last()->message;
+        MessagesI.AppendMessageT( QString( "Cannot delete branch <b>" ) + QString::fromStdString( name ) + "</b>: " +
+                                  QString::fromUtf8( spec_error ) + QString( " (%1)" ).arg( error ) );
+        return 547 + ( 10000 * error * -1 );
+    }
+
+    return 0;
+}
+
 static int fetchhead_foreach_cb( const char *ref_name, const char *remote_url, const git_oid *oidp,
                                  unsigned int is_merge, void *payload )
 {
