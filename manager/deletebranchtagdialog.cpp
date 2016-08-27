@@ -57,7 +57,7 @@ int DeleteBranchTagDialog::endAdding()
         MyRefData refData( "", "", false, false );
         QVariant vRefData = QVariant::fromValue( refData );
 
-        ui->comboBox->addItem( tr( "No branches in repository" ), vRefData );
+        ui->comboBox->addItem( tr( "No branches or tags in repository" ), vRefData );
     }
 
     return 0;

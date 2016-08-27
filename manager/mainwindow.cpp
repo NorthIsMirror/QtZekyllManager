@@ -2001,7 +2001,7 @@ void MainWindow::on_git2DeleteBranch_clicked()
 
     if ( dbtdialog->exec() == QDialog::Accepted ) {
         QString selectedBranch = dbtdialog->selectedRef().trimmed();
-        if ( !selectedBranch.isEmpty() && selectedBranch != tr( "No branches in repository" ) ) {
+        if ( !selectedBranch.isEmpty() && selectedBranch != tr( "No branches or tags in repository" ) ) {
             error = lgit_->deleteBranch( selectedBranch.toStdString(), true );
             if ( 0 == error ) {
                 MessagesI.AppendMessageT( tr( "Successful deletion of branch <b>" ) + selectedBranch + "</b>" );
