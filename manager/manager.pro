@@ -41,7 +41,9 @@ SOURCES += main.cpp \
     lgit_tags.cpp \
     progresswidget.cpp \
     lgit_status.cpp \
-    statusdialog.cpp
+    statusdialog.cpp \
+    newbranchdialog.cpp \
+    logdialog.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -74,7 +76,9 @@ HEADERS  += mainwindow.h \
     lgit_tags.h \
     progresswidget.h \
     lgit_status.h \
-    statusdialog.h
+    statusdialog.h \
+    newbranchdialog.h \
+    logdialog.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \
@@ -83,7 +87,9 @@ FORMS    += mainwindow.ui \
     pulldialog.ui \
     checkoutdialog.ui \
     progresswidget.ui \
-    statusdialog.ui
+    statusdialog.ui \
+    newbranchdialog.ui \
+    logdialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libgit2/release/ -lgit2
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libgit2/debug/ -lgit2

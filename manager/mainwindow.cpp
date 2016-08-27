@@ -29,6 +29,7 @@
 #include "pulldialog.h"
 #include "checkoutdialog.h"
 #include "statusdialog.h"
+#include "newbranchdialog.h"
 
 #include <QMap>
 #include <QDir>
@@ -1935,4 +1936,44 @@ void MainWindow::on_gitStatus_clicked()
     sdialog->setText( QString::fromStdString( lgit_->status_summary() ) );
     sdialog->exec();
     sdialog->deleteLater();
+}
+
+void MainWindow::on_git2NewBranch_clicked()
+{
+    int error;
+
+    NewBranchDialog *nbdialog = new NewBranchDialog( this );
+    nbdialog->setLGit( lgit_ );
+    if ( nbdialog->exec() == QDialog::Accepted ) {
+        if ( !nbdialog->isUnclear() ) {
+            if ( nbdialog->useHead() ) {
+                error = lgit_->createBranch( nbdialog->branchName().toStdString() );
+            } else {
+                error = lgit_->createBranch( nbdialog->branchName().toStdString(), nbdialog->commitSha().toStdString() );
+            }
+
+            if ( 0 == error ) {
+                MessagesI.AppendMessageT( tr( "Successfully created branch <b>" ) + nbdialog->branchName() + "</b>" );
+            }
+
+            if ( nbdialog->doCheckout() ) {
+                if ( 0 == error ) {
+                    // Refresh branches list
+                    lgit_->loadBranches( BRANCH_LOCAL );
+
+                    // Invoke checkout
+                    if ( ( error = lgit_->checkout( nbdialog->branchName().toStdString(), "", true, false ) ) > 0 ) {
+                        MessagesI.AppendMessageT( QString( "Checkout of newly created branch <b>" ) + nbdialog->branchName() +
+                                                  QString( "</b> failed (exit code: %1)" ) . arg( error ) );
+                    } else {
+                        MessagesI.AppendMessageT( QString( "Successful checkout of newly created branch <b>" ) + nbdialog->branchName() + "</b>");
+                    }
+                } else {
+                    MessagesI.AppendMessageT( "Not doing checkout, branch creation not successful" );
+                }
+            }
+
+        }
+    }
+    nbdialog->deleteLater();
 }
