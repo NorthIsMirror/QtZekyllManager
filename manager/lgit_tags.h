@@ -35,6 +35,8 @@ public:
 
     void clear() { tags_.clear(); }
 
+    int deleteTag( git_repository *repo, const std::string & name );
+
 private:
     std::vector< mytag > tags_;
 };

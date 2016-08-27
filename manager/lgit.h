@@ -112,6 +112,7 @@ public:
     int doStatus();
     int createBranch( const std::string & name, const std::string & tip_sha = std::string() );
     int deleteBranch( const std::string & name, bool local = true );
+    int deleteTag( const std::string & name );
 
     AnalysisResult analysisResult() const { return analysisResult_; }
 

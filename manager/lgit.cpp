@@ -990,6 +990,23 @@ int lgit::deleteBranch( const std::string & name, bool local )
     return retval;
 }
 
+int lgit::deleteTag( const std::string & name )
+{
+    int error, retval = 0;
+
+    error = openRepo();
+    if ( error > 0 ) {
+        retval += error;
+        MessagesI.AppendMessageT( "Could not open repository " + repo_path_ + " (17)" );
+        return retval + 1000000 * 3;
+    }
+
+    retval += git_tags_.deleteTag( repo_, name );
+
+    retval += closeRepo();
+    return retval;
+}
+
 std::vector<std::string> lgit::gatherCheckoutOpDataForType( CheckoutOperationEvent type )
 {
     std::vector< std::string > accum;

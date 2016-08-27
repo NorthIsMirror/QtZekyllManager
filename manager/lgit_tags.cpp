@@ -158,6 +158,19 @@ int lgit_tags::list( git_repository *repo )
     return retval;
 }
 
+int lgit_tags::deleteTag( git_repository *repo, const std::string & name )
+{
+    int error;
+
+    if ( ( error = git_tag_delete( repo, name.c_str() ) ) < 0 ) {
+        const char *spec_error = giterr_last()->message;
+        MessagesI.AppendMessageT( QString( "Cannot delete tag: %1 (%2)" ).arg( spec_error ).arg( error * -1 ) );
+        return 557 + ( 10000 * error * -1 );
+    }
+
+    return 0;
+}
+
 static int tag_foreach_callback( const char *name, git_oid *oid, void *payload ) {
     std::vector< tag_temp > *temp = static_cast< std::vector< tag_temp > * > ( payload );
     temp->push_back( tag_temp( std::string( name ), *oid ) );
