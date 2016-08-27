@@ -210,6 +210,8 @@ private slots:
 
     void on_git2DeleteBranch_clicked();
 
+    void on_git2DeleteTag_clicked();
+
 public:
     int currentIndex() const { return current_index_; }
     std::tuple<bool, QString, int, QString> getProcessedZcodeInput();

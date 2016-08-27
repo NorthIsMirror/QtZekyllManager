@@ -2018,3 +2018,36 @@ void MainWindow::on_git2DeleteBranch_clicked()
 
     dbtdialog->deleteLater();
 }
+
+void MainWindow::on_git2DeleteTag_clicked()
+{
+    int error;
+
+    DeleteBranchTagDialog *dbtdialog = new DeleteBranchTagDialog( this );
+
+    lgit_->loadTags();
+
+    for ( std::vector< mytag >::const_iterator it = lgit_->raw_tags().begin(); it != lgit_->raw_tags().end(); ++ it ) {
+        dbtdialog->addTag( QString::fromStdString( it->name ), QString::fromStdString( it->targetSha ) );
+    }
+
+    dbtdialog->endAdding();
+
+    if ( dbtdialog->exec() == QDialog::Accepted ) {
+        QString selectedTag = dbtdialog->selectedRef().trimmed();
+        if ( !selectedTag.isEmpty() && selectedTag != tr( "No branches or tags in repository" ) ) {
+            error = lgit_->deleteTag( selectedTag.toStdString() );
+            if ( 0 == error ) {
+                MessagesI.AppendMessageT( tr( "Successful deletion of tag <b>" ) + selectedTag + "</b>" );
+                if ( ( error = lgit_->loadTags() ) > 0 ) {
+                    MessagesI.AppendMessageT( tr( "Could not reload tags, error code: %1" ).arg( error ) );
+                }
+            } else {
+                MessagesI.AppendMessageT( tr( "Cannot delete tag <b>%1</b>, error code: %2").arg( selectedTag ).arg( error ) );
+            }
+        }
+    } else {
+        MessagesI.AppendMessageT( tr( "<font color='green'>Tag deletion aborted</font>" ) );
+    }
+
+}
