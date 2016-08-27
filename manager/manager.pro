@@ -43,7 +43,8 @@ SOURCES += main.cpp \
     lgit_status.cpp \
     statusdialog.cpp \
     newbranchdialog.cpp \
-    logdialog.cpp
+    logdialog.cpp \
+    deletebranchtagdialog.cpp
 
 HEADERS  += mainwindow.h \
     call_once.h \
@@ -78,7 +79,8 @@ HEADERS  += mainwindow.h \
     lgit_status.h \
     statusdialog.h \
     newbranchdialog.h \
-    logdialog.h
+    logdialog.h \
+    deletebranchtagdialog.h
 
 FORMS    += mainwindow.ui \
     zmeditor.ui \
@@ -89,7 +91,8 @@ FORMS    += mainwindow.ui \
     progresswidget.ui \
     statusdialog.ui \
     newbranchdialog.ui \
-    logdialog.ui
+    logdialog.ui \
+    deletebranchtagdialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libgit2/release/ -lgit2
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libgit2/debug/ -lgit2

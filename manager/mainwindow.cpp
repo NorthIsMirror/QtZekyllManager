@@ -30,6 +30,7 @@
 #include "checkoutdialog.h"
 #include "statusdialog.h"
 #include "newbranchdialog.h"
+#include "deletebranchtagdialog.h"
 
 #include <QMap>
 #include <QDir>
@@ -1976,4 +1977,44 @@ void MainWindow::on_git2NewBranch_clicked()
         }
     }
     nbdialog->deleteLater();
+}
+
+void MainWindow::on_git2DeleteBranch_clicked()
+{
+    int error;
+
+    DeleteBranchTagDialog *dbtdialog = new DeleteBranchTagDialog( this );
+
+    lgit_->loadBranches( BRANCH_LOCAL );
+
+    for ( std::vector< mybranch >::const_iterator it = lgit_->raw_branches().begin(); it != lgit_->raw_branches().end(); ++ it ) {
+        if ( it->is_in_fetch_head ) {
+            continue;
+        }
+        if ( it->name == "master" ) {
+            continue;
+        }
+        dbtdialog->addBranch( QString::fromStdString( it->name ), QString::fromStdString( it->tip_sha ) );
+    }
+
+    dbtdialog->endAdding();
+
+    if ( dbtdialog->exec() == QDialog::Accepted ) {
+        QString selectedBranch = dbtdialog->selectedRef().trimmed();
+        if ( !selectedBranch.isEmpty() && selectedBranch != tr( "No branches in repository" ) ) {
+            error = lgit_->deleteBranch( selectedBranch.toStdString(), true );
+            if ( 0 == error ) {
+                MessagesI.AppendMessageT( tr( "Successful deletion of branch <b>" ) + selectedBranch + "</b>" );
+                if ( ( error = lgit_->loadBranches( BRANCH_LOCAL ) ) > 0 ) {
+                    MessagesI.AppendMessageT( tr( "Could not reload branches, error code: %1" ).arg( error ) );
+                }
+            } else {
+                MessagesI.AppendMessageT( tr( "Cannot delete branch <b>%1</b>, error code: %2").arg( selectedBranch ).arg( error ) );
+            }
+        }
+    } else {
+        MessagesI.AppendMessageT( tr( "<font color='green'>Branch deletion aborted</font>" ) );
+    }
+
+    dbtdialog->deleteLater();
 }
