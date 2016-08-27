@@ -106,6 +106,7 @@ int lgit_log::log_of_tip( git_repository *repo, const std::string & sha, const s
 
     if( hide != "" ) {
         git_revwalk_hide( walk, git_object_id( obj ) );
+        git_object_free( obj );
     }
 
     int error2 = 0;
