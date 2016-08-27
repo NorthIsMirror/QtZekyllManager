@@ -847,11 +847,25 @@ int lgit::checkout( const std::string & target, const std::string & tip_sha, boo
     int error, retval = 0;
 
     // Check if tip_sha is up to date (provided that caller will call loadBranches())
-    if ( is_branch ) {
+    if ( is_branch && tip_sha != "" ) {
         mybranch & branch = git_branches_.findSha( tip_sha.c_str() );
         if( branch.invalid == INVALID_DUMMY || branch.is_in_fetch_head ) {
             MessagesI.AppendMessageT( "Repository changed when dialog was open, please reopen and try again" );
             return 467;
+        }
+    }
+
+    // We get SHA of branch from branch enumeration because this
+    // will correctly handle case when there is branch and tag
+    // of the same name. Thus, loadBranches() call must precede.
+    std::string tip_sha2 = tip_sha;
+    if ( tip_sha2 == "" && is_branch ) {
+        const mybranch & branch = git_branches_.findNameWithType( target.c_str(), FIND_BRANCH_LOCAL );
+        if( branch.invalid == INVALID_DUMMY || branch.is_in_fetch_head ) {
+            MessagesI.AppendMessageT( QString( "Could not checkout: there is no branch `" ) + QString::fromStdString( target ) + "'" );
+            return 523;
+        } else {
+            tip_sha2 = branch.tip_sha;
         }
     }
 
@@ -866,7 +880,7 @@ int lgit::checkout( const std::string & target, const std::string & tip_sha, boo
     git_oid oid;
     git_commit *new_tip_commit;
 
-    if ( ( error = git_oid_fromstr( &oid, tip_sha.c_str() ) ) < 0 ) {
+    if ( ( error = git_oid_fromstr( &oid, tip_sha2.c_str() ) ) < 0 ) {
         MessagesI.AppendMessageT( tr( "Selected branch or tag has improper SHA, cannot checkout" ) );
         retval += closeRepo();
         return retval + 449 + ( 10000 * error * -1 );
