@@ -787,7 +787,7 @@ int lgit::readLog( const QString & tip_sha, const QString & hide, bool equip )
     }
 
     git_log_.clear();
-    git_log_.log_of_tip( repo_, tip_sha.toStdString(), hide.toStdString() );
+    retval += git_log_.log_of_tip( repo_, tip_sha.toStdString(), hide.toStdString() );
 
     if( equip ) {
         git_log_.equip_with_diff_data( repo_ );

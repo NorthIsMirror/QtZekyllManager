@@ -194,7 +194,7 @@ void CheckoutDialog::on_buttonBox_clicked( QAbstractButton *button )
             // Refresh branches to allow right-before-action verification of tip sha
             lgit_->loadBranches( BRANCH_LOCAL );
 
-            if( ( error = lgit_->checkout( refData.name.toStdString(), refData.tip_sha.toStdString(), refData.is_branch, refData.is_tag ) ) > 0 ) {
+            if ( ( error = lgit_->checkout( refData.name.toStdString(), refData.tip_sha.toStdString(), refData.is_branch, refData.is_tag ) ) > 0 ) {
                 ui->label->setText( tr( "Problems with checkout, error code: %1" ).arg( error ) );
                 ui->currentLabel->setText( tr( "Current HEAD: unknown" ) );
             } else {
