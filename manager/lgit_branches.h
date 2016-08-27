@@ -75,6 +75,8 @@ public:
     git_repository *cur_repo() { return cur_repo_; }
 
     const std::vector< mybranch > & raw_branches() const { return raw_branches_; }
+    std::vector< mybranch > & raw_branches_rw() { return raw_branches_; }
+
     void add( const mybranch & branch ) { raw_branches_.push_back( branch ); }
     mybranch & operator[] ( int idx ) { return raw_branches_[ idx ]; }
     const mybranch & operator[] ( int idx ) const { return raw_branches_[ idx ]; }

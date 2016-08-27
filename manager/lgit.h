@@ -125,6 +125,9 @@ public:
     const lgit_branches & branches() const { return git_branches_; }
     const std::vector< mybranch > & raw_branches() const { return git_branches_.raw_branches(); }
 
+    lgit_branches & branches_rw() { return git_branches_; }
+    std::vector< mybranch > & raw_branches_rw() { return git_branches_.raw_branches_rw(); }
+
     const lgit_current & current() const { return git_current_; }
 
     const lgit_remotes & remotes() const { return git_remotes_; }
